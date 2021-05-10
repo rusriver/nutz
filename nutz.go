@@ -3,10 +3,193 @@ package nutz
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
 var indent = 0
+
+// err := nutz.MapHierToStruct(hier, &strct)
+
+type tMHTS struct {
+	path []string
+}
+
+func MapHierToStruct(hier interface{}, strct interface{}) error {
+	rv := reflect.ValueOf(strct)
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return fmt.Errorf("MapHierToStruct(), must be pointer, not %v", reflect.TypeOf(strct))
+	}
+
+	env := &tMHTS{
+		path: []string{},
+	}
+	env.mapHierToStruct(hier, rv)
+
+	return nil
+}
+
+func (env *tMHTS) mapHierToStruct(hi1 interface{}, rv1 reflect.Value) error {
+	fmt.Printf("MapHierToStruct() at path %v\n", strings.Join(env.path, "."))
+EntrySwitch:
+	switch hi1v := hi1.(type) {
+	default:
+		fmt.Printf("+++ EntrySwitch, default\n")
+		fmt.Print(strings.Repeat("  ", indent))
+		fmt.Printf("%+v : %T\n", hi1, hi1)
+	case map[string]interface{}:
+		fmt.Printf("+++ EntrySwitch, map[string]interface{}\n")
+		var map1struct0 bool
+
+		switch rv1.Kind() {
+		case reflect.Interface:
+			if rv1.IsNil() {
+				rv1.Set(reflect.ValueOf(map[string]interface{}{}))
+			} else {
+				rv1 = rv1.Elem()
+			}
+			goto EntrySwitch
+
+		case reflect.Ptr:
+			if rv1.IsNil() {
+				typ := rv1.Type()
+				rv1.Set(reflect.New(typ))
+			}
+			rv1 = rv1.Elem()
+			goto EntrySwitch
+
+		case reflect.Map:
+			typ := rv1.Type()
+			map_kt := typ.Key().String()
+			if map_kt != "string" {
+				return fmt.Errorf("MapHierToStruct(), map key type must be [string], not %v, at path %v", map_kt, strings.Join(env.path, "."))
+			}
+			map1struct0 = true
+
+		case reflect.Struct:
+			map1struct0 = false
+
+		default:
+			return fmt.Errorf("MapHierToStruct(), incompatible type %v at path %v", rv1.Kind, strings.Join(env.path, "."))
+		}
+
+		// if we are here, then there's for sure either a map or struct
+		for k, v := range hi1v {
+			fmt.Print(strings.Repeat("  ", indent))
+			fmt.Printf("%+v => %+v\n", k, v)
+			env.path = append(env.path, k)
+
+			// get rv2
+			var rv2 reflect.Value
+			if map1struct0 { // map
+				rv2 = rv1.MapIndex(reflect.ValueOf(k))
+				if !rv2.IsValid() || !rv2.CanSet() {
+					rv2 = rv1.MapIndex(reflect.ValueOf(ToCamelStr(k)))
+					if !rv2.IsValid() || !rv2.CanSet() {
+						continue // skip it
+					}
+				}
+			} else { // struct
+				rv2 = rv1.FieldByName(k)
+				if !rv2.IsValid() || !rv2.CanSet() {
+					rv2 = rv1.FieldByName(ToCamelStr(k))
+					if !rv2.IsValid() || !rv2.CanSet() {
+						continue // skip it
+					}
+				}
+			}
+
+			// go get set it
+			var set bool
+			switch v2 := v.(type) {
+			case map[string]interface{}, []interface{}:
+				env.mapHierToStruct(v, rv2)
+			case string:
+				switch rv2.Kind() {
+				case reflect.String:
+					rv2.SetString(v2)
+					set = true
+				case reflect.Slice:
+					// the case of byte arrays is not handled intentionally, because of weirdness of Go internals
+					if rv2.Type().Elem().String() == "uint8" {
+						rv2.SetBytes([]byte(v2))
+						set = true
+					}
+				}
+			case bool:
+				if rv2.Kind() == reflect.Bool {
+					rv2.SetBool(v2)
+					set = true
+				}
+			case uint8, uint16, uint32, uint64:
+				var v3 uint64
+				switch v2 := v.(type) {
+				case uint8:
+					v3 = uint64(v2)
+				case uint16:
+					v3 = uint64(v2)
+				case uint32:
+					v3 = uint64(v2)
+				case uint64:
+					v3 = uint64(v2)
+				}
+				switch rv2.Kind() {
+				case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+					rv2.SetUint(v3)
+					set = true
+				}
+			case int8, int16, int32, int64:
+				var v3 int64
+				switch v2 := v.(type) {
+				case int8:
+					v3 = int64(v2)
+				case int16:
+					v3 = int64(v2)
+				case int32:
+					v3 = int64(v2)
+				case int64:
+					v3 = int64(v2)
+				}
+				switch rv2.Kind() {
+				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+					rv2.SetInt(v3)
+					set = true
+				}
+			case float32, float64:
+				var v3 float64
+				switch v2 := v.(type) {
+				case float32:
+					v3 = float64(v2)
+				case float64:
+					v3 = float64(v2)
+				}
+				switch rv2.Kind() {
+				case reflect.Float32, reflect.Float64:
+					rv2.SetFloat(v3)
+					set = true
+				}
+			default:
+				return fmt.Errorf("MapHierToStruct(), unsupported type %T in hierarchy at path %v2", v, strings.Join(env.path, "."))
+			}
+			if !set {
+				return fmt.Errorf("MapHierToStruct(), incompatible type %v at path %v", rv1.Type(), strings.Join(env.path, "."))
+			}
+
+			env.path = env.path[:len(env.path)-1]
+		}
+	case []interface{}:
+		fmt.Printf("+++ EntrySwitch, interface{}\n")
+		for i, v := range hi1v {
+			fmt.Print(strings.Repeat("  ", indent))
+			fmt.Printf("[%+v] %+v\n", i, v)
+			env.path = append(env.path, strconv.Itoa(i))
+			env.mapHierToStruct(v, rv1)
+			env.path = env.path[:len(env.path)-1]
+		}
+	}
+
+	return nil
+}
 
 func IterlevJ(rnode interface{}) {
 	switch rnv := rnode.(type) {

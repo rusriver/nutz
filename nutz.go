@@ -5,7 +5,6 @@ import (
 )
 
 func toCamelStr(s string) string {
-	sd
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return s

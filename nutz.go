@@ -1,10 +1,10 @@
 package nutz
 
 import (
-	"string"
+	"strings"
 )
 
-func toCamelStr(s string) string {
+func ToCamelStr(s string) string {
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return s

@@ -1,4 +1,4 @@
-package nutz
+package main
 
 import (
 	"fmt"
@@ -6,31 +6,46 @@ import (
 	"strings"
 )
 
+type person struct {
+	firsName string
+	LastName string
+	iceCream []string
+}
+
+type someT int
+
+func main() {
+	u := struct {
+		MyMap     map[int]int
+		MyMap2    map[string]interface{}
+		MySlice   []string
+		MySlice2  []string
+		MyPerson  person
+		MyPerson2 *person
+		MyPerson3 *person
+		age       int
+		Some      someT
+	}{
+		MyMap:   map[int]int{1: 10, 2: 20},
+		MyMap2:  map[string]interface{}{"a": 10, "A": "AAA-string"},
+		MySlice: []string{"red", "green"},
+		MyPerson: person{
+			firsName: "Esmaeil",
+			LastName: "Abedi",
+			iceCream: []string{"Vanilla", "chocolate"},
+		},
+		MyPerson3: &person{
+			LastName: "Maya",
+		},
+		age:  15,
+		Some: 25,
+	}
+
+	IterlevS(reflect.ValueOf(u))
+}
+
 var indent = 0
 
-func IterlevJ(rnode interface{}) {
-	switch rnv := rnode.(type) {
-	default:
-		fmt.Print(strings.Repeat("  ", indent))
-		fmt.Printf("%+v : %T\n", rnode, rnode)
-	case map[string]interface{}:
-		for k, v := range rnv {
-			fmt.Print(strings.Repeat("  ", indent))
-			fmt.Printf("%+v => %+v\n", k, v)
-			indent++
-			IterlevJ(v)
-			indent--
-		}
-	case []interface{}:
-		for i, v := range rnv {
-			fmt.Print(strings.Repeat("  ", indent))
-			fmt.Printf("[%+v] %+v\n", i, v)
-			indent++
-			IterlevJ(v)
-			indent--
-		}
-	}
-}
 func IterlevS(v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Interface, reflect.Ptr:
@@ -106,34 +121,4 @@ func IterlevS(v reflect.Value) {
 			}
 		}
 	}
-}
-
-func ToCamelStr(s string) string {
-	s = strings.TrimSpace(s)
-	if s == "" {
-		return s
-	}
-
-	n := strings.Builder{}
-	n.Grow(len(s))
-	capNext := true
-	for _, v := range []byte(s) {
-		vIsCap := v >= 'A' && v <= 'Z'
-		vIsLow := v >= 'a' && v <= 'z'
-		if capNext {
-			if vIsLow {
-				v -= 32
-			}
-		}
-		if vIsCap || vIsLow {
-			n.WriteByte(v)
-			capNext = false
-		} else if vIsNum := v >= '0' && v <= '9'; vIsNum {
-			n.WriteByte(v)
-			capNext = true
-		} else {
-			capNext = v == '_' || v == ' ' || v == '-' || v == '.'
-		}
-	}
-	return n.String()
 }

@@ -4,7 +4,6 @@ import (
 	"string"
 )
 
-//[of]:func toCamelStr(s string) string {
 func toCamelStr(s string) string {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -34,5 +33,3 @@ func toCamelStr(s string) string {
 	}
 	return n.String()
 }
-
-//[cf]

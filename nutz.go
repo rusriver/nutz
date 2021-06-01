@@ -32,7 +32,7 @@ func MapHierToStruct(hier interface{}, strct interface{}) error {
 
 func (env *tMHTS) mapHierToStruct(hi1 interface{}, rv1 reflect.Value) (errr error) {
 	defer func() {
-		if err := recover().(error); err != nil {
+		if err := recover(); err != nil {
 			errr = fmt.Errorf("MapHierToStruct()-panic, internal panic '%v' at path %v - CONTACT THE DEVELOPERS\n%v", err, strings.Join(env.path, "."), string(debug.Stack()))
 		}
 	}()

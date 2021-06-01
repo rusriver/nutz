@@ -32,7 +32,7 @@ func MapHierToStruct(hier interface{}, strct interface{}) error {
 
 func (env *tMHTS) mapHierToStruct(hi1 interface{}, rv1 reflect.Value) (errr error) {
 	defer func() {
-		if err := recover(); err != nil {
+		if err := recover().(error); err != nil {
 			errr = fmt.Errorf("MapHierToStruct()-panic, internal panic '%v' at path %v - CONTACT THE DEVELOPERS\n%v", err, strings.Join(env.path, "."), string(debug.Stack()))
 		}
 	}()
@@ -106,7 +106,7 @@ EntrySwitch:
 				rv3 = reflect.New(rv1.Type().Elem()).Elem()
 				err = env.set_v2(rv3, v)
 				if err != nil {
-					env.path = env.path[:len(env.path)-1]
+					env.path = (env.path)[:len(env.path)-1]
 					return err
 				}
 				rv1.SetMapIndex(rk, rv3)
@@ -116,19 +116,19 @@ EntrySwitch:
 				if !rv2.IsValid() || !rv2.CanSet() {
 					rv2 = rv1.FieldByName(ToCamelStr(k))
 					if !rv2.IsValid() || !rv2.CanSet() {
-						env.path = env.path[:len(env.path)-1]
+						env.path = (env.path)[:len(env.path)-1]
 						continue // skip it
 					}
 				}
 
 				err = env.set_v2(rv2, v)
 				if err != nil {
-					env.path = env.path[:len(env.path)-1]
+					env.path = (env.path)[:len(env.path)-1]
 					return err
 				}
 			}
 
-			env.path = env.path[:len(env.path)-1]
+			env.path = (env.path)[:len(env.path)-1]
 		}
 	case []interface{}:
 		var err error
@@ -177,7 +177,7 @@ EntrySwitch:
 
 				err = env.set_v2(rv2, v)
 				if err != nil {
-					env.path = env.path[:len(env.path)-1]
+					env.path = (env.path)[:len(env.path)-1]
 					return err
 				}
 
@@ -185,13 +185,13 @@ EntrySwitch:
 				rv3 = reflect.New(rv1.Type().Elem()).Elem()
 				err = env.set_v2(rv3, v)
 				if err != nil {
-					env.path = env.path[:len(env.path)-1]
+					env.path = (env.path)[:len(env.path)-1]
 					return err
 				}
 				rv1.Set(reflect.Append(rv1, rv3))
 			}
 
-			env.path = env.path[:len(env.path)-1]
+			env.path = (env.path)[:len(env.path)-1]
 		}
 	}
 

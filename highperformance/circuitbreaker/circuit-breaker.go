@@ -236,8 +236,10 @@ func (cb *CircuitBreaker) IsClosedAllowed() (ok bool) {
 	return false
 }
 
-func (cb *CircuitBreaker) WantToDo(f func() (success bool)) {
+func (cb *CircuitBreaker) WantToDo(f func() (success bool)) (r bool) {
 	if cb.IsClosedAllowed() {
-		cb.Report(f())
+		r = f()
+		cb.Report(r)
 	}
+	return false
 }

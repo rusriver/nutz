@@ -47,7 +47,7 @@ func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 	cb.DenyWaitTime = time.Minute * 1
 	cb.Context = context.Background()
 	cb.DQF_Size = 32
-	cb.DebugMode = true
+	cb.DebugMode = false
 
 	for _, f := range fOpts {
 		f(cb)

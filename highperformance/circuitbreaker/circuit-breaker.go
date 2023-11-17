@@ -240,6 +240,8 @@ func (cb *CircuitBreaker) WantToDo(f func() (success bool)) (r bool) {
 	if cb.IsClosedAllowed() {
 		r = f()
 		cb.Report(r)
+		return r
+	} else {
+		return false
 	}
-	return false
 }

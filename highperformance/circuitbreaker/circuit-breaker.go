@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	cbState_OpenDenied    = 0
-	cbState_ClosedAllowed = 1
+	CbState_OpenDenied    = 0
+	CbState_ClosedAllowed = 1
 	//
-	gState_DenyRestart = 1_00
-	gState_Allow       = 2_00
-	gState_DenyWait    = 3_00
+	GState_DenyRestart = 1_00
+	GState_Allow       = 2_00
+	GState_DenyWait    = 3_00
 	//
 	debugPrefix = "CIRCUIT-BREAKER: "
 )
@@ -29,12 +29,15 @@ type CircuitBreaker struct {
 	Context             context.Context
 	DQF_Size            int
 	DebugMode           bool
+	StateHookFunc       StateHookFunc // dep injection
 	//
 	state      int
 	chReport   chan bool
 	chReignite chan struct{}
 	chDQF      chan func()
 }
+
+type StateHookFunc func(cbState, gState int)
 
 func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 	cb = &CircuitBreaker{}
@@ -65,7 +68,7 @@ func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 func (cb *CircuitBreaker) g() {
 	counter := 0
 	lastTime := time.Now()
-	state := gState_DenyRestart
+	state := GState_DenyRestart
 	tkr := time.NewTicker(cb.ReignitePeriod) // keep it so, don't move to DQF -- it's useful, see docs why
 
 	if cb.DebugMode {
@@ -100,34 +103,34 @@ func (cb *CircuitBreaker) g() {
 	var setState func(int)
 	setState = func(newState int) {
 		switch newState {
-		case gState_DenyRestart:
-			cb.state = cbState_OpenDenied
+		case GState_DenyRestart:
+			cb.state = CbState_OpenDenied
 			counter = 0
 			lastTime = time.Now()
-			state = gState_DenyRestart
+			state = GState_DenyRestart
 			if cb.DebugMode {
 				log.Printf(debugPrefix + "DENY-RESTART\n")
 			}
 
-		case gState_Allow:
-			cb.state = cbState_ClosedAllowed
+		case GState_Allow:
+			cb.state = CbState_ClosedAllowed
 			counter = 0
 			lastTime = time.Now()
-			state = gState_Allow
+			state = GState_Allow
 			if cb.DebugMode {
 				log.Printf(debugPrefix + "ALLOW\n")
 			}
 
-		case gState_DenyWait:
-			cb.state = cbState_OpenDenied
+		case GState_DenyWait:
+			cb.state = CbState_OpenDenied
 			counter = 0
 			lastTime = time.Now()
-			state = gState_DenyWait
+			state = GState_DenyWait
 			go func() {
 				time.Sleep(cb.DenyWaitTime)
 				select {
 				case cb.chDQF <- func() {
-					setState(gState_DenyRestart)
+					setState(GState_DenyRestart)
 				}:
 				default:
 					panic(errors.New("d64bc28d72f7 DQF overflow"))
@@ -136,6 +139,10 @@ func (cb *CircuitBreaker) g() {
 			if cb.DebugMode {
 				log.Printf(debugPrefix + "DENY-WAIT\n")
 			}
+		}
+		if cb.StateHookFunc != nil {
+			// this can be used to inject code that does metrics et al
+			cb.StateHookFunc(cb.state, state)
 		}
 	}
 
@@ -154,22 +161,22 @@ func (cb *CircuitBreaker) g() {
 		case r := <-cb.chReport:
 
 			switch state {
-			case gState_DenyRestart:
+			case GState_DenyRestart:
 				pullUpPositiveRPS() // here for symmetricity
 				switch r {
 				case true:
 					counter++
 					if counter > cb.CloseAllowWhenAbove {
-						setState(gState_Allow)
+						setState(GState_Allow)
 					}
 				case false:
 					counter--
 					if counter < cb.OpenDenyWhenBelow {
-						setState(gState_DenyWait)
+						setState(GState_DenyWait)
 					}
 				}
 
-			case gState_Allow:
+			case GState_Allow:
 				pullUpPositiveRPS()
 				switch r {
 				case true:
@@ -180,17 +187,17 @@ func (cb *CircuitBreaker) g() {
 				case false:
 					counter--
 					if counter < cb.OpenDenyWhenBelow {
-						setState(gState_DenyWait)
+						setState(GState_DenyWait)
 					}
 				}
 
-			case gState_DenyWait:
+			case GState_DenyWait:
 				// ignore any reports, just wait
 
 			}
 
 		case <-tkr.C: // not DQF, intentionally randomized
-			if state == gState_DenyRestart {
+			if state == GState_DenyRestart {
 				for i := 0; i < cb.ChanReigniteSize; i++ {
 					select {
 					case cb.chReignite <- struct{}{}:
@@ -208,12 +215,12 @@ func (cb *CircuitBreaker) g() {
 
 func (cb *CircuitBreaker) Report(r bool) {
 	switch cb.state {
-	case cbState_OpenDenied:
+	case CbState_OpenDenied:
 		select {
 		case cb.chReport <- r:
 		default:
 		}
-	case cbState_ClosedAllowed:
+	case CbState_ClosedAllowed:
 		if !r {
 			select {
 			case cb.chReport <- r:
@@ -224,7 +231,7 @@ func (cb *CircuitBreaker) Report(r bool) {
 }
 
 func (cb *CircuitBreaker) IsClosedAllowed() (ok bool) {
-	if cb.state == cbState_ClosedAllowed {
+	if cb.state == CbState_ClosedAllowed {
 		return true
 	} else {
 		select {

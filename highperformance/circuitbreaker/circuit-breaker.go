@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	CbState_OpenDenied    = 0
-	CbState_ClosedAllowed = 1
+	// don't use 0, because 0 is reserved as indication of missing data in metrics
+	CbState_OpenDenied    = 1
+	CbState_ClosedAllowed = 2
 	//
+	// don't use 0, because 0 is reserved as indication of missing data in metrics
 	GState_DenyRestart = 1_00
 	GState_Allow       = 2_00
 	GState_DenyWait    = 3_00
@@ -29,7 +31,7 @@ type CircuitBreaker struct {
 	Context             context.Context
 	DQF_Size            int
 	DebugMode           bool
-	StateHookFunc       StateHookFunc // dep injection
+	StateHookFunc       StateHookFunc // dep injection // this can be used to inject code that does metrics et al
 	//
 	state      int
 	chReport   chan bool
@@ -66,38 +68,13 @@ func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 }
 
 func (cb *CircuitBreaker) g() {
-	counter := 0
-	lastTime := time.Now()
-	state := GState_DenyRestart
-	tkr := time.NewTicker(cb.ReignitePeriod) // keep it so, don't move to DQF -- it's useful, see docs why
-
+	var (
+		counter  int
+		lastTime time.Time
+		state    int
+	)
 	if cb.DebugMode {
 		log.Printf(debugPrefix + "g started\n")
-	}
-
-	// initial ignition, once
-	rand.Seed(time.Now().UnixNano())
-	time.Sleep(time.Duration(rand.Intn(int(cb.ReignitePeriod.Milliseconds()))) * time.Millisecond)
-	for i := 0; i < cb.ChanReigniteSize; i++ {
-		select {
-		case cb.chReignite <- struct{}{}:
-		default:
-		}
-	}
-	if cb.DebugMode {
-		log.Printf(debugPrefix + "ignition\n")
-	}
-
-	pullUpPositiveRPS := func() {
-		tNow := time.Now()
-		if counter < 0 {
-			seconds := tNow.Sub(lastTime).Seconds()
-			counter += int(seconds)
-			if counter > 0 {
-				counter = 0
-			}
-		}
-		lastTime = tNow
 	}
 
 	var setState func(int)
@@ -141,11 +118,38 @@ func (cb *CircuitBreaker) g() {
 			}
 		}
 		if cb.StateHookFunc != nil {
-			// this can be used to inject code that does metrics et al
 			cb.StateHookFunc(cb.state, state)
 		}
 	}
 
+	setState(GState_DenyRestart)
+
+	// initial ignition, once
+	if cb.DebugMode {
+		log.Printf(debugPrefix + "ignition\n")
+	}
+	rand.Seed(time.Now().UnixNano())
+	time.Sleep(time.Duration(rand.Intn(int(cb.ReignitePeriod.Milliseconds()))) * time.Millisecond)
+	for i := 0; i < cb.ChanReigniteSize; i++ {
+		select {
+		case cb.chReignite <- struct{}{}:
+		default:
+		}
+	}
+
+	pullUpPositiveRPS := func() {
+		tNow := time.Now()
+		if counter < 0 {
+			seconds := tNow.Sub(lastTime).Seconds()
+			counter += int(seconds)
+			if counter > 0 {
+				counter = 0
+			}
+		}
+		lastTime = tNow
+	}
+
+	reigniteTicker := time.NewTicker(cb.ReignitePeriod) // keep it so, don't move to DQF -- it's useful, see docs why
 	for {
 		select {
 		case <-cb.Context.Done():
@@ -196,7 +200,7 @@ func (cb *CircuitBreaker) g() {
 
 			}
 
-		case <-tkr.C: // not DQF, intentionally randomized
+		case <-reigniteTicker.C: // not DQF, intentionally randomized
 			if state == GState_DenyRestart {
 				for i := 0; i < cb.ChanReigniteSize; i++ {
 					select {

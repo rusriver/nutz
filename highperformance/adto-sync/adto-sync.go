@@ -9,11 +9,12 @@ import (
 )
 
 type ADTOSync struct {
-	mu        sync.Mutex
-	ctx       context.Context
-	cancelCtx context.CancelFunc
-	err       error
-	once      FastAsyncOnce
+	mu          sync.Mutex
+	ctx         context.Context
+	cancelCtx   context.CancelFunc
+	err         error
+	once        FastAsyncOnce
+	Invalidated bool
 }
 
 func (ds *ADTOSync) SealWithTimeout(ctxUp context.Context, to time.Duration) {
@@ -24,9 +25,10 @@ func (ds *ADTOSync) SealWithTimeout(ctxUp context.Context, to time.Duration) {
 		case <-time.After(to):
 			// timeout path
 			ds.once.Do(func() {
+				ds.Invalidated = true
+				ds.err = errors.New("f633da35 Timeout")
 				ds.mu.Unlock()
 			})
-			ds.err = errors.New("f633da35 Timeout")
 			return
 		case <-ds.ctx.Done():
 			return

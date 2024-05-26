@@ -14,6 +14,7 @@ import (
 // go test --bench=. --benchtime=30s
 
 var Parallelism = 1000 // number of goroutines per one CPU;
+var EntropyMod = 32
 
 func TestMain(m *testing.M) {
 	cpuStat, _ := cpu.Info()
@@ -42,7 +43,7 @@ func Benchmark_gz_1_infra(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			/// payload was here
 			wrap_i++
@@ -64,7 +65,7 @@ func Benchmark_gz_1_load(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			counter.ApplyValue(entropy, func(s *geteilterzaehler.Scherbe) {
 				s.V++
@@ -88,7 +89,7 @@ func Benchmark_gz_32_infra(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			/// payload was here
 			wrap_i++
@@ -110,7 +111,7 @@ func Benchmark_gz_32_load(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			counter.ApplyValue(entropy, func(s *geteilterzaehler.Scherbe) {
 				s.V++
@@ -134,7 +135,7 @@ func Benchmark_gz_256_infra(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			/// payload was here
 			wrap_i++
@@ -156,7 +157,7 @@ func Benchmark_gz_256_load(b *testing.B) {
 		var wrap_i uint16 = uint16(rand.Intn(5000))
 		var x uint16
 		for pb.Next() {
-			entropy := wrap_i % 0xF
+			entropy := wrap_i % uint16(EntropyMod)
 			x += entropy
 			counter.ApplyValue(entropy, func(s *geteilterzaehler.Scherbe) {
 				s.V++

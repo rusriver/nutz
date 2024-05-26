@@ -56,23 +56,24 @@ func (gz *Int) Reduce(f func(s *Scherbe)) {
 }
 
 // A backgroud goroutine for constant-rate raduction process
-func (gz *Int) BackgroundReducer(ctx context.Context, fullScanPeriod time.Duration, f func(s *Scherbe, nextRound bool)) {
-	period := fullScanPeriod / time.Duration(gz.Breadth)
-	tick := time.NewTicker(period)
+func (gz *Int) BackgroundReducer(ctx context.Context, tickPeriod time.Duration, batchPerTick int, f func(s *Scherbe, nextRound bool)) {
+	tick := time.NewTicker(tickPeriod)
 	i := 0
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-tick.C:
-			if i == 0 {
-				f(gz.scherben[i], true)
-			} else {
-				f(gz.scherben[i], false)
-			}
-			i++
-			if i == int(gz.Breadth) {
-				i = 0
+			for bi := 0; bi < batchPerTick; bi++ {
+				if i == 0 {
+					f(gz.scherben[i], true)
+				} else {
+					f(gz.scherben[i], false)
+				}
+				i++
+				if i == int(gz.Breadth) {
+					i = 0
+				}
 			}
 		}
 	}

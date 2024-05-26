@@ -19,7 +19,7 @@ func main() {
 	var avResult int
 
 	var av0 int
-	go counter.BackgroundReducer(ctx, time.Second, func(s *geteilterzaehler.Scherbe, nextRound bool) {
+	go counter.BackgroundReducer(ctx, time.Millisecond*100, 4, func(s *geteilterzaehler.Scherbe, nextRound bool) {
 		if nextRound {
 			avResult = av0
 			av0 = 0

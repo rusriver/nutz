@@ -3,7 +3,7 @@
 Uses a racing shuttle, with user-injected extra entropy, to minimize the mutex contention of individual shards.
 
 When used properly, it is usually N times faster than a simple mutex protected counter, where N is the number
-of real CPU cores.
+of real CPU cores, when using simple float64 counter. If the counting logic is more advanced, the gain can be more substantial.
 
 Yields precise results, but doesn't guarantee specific time of measurement. See Heisenberg's indeterminacy principle,
 https://en.wikipedia.org/wiki/Uncertainty_principle.

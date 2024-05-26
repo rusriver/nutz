@@ -14,7 +14,7 @@ import (
 // go test --bench=. --benchtime=30s
 
 var Parallelism = 1000 // number of goroutines per one CPU;
-var EntropyMod = 32
+var EntropyMod = 32    // for best results, must be x8 less than the breadth
 
 func TestMain(m *testing.M) {
 	cpuStat, _ := cpu.Info()

@@ -13,7 +13,7 @@ type Int struct {
 }
 
 type Scherbe struct {
-	V  int
+	V  float64
 	mu sync.Mutex
 }
 

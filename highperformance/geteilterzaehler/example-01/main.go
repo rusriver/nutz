@@ -16,9 +16,9 @@ func main() {
 		gz.Breadth = 32
 	})
 
-	var avResult int
+	var avResult float64
 
-	var av0 int
+	var av0 float64
 	go counter.BackgroundReducer(ctx, time.Millisecond*100, 4, func(s *geteilterzaehler.Scherbe, nextRound bool) {
 		if nextRound {
 			avResult = av0

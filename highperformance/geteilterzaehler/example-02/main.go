@@ -16,7 +16,7 @@ func main() {
 		gz.Breadth = 32
 	})
 
-	var avResult int
+	var avResult float64
 
 	go func() {
 		tick := time.NewTicker(time.Second)
@@ -25,7 +25,7 @@ func main() {
 			case <-ctx.Done():
 				return
 			case <-tick.C:
-				var av0 int
+				var av0 float64
 				counter.Reduce(func(s *geteilterzaehler.Scherbe) {
 					av0 += s.V
 				})

@@ -18,7 +18,7 @@ func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreato
 type HttpSpan struct {
 	Parent                *HttpSpanCreator
 	Id, Php, Path, Method string
-	T0                    time.Time // when the span was created
+	T0, T1                time.Time // when the span was created
 }
 
 func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {

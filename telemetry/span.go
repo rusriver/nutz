@@ -4,7 +4,7 @@ import "time"
 
 type HttpSpanCreator struct {
 	StarterFunc  func(s *HttpSpan)
-	FinisherFunc func(s *HttpSpan)
+	FinisherFunc func(s *HttpSpan, httpCode int, whoFinishes_0we1upstream int)
 }
 
 func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreator, err error) {
@@ -36,8 +36,8 @@ func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {
 	return
 }
 
-func (s *HttpSpan) Finish(httpCode int) {
+func (s *HttpSpan) Finish(httpCode int, whoFinishes_0we1upstream int) {
 	if s.Parent.FinisherFunc != nil {
-		s.Parent.FinisherFunc(s)
+		s.Parent.FinisherFunc(s, httpCode, whoFinishes_0we1upstream)
 	}
 }

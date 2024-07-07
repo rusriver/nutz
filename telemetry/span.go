@@ -3,9 +3,8 @@ package telemetry
 import "time"
 
 type HttpSpanCreator struct {
-	ResponseType_0own1proxied bool
-	StarterFunc               func(s *HttpSpan)
-	FinisherFunc              func(s *HttpSpan)
+	StarterFunc  func(s *HttpSpan)
+	FinisherFunc func(s *HttpSpan)
 }
 
 func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreator, err error) {

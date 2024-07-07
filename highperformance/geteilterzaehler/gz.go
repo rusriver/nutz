@@ -55,7 +55,7 @@ func (gz *Int) Reduce(f func(s *Scherbe)) {
 	return
 }
 
-// A backgroud goroutine for constant-rate raduction process
+// A backgroud goroutine for constant-rate reduction process
 func (gz *Int) BackgroundReducer(ctx context.Context, tickPeriod time.Duration, batchPerTick int, f func(s *Scherbe, nextRound bool)) {
 	tick := time.NewTicker(tickPeriod)
 	i := 0

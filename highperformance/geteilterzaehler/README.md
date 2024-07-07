@@ -1,4 +1,4 @@
-### High-performance universal counter, optimized for heavily concurrent use
+### High-performance universal counter, optimized for heavy concurrent use
 
 Uses a racing shuttle, with user-injected extra entropy, to minimize the mutex contention of individual shards.
 

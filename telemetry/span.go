@@ -8,7 +8,7 @@ type HttpSpanCreator struct {
 	FinisherFunc              func(s *HttpSpan)
 }
 
-func NewHttpSpanCreator(optFuncs ...func(f *HttpSpanCreator)) (c *HttpSpanCreator, err error) {
+func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreator, err error) {
 	c = &HttpSpanCreator{}
 	for _, of := range optFuncs {
 		of(c)

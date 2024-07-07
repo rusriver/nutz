@@ -19,7 +19,7 @@ func NewHttpSpanCreator(optFuncs ...func(f *HttpSpanCreator)) (c *HttpSpanCreato
 type HttpSpan struct {
 	Parent                *HttpSpanCreator
 	Id, Php, Path, Method string
-	t0                    time.Time // when the span was created
+	T0                    time.Time // when the span was created
 }
 
 func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {
@@ -29,6 +29,7 @@ func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {
 		Php:    php,
 		Path:   path,
 		Method: method,
+		T0:     time.Now(),
 	}
 	if c.StarterFunc != nil {
 		c.StarterFunc(s)

@@ -28,16 +28,21 @@ func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {
 		Php:    php,
 		Path:   path,
 		Method: method,
-		T0:     time.Now(),
-	}
-	if c.StarterFunc != nil {
-		c.StarterFunc(s)
 	}
 	return
 }
 
+func (s *HttpSpan) Start() {
+	if s.Parent.StarterFunc != nil {
+		s.Parent.StarterFunc(s)
+	}
+}
+
+// only calls a finisher, if T0 was set, else ignores it
 func (s *HttpSpan) Finish(httpCode int, whoFinishes_0we1upstream int) {
 	if s.Parent.FinisherFunc != nil {
-		s.Parent.FinisherFunc(s, httpCode, whoFinishes_0we1upstream)
+		if !s.T0.IsZero() {
+			s.Parent.FinisherFunc(s, httpCode, whoFinishes_0we1upstream)
+		}
 	}
 }

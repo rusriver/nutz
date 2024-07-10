@@ -4,7 +4,7 @@ import "time"
 
 type HttpSpanCreator struct {
 	StarterFunc  func(s *HttpSpan)
-	FinisherFunc func(s *HttpSpan, httpCode int, whoFinishes_0we1upstream int)
+	FinisherFunc func(s *HttpSpan, httpCode int, whoFinishes string)
 }
 
 func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreator, err error) {
@@ -39,10 +39,10 @@ func (s *HttpSpan) Start() {
 }
 
 // only calls a finisher, if T0 was set, else ignores it
-func (s *HttpSpan) Finish(httpCode int, whoFinishes_0we1upstream int) {
+func (s *HttpSpan) Finish(httpCode int, whoFinishes string) {
 	if s.Parent.FinisherFunc != nil {
 		if !s.T0.IsZero() {
-			s.Parent.FinisherFunc(s, httpCode, whoFinishes_0we1upstream)
+			s.Parent.FinisherFunc(s, httpCode, whoFinishes)
 		}
 	}
 }

@@ -44,5 +44,6 @@ func (s *HttpSpan) Finish(httpCode int, whoFinishes string) {
 		if !s.T0.IsZero() {
 			s.Parent.FinisherFunc(s, httpCode, whoFinishes)
 		}
+		s.Parent.FinisherFunc = nil // make sure the finisher is called only once
 	}
 }

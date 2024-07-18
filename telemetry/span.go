@@ -19,7 +19,7 @@ type HttpSpan struct {
 	Parent                *HttpSpanCreator
 	Id, Php, Path, Method string
 	T0, T1                time.Time // when the span was created
-	ExtraObject           any
+	ExtraObject           any       // can be used to attach extra user context, e.g. to report data transferred, other attributed of a span
 }
 
 func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {

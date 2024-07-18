@@ -19,6 +19,7 @@ type HttpSpan struct {
 	Parent                *HttpSpanCreator
 	Id, Php, Path, Method string
 	T0, T1                time.Time // when the span was created
+	ExtraObject           any
 }
 
 func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {

@@ -15,6 +15,7 @@ type ILogger interface {
 	Info() IEvent
 	SubLoggerInitChain() IEvent
 	GetZeroLoggerPtr() *zerolog.Logger
+	GetNutzLogger() *Logger
 	SetLevel(zerolog.Level) ILogger
 }
 

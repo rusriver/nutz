@@ -107,6 +107,11 @@ func (l *Logger) GetZeroLoggerPtr() *zerolog.Logger {
 	return l.zeroLogger
 }
 
+// This is useful to access Settings later after init.
+func (l *Logger) GetNutzLogger() *Logger {
+	return l
+}
+
 func (l *Logger) SetLevel(level zerolog.Level) ILogger {
 	return l
 }

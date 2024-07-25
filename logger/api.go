@@ -7,12 +7,12 @@ import (
 )
 
 type ILogger interface {
-	Trace() IEvent
-	Debug() IEvent
-	Error() IEvent
-	Err(error) IEvent
-	Warn() IEvent
-	Info() IEvent
+	TraceEvent() IEvent
+	DebugEvent() IEvent
+	ErrorEvent() IEvent
+	ErrEvent(error) IEvent
+	WarnEvent() IEvent
+	InfoEvent() IEvent
 	SubLoggerInitChain() IEvent
 	GetZeroLoggerPtr() *zerolog.Logger
 	GetNutzLogger() *Logger
@@ -20,6 +20,7 @@ type ILogger interface {
 }
 
 type IEvent interface {
+	Inactive() IEvent
 	Caller() IEvent
 	Str(string, string) IEvent
 	Strs(string, []string) IEvent

@@ -1,6 +1,7 @@
 This is a very small and simple interface wrapper over the zerolog logger,
 including the reference implementation of the wrapper. It is production ready,
-and used since 2021 privately, until open sourced in 2024.
+and used since 2021 privately, until open sourced in 2024. Open sourced version
+took some improvements since then.
 
 Goals of making such a wrapper around the zerolog logger:
 
@@ -23,10 +24,14 @@ Goals of making such a wrapper around the zerolog logger:
             hook; the send operation itself is detached in a writer, and you can't link the two,
             but to fork and fix the original zerolog.
 
-    2) Technical ability to add filters, including those activated and managed at runtime.
+    2) Technical ability to add filters, including those activated and managed at runtime, or set
+        via a config files, without interfering into the source code.
 
     3) Ability to set logging ratelims for individual codes/tags or groups of codes/tags,
         without interfering into the main user codebase.
+        
+        That is, the fine-tuning of what to log and how, can be delegated to operations or
+        maintenance team.
 
     4) Ability to switch off some points of logging, without removing them from the source code.
         Like a filter, but hardcoded.
@@ -47,9 +52,9 @@ Goals of making such a wrapper around the zerolog logger:
 
     9) Ability to add alerts, both in logging and in metrics systems, for specific codes/tags,
         their groups or sets. It is very important functionality, it allows to track situations of
-        repeated restarts of sub-systems, too often refreshes, or the lack of thereof, and a lot of another
-        kinds of anomalies, by accounting for growth or fall of specific trends of logging rates in
-        general, as well as by specific sub-systems, points, or groups of codes.
+        repeated restarts of sub-systems, too often refreshes, or the lack of thereof, and a lot of
+        another kinds of anomalies, by accounting for growth or fall of specific trends of logging
+        rates in general, as well as by specific sub-systems, points, or groups of codes.
 
     10) Ability to make graphs in grafana of specific codes or groups of them, and visualize
         the key states of the service, such as start, restart, etc. For more complex services,
@@ -60,9 +65,6 @@ Goals of making such a wrapper around the zerolog logger:
     11) Ability to use Msgtag struct for production-level readiness sensor, which can be hard-coded
         for specific logging codes, and keep an account what subsystems are running already.
 
-    12) Возможность использовать коды логирования для heartbeat sensor подсистем, по аналогии с
-        readiness sensor.
-
     12) Ability to use logging codes for a production heartbeat sensor systems, analogously to
         the readiness sensor systems.
 
@@ -71,6 +73,28 @@ Goals of making such a wrapper around the zerolog logger:
 
     14) Ability to use reported metrics for ML systems and other pattern finding algorithms,
         for determining the health and runtime state and modes of operation of services.
+
+    15) Added the inactication functionality, which allows to efficiently deactivate some LPs,
+        and via an ActicationHook activate them on demand. The hook is executed on setting the
+        Msgtag(), because only then it makes sense.
+
+        To make sure inactivated LPs incur minimum CPU overhead on useless attachment of data,
+        please use this chain idiom:
+
+            event.Inactive().Msgtag().AllOtherData()....
+
+        That's because the ActivationHook is called in Msgtag() specifically.
+
+        Some rules of thumb, if the the ActivationHook is set, and is about to reactivate it:
+
+            If the logger was inactivated, then any data set before the Msgtag() will be bypassed,
+            and data set after it will be set.
+
+            If the event was inactivated, then any data set before the Msgtag() will be be bypassed,
+            and data set after it will be set.
+
+            If the logger was active, then any data set on event before the Inactive() will be set,
+            and not bypassed.
 
 --
 
@@ -83,5 +107,11 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
 
     Currently, in the reference implementation, the msgtag array, the title, level, and subsystem are
     all available as scalars.
+
+--
+
+Common idioms:
+
+
 
 --

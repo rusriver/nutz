@@ -2,21 +2,6 @@ package logger
 
 import "github.com/rs/zerolog"
 
-var _ ILogger = (*Logger)(nil)
-
-type Settings struct {
-	PanicOnMisuse bool
-	MsgtagKey     string
-	OnSendHook    func(e *Event) (doSend bool)
-}
-
-type Logger struct {
-	Settings     *Settings
-	TheSubsystem string // per logger
-
-	zeroLogger *zerolog.Logger
-}
-
 // An initial zerologger must be provided by yours explicitly.
 // Typical idiom:
 /*
@@ -43,55 +28,62 @@ func New(zl *zerolog.Logger, optFuncs ...func(s *Settings)) (logger *Logger) {
 	return logger
 }
 
-func (l *Logger) Debug() (e IEvent) {
+func (l *Logger) DebugEvent() (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.DebugLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Debug(),
 	}
 }
 
-func (l *Logger) Trace() (e IEvent) {
+func (l *Logger) TraceEvent() (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.TraceLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Trace(),
 	}
 }
 
-func (l *Logger) Error() (e IEvent) {
+func (l *Logger) ErrorEvent() (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.ErrorLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Error(),
 	}
 }
 
-func (l *Logger) Err(err error) (e IEvent) {
+func (l *Logger) ErrEvent(err error) (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.ErrorLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Err(err),
 	}
 }
 
-func (l *Logger) Warn() (e IEvent) {
+func (l *Logger) WarnEvent() (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.WarnLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Warn(),
 	}
 }
 
-func (l *Logger) Info() (e IEvent) {
+func (l *Logger) InfoEvent() (e IEvent) {
 	return &Event{
+		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Info(),
 	}
 }
 
-// Can be used if you intend to call ILogger() on it later
+// Can be used if you intend to call ILogger() on it later.
+// By default, all new sub-loggers are active, even if parent was inactivated.
 func (l *Logger) SubLoggerInitChain() IEvent {
 	zerologContext := l.zeroLogger.With()
 	e := &Event{

@@ -82,8 +82,6 @@ func (l *Logger) InfoEvent() (e IEvent) {
 	}
 }
 
-// Can be used if you intend to call ILogger() on it later.
-// By default, all new sub-loggers are active, even if parent was inactivated.
 func (l *Logger) SubLoggerInitChain() IEvent {
 	zerologContext := l.zeroLogger.With()
 	e := &Event{
@@ -99,7 +97,6 @@ func (l *Logger) GetZeroLoggerPtr() *zerolog.Logger {
 	return l.zeroLogger
 }
 
-// This is useful to access Settings later after init.
 func (l *Logger) GetNutzLogger() *Logger {
 	return l
 }
@@ -108,16 +105,6 @@ func (l *Logger) SetLevel(level zerolog.Level) ILogger {
 	return l
 }
 
-// Attach any user object to the event object, to be used later
-// inside the callback hooks. Intended to pass user-level runtime data to the
-// hook(s). Doesn't add anything to the logline serializations.
-// Normally, the UO must be a pointer, and at the receiving side in the hook
-// you do something along the lines:
-//
-//	myObject, _ := e.ParentLogger.UserObject.(*MyObject)
-//	if myObject !=  nil {
-//		...
-//	}
 func (l *Logger) AddUO(uo any) ILogger {
 	l.UserObject = uo
 	return l

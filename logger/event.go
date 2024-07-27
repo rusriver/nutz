@@ -7,8 +7,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Inactivation applies to real events only, all data set ops will be bypassed.
-// However, if applied to sub-logger init chain, nothing is bypassed.
 func (e *Event) Inactive() IEvent {
 	if e.subLoggerInitChain != nil {
 		e.subLoggerInitChain.isInactive = true // for new sub-logger init chain
@@ -18,13 +16,6 @@ func (e *Event) Inactive() IEvent {
 	return e
 }
 
-// This is useful to do some work only if the event is activated, e.g. do some data prep
-// or JSON marshalling, and waste no time otherwise.
-//
-//	     logger.InfoEvent().Inactive().Msgtag().IfActive(func(ev IEvent) {
-//				// do some heavy work, then
-//				ev.RawJSON(b)
-//			}).Title("my event").Send()
 func (e *Event) IfActive(f func(ev IEvent)) IEvent {
 	if !e.IsInactive {
 		f(e)
@@ -123,7 +114,6 @@ func (e *Event) Dict(k string, v *zerolog.Event) IEvent {
 	return e
 }
 
-// Must not be used on sub-logger init chains.
 func (e *Event) SendMsgf(s string, vv ...any) {
 	if e.IsInactive {
 		return // bypass
@@ -133,7 +123,6 @@ func (e *Event) SendMsgf(s string, vv ...any) {
 	return
 }
 
-// Must not be used on sub-logger init chains.
 func (e *Event) SendMsg(s string) {
 	if e.IsInactive {
 		return // bypass
@@ -143,10 +132,6 @@ func (e *Event) SendMsg(s string) {
 	return
 }
 
-// It's like Msg(), but sets the value to "title" field, and also
-// can be used to report to metrics. Must be low-cardinality string.
-// DO NOT put in it any variable strings, e.g. Sprintf()-formatted or
-// containing requestId or any other Id or counters!
 func (e *Event) Title(s string) IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Str("title", s)
@@ -161,8 +146,6 @@ func (e *Event) Title(s string) IEvent {
 	return e
 }
 
-// The same as Title().Send()
-// Must not be used on sub-logger init chains.
 func (e *Event) SendTitle(s string) {
 	if e.IsInactive {
 		return // bypass
@@ -171,10 +154,6 @@ func (e *Event) SendTitle(s string) {
 	return
 }
 
-// Some first strings are reported to metrics, be careful to NOT put in them
-// high-cardinality IDs. Doesn't apply to sub-logger init chains, must be set
-// per each event individually.
-// If the ActicationHook is set, it is called, and it can reactivate the event.
 func (e *Event) Msgtag(msgtag *Msgtag, ss ...string) IEvent {
 	// set msgtag to our context first
 	if msgtag == nil {
@@ -199,7 +178,6 @@ func (e *Event) Msgtag(msgtag *Msgtag, ss ...string) IEvent {
 	return e
 }
 
-// Also must be reported to metrics.
 func (e *Event) SubSystem(s string) IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Str("subsystem", s)
@@ -253,7 +231,6 @@ func (e *Event) Bytes(k string, bb []byte) IEvent {
 	return e
 }
 
-// Must not be used on sub-logger init chains.
 func (e *Event) Send() {
 	if e.subLoggerInitChain != nil {
 		if e.ParentLogger.Settings.PanicOnMisuse {
@@ -276,7 +253,6 @@ func (e *Event) Send() {
 	return
 }
 
-// Only works if you created a chain with With()
 func (e *Event) ILogger() ILogger {
 	if e.subLoggerInitChain != nil {
 		zeroLogger := e.subLoggerInitChain.zerologContext.Logger()

@@ -125,7 +125,22 @@ Common idioms:
                     return true
                 }
             })
+
+    Or, init v2:
             
+            "github.com/rs/zerolog"
+            "github.com/rusriver/nutz/logger"
+
+            zerologger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+
+            logger = logger.New(zerologger, func(s *logger.Settings) {
+                s.PanicOnMisuse = false
+                s.OnSendHook = func(e *logger.Event) (doSend bool) {
+                    // ...
+                    return true
+                }
+            })
+
     Make a sub-logger:
 
             logger = logger.SubLoggerInitChain().
@@ -149,6 +164,36 @@ Common idioms:
 
             logger.InfoEvent().Msgtag(nil, "123", "456").Title("informational test event").Send()
             logger.InfoEvent().Inactive().Msgtag(nil, "123", "456").Title("informational test event").Send()
+
+    Intercept the serialized events with a io.Writer tee:
+
+
+            type LogsTee struct{}
+
+            var _ io.Writer = (*LogsTee)(nil)
+
+            func (t *LogsTee) Write(p []byte) (n int, err error) {
+                os.Stderr.Write(p)
+
+                // clone the p - as we must not modify it, see the https://pkg.go.dev/io#Writer
+                p2 := append(p[:0:0], p...)
+
+                s2 := strings.TrimSpace(string(p2))
+                fmt.Println("<--", s2, "-->")
+
+                return
+            }
+
+            tee := &LogsTee{}
+
+            zerologger := zerolog.New(tee).With().Timestamp().Logger()
+
+            logger = logger.New(zerologger, func(s *logger.Settings) {})
+
+
+    You can also consider using the https://pkg.go.dev/io#MultiWriter, but that's a little bit different.
+
+
 
 
 --

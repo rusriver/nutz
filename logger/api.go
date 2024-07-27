@@ -17,6 +17,7 @@ type ILogger interface {
 	GetZeroLoggerPtr() *zerolog.Logger
 	GetNutzLogger() *Logger
 	SetLevel(zerolog.Level) ILogger
+	AddUO(uo any) ILogger
 }
 
 type IEvent interface {

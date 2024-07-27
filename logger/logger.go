@@ -107,3 +107,18 @@ func (l *Logger) GetNutzLogger() *Logger {
 func (l *Logger) SetLevel(level zerolog.Level) ILogger {
 	return l
 }
+
+// Attach any user object to the event object, to be used later
+// inside the callback hooks. Intended to pass user-level runtime data to the
+// hook(s). Doesn't add anything to the logline serializations.
+// Normally, the UO must be a pointer, and at the receiving side in the hook
+// you do something along the lines:
+//
+//	myObject, _ := e.ParentLogger.UserObject.(*MyObject)
+//	if myObject !=  nil {
+//		...
+//	}
+func (l *Logger) AddUO(uo any) ILogger {
+	l.UserObject = uo
+	return l
+}

@@ -27,12 +27,13 @@ type Settings struct {
 	PanicOnMisuse  bool
 	MsgtagKey      string
 	OnSendHook     func(e *Event) (doSend bool)
-	ActivationHook func(e *Event) (inactivate bool)
+	ActivationHook func(e *Event) (inactivate bool) // called on Msgtag()
 }
 type Logger struct {
 	Settings     *Settings
 	IsInactive   bool   // per whole logger instance
 	TheSubsystem string // per logger
+	UserObject   any
 
 	zeroLogger *zerolog.Logger
 }

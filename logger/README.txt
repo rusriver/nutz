@@ -81,8 +81,9 @@ Goals of making such a wrapper around the zerolog logger:
         To make sure inactivated LPs incur minimum CPU overhead on useless attachment of data,
         please use this chain idiom:
 
-            event.Inactive().Msgtag().AllOtherData()....
-
+            logger.InfoEvent().Msgtag(msgtag).AllOtherData()...                   -- (1)
+            logger.InfoEvent().Inactive().Msgtag(msgtag).AllOtherData()...        -- (2)
+        
         That's because the ActivationHook is called in Msgtag() specifically.
 
         Some rules of thumb, if the the ActivationHook is set, and is about to reactivate it:
@@ -112,6 +113,42 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
 
 Common idioms:
 
+    Init the logger:
+
+            "github.com/rs/zerolog/log"
+            "github.com/rusriver/nutz/logger"
+
+            logger = logger.New(&log.Logger, func(s *logger.Settings) {
+                s.PanicOnMisuse = false
+                s.OnSendHook = func(e *logger.Event) (doSend bool) {
+                    // ...
+                    return true
+                }
+            })
+            
+    Make a sub-logger:
+
+            logger = logger.SubLoggerInitChain().
+                Str("executable", "my service").
+                Str("version", "1.234.0").
+                Caller().
+                ILogger()
+
+    Add callbacks to already existing logger:
+
+            nutzLogger := logger.GetNutzLogger()
+            nutzLogger.Settings.ActivationHook = func(e *logger.Event) (inactivate bool) {
+                inactivate = false
+                return
+            }
+            nutzLogger.Settings.OnSendHook = func(e *logger.Event) (doSend bool) {
+                return true //
+            }
+
+    Send a logline:
+
+            logger.InfoEvent().Msgtag(nil, "123", "456").Title("informational test event").Send()
+            logger.InfoEvent().Inactive().Msgtag(nil, "123", "456").Title("informational test event").Send()
 
 
 --

@@ -18,6 +18,20 @@ func (e *Event) Inactive() IEvent {
 	return e
 }
 
+// This is useful to do some work only if the event is activated, e.g. do some data prep
+// or JSON marshalling, and waste no time otherwise.
+//
+//	     logger.InfoEvent().Inactive().Msgtag().IfActive(func(ev IEvent) {
+//				// do some heavy work, then
+//				ev.RawJSON(b)
+//			}).Title("my event").Send()
+func (e *Event) IfActive(f func(ev IEvent)) IEvent {
+	if !e.IsInactive {
+		f(e)
+	}
+	return e
+}
+
 func (e *Event) Caller() IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Caller()

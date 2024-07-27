@@ -22,6 +22,7 @@ type ILogger interface {
 
 type IEvent interface {
 	Inactive() IEvent
+	IfActive(func(IEvent)) IEvent
 	Caller() IEvent
 	Str(string, string) IEvent
 	Strs(string, []string) IEvent

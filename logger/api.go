@@ -52,7 +52,7 @@ type IEvent interface {
 	//			}).Title("my event").Send()
 	IfActive(func(IEvent)) IEvent
 
-	Caller() IEvent
+	Caller(skip ...int) IEvent
 	Str(string, string) IEvent
 	Strs(string, []string) IEvent
 	Time(string, time.Time) IEvent

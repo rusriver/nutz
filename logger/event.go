@@ -23,15 +23,19 @@ func (e *Event) IfActive(f func(ev IEvent)) IEvent {
 	return e
 }
 
-func (e *Event) Caller() IEvent {
+func (e *Event) Caller(skip ...int) IEvent {
+	skipCount := 4
+	if len(skip) > 0 {
+		skipCount = skip[0]
+	}
 	if e.subLoggerInitChain != nil {
-		sub := e.subLoggerInitChain.zerologContext.Caller()
+		sub := e.subLoggerInitChain.zerologContext.CallerWithSkipFrameCount(skipCount)
 		e.subLoggerInitChain.zerologContext = &sub
 	} else {
 		if e.IsInactive {
 			return e // bypass
 		}
-		e.zerologEvent.Caller()
+		e.zerologEvent.Caller(skipCount)
 	}
 	return e
 }

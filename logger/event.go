@@ -53,6 +53,19 @@ func (e *Event) Str(k, v string) IEvent {
 	return e
 }
 
+func (e *Event) Strf(k, s string, vv ...any) IEvent {
+	if e.subLoggerInitChain != nil {
+		sub := e.subLoggerInitChain.zerologContext.Str(k, fmt.Sprintf(s, vv...))
+		e.subLoggerInitChain.zerologContext = &sub
+	} else {
+		if e.IsInactive {
+			return e // bypass
+		}
+		e.zerologEvent.Str(k, fmt.Sprintf(s, vv...))
+	}
+	return e
+}
+
 func (e *Event) Strs(k string, vv []string) IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Strs(k, vv)

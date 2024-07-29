@@ -54,6 +54,7 @@ type IEvent interface {
 
 	Caller(skip ...int) IEvent
 	Str(string, string) IEvent
+	Strf(string, string, ...any) IEvent
 	Strs(string, []string) IEvent
 	Time(string, time.Time) IEvent
 	Int(string, int) IEvent

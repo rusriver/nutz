@@ -16,7 +16,8 @@ func NewHttpSpanCreator(optFuncs ...func(c *HttpSpanCreator)) (c *HttpSpanCreato
 }
 
 type HttpSpan struct {
-	Parent                *HttpSpanCreator
+	StarterFunc           func(s *HttpSpan)
+	FinisherFunc          func(s *HttpSpan, httpCode int, whoFinishes string)
 	Id, Php, Path, Method string
 	T0, T1                time.Time // when the span was created
 	ExtraObject           any       // can be used to attach extra user context, e.g. to report data transferred, other attributed of a span
@@ -24,27 +25,28 @@ type HttpSpan struct {
 
 func (c *HttpSpanCreator) NewSpan(id, php, path, method string) (s *HttpSpan) {
 	s = &HttpSpan{
-		Parent: c,
-		Id:     id,
-		Php:    php,
-		Path:   path,
-		Method: method,
+		StarterFunc:  c.StarterFunc,
+		FinisherFunc: c.FinisherFunc,
+		Id:           id,
+		Php:          php,
+		Path:         path,
+		Method:       method,
 	}
 	return
 }
 
 func (s *HttpSpan) Start() {
-	if s.Parent.StarterFunc != nil {
-		s.Parent.StarterFunc(s)
+	if s.StarterFunc != nil {
+		s.StarterFunc(s)
 	}
 }
 
 // only calls a finisher, if T0 was set, else ignores it
 func (s *HttpSpan) Finish(httpCode int, whoFinishes string) {
-	if s.Parent.FinisherFunc != nil {
+	if s.FinisherFunc != nil {
 		if !s.T0.IsZero() {
-			s.Parent.FinisherFunc(s, httpCode, whoFinishes)
+			s.FinisherFunc(s, httpCode, whoFinishes)
 		}
-		s.Parent.FinisherFunc = nil // make sure the finisher is called only once
+		s.FinisherFunc = nil // make sure the finisher is called only once
 	}
 }

@@ -151,13 +151,12 @@ func (e *Event) SendMsg(s string) {
 
 func (e *Event) Title(s string) IEvent {
 	if e.subLoggerInitChain != nil {
-		sub := e.subLoggerInitChain.zerologContext.Str("title", s)
-		e.subLoggerInitChain.zerologContext = &sub
-	} else {
-		if e.IsInactive {
-			return e // bypass
+		if e.ParentLogger.Settings.PanicOnMisuse {
+			panic("282dd247-6dbd-410f-989b-59ef2daa67ff")
+		} else {
+			return e
 		}
-		e.zerologEvent.Str("title", s)
+	} else {
 		e.TheTitle = s
 	}
 	return e
@@ -258,6 +257,9 @@ func (e *Event) Send() {
 	}
 	if e.IsInactive {
 		return // bypass
+	}
+	if len(e.TheTitle) > 0 {
+		e.zerologEvent.Str("title", e.TheTitle) // gonna be the last, and that's great for readability
 	}
 	hook := e.ParentLogger.Settings.OnSendHook
 	doSend := true

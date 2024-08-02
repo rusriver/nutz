@@ -71,6 +71,9 @@ type IEvent interface {
 	// can be used to report to metrics. Must be low-cardinality string.
 	// DO NOT put in it any variable strings, e.g. Sprintf()-formatted or
 	// containing requestId or any other Id or counters!
+	// Can't be applied for sub-logger chains, only for events.
+	// In typical idiom, must be used BEFORE the Msgtag() - it's specififcally
+	// designed to not bypass in inactive events.
 	Title(string) IEvent
 
 	// The same as Title().Send()

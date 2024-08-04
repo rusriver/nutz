@@ -157,7 +157,12 @@ func (e *Event) Title(s string) IEvent {
 			return e
 		}
 	} else {
-		e.TheTitle = s
+		// this is to protect against losing the title if used twice mistakenly
+		if len(e.TheTitle) == 0 {
+			e.TheTitle = s
+		} else {
+			e.TheTitle += " " + s
+		}
 	}
 	return e
 }

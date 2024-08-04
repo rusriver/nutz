@@ -61,6 +61,7 @@ func (l *Logger) ErrEvent(err error) (e IEvent) {
 		TheLevel:     zerolog.ErrorLevel.String(),
 		ParentLogger: l,
 		zerologEvent: l.zeroLogger.Err(err),
+		TheTitle:     "ERROR", // the default title
 	}
 }
 

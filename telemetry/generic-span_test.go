@@ -22,6 +22,9 @@ func Test_span_001(t *testing.T) {
 		c.FinisherFunc = func(s *telemetry.Span[*MySpanAttrs]) {
 			fmt.Printf("++finisher %v %+v", s.T1.Sub(s.T0), s.UserAttrs)
 		}
+		c.ErrorFunc = func(s *telemetry.Span[*MySpanAttrs], err error) {
+			fmt.Printf("++error %v %+v", err, s.UserAttrs)
+		}
 	})
 
 	span := spanCreator.NewSpan(func(s *telemetry.Span[*MySpanAttrs]) {

@@ -1,10 +1,14 @@
 package telemetry
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type SpanCreator[T any] struct {
 	StarterFunc  func(s *Span[T])
 	FinisherFunc func(s *Span[T])
+	ErrorFunc    func(s *Span[T], err error)
 }
 
 func NewSpanCreator[T any](optFuncs ...func(c *SpanCreator[T])) (c *SpanCreator[T]) {
@@ -18,6 +22,7 @@ func NewSpanCreator[T any](optFuncs ...func(c *SpanCreator[T])) (c *SpanCreator[
 type Span[T any] struct {
 	starterFunc  func(s *Span[T])
 	finisherFunc func(s *Span[T])
+	errorFunc    func(s *Span[T], err error)
 	T0, T1       time.Time // the time bounds of the span
 	UserAttrs    T
 }
@@ -26,6 +31,7 @@ func (c *SpanCreator[T]) NewSpan(of ...func(s *Span[T])) (s *Span[T]) {
 	s = &Span[T]{
 		starterFunc:  c.StarterFunc,
 		finisherFunc: c.FinisherFunc,
+		errorFunc:    c.ErrorFunc,
 	}
 	for _, f := range of {
 		f(s)
@@ -45,8 +51,12 @@ func (s *Span[T]) Finish(of ...func(s *Span[T])) {
 		f(s)
 	}
 	if s.finisherFunc != nil {
-		if !s.T0.IsZero() {
+		if !s.T0.IsZero() && s.T1.After(s.T0) {
 			s.finisherFunc(s)
+		} else {
+			if s.errorFunc != nil {
+				s.errorFunc(s, errors.New("bad T0/T1"))
+			}
 		}
 		s.finisherFunc = nil // make sure the finisher is called only once
 	}

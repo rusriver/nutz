@@ -51,11 +51,14 @@ func (s *Span[T]) Finish(of ...func(s *Span[T])) {
 		f(s)
 	}
 	if s.finisherFunc != nil {
-		if !s.T0.IsZero() && s.T1.After(s.T0) {
+		if !s.T0.IsZero() {
+			if !s.T1.After(s.T0) {
+				s.T1 = s.T0 // sometimes the span might have the timestamp only, then the duration would be zero
+			}
 			s.finisherFunc(s)
 		} else {
 			if s.errorFunc != nil {
-				s.errorFunc(s, errors.New("bad T0/T1"))
+				s.errorFunc(s, errors.New("T0 must not be zero"))
 			}
 		}
 		s.finisherFunc = nil // make sure the finisher is called only once

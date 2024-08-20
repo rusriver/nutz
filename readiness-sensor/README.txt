@@ -15,7 +15,7 @@ TODO: add ability to set individual TTL per reported thing, and or values of the
 
 --
 
-Usage idiom:
+Usage idiom 1:
 
 	sensor, _ = readinesssensor.New(func(c *readinesssensor.Sensor) {
 		c.Context = context.Background()
@@ -56,4 +56,60 @@ Usage idiom:
 		time.Sleep(10 * time.Second)
 		sensor.Report("C")
 	}()
+
+Usage idiom 2:
+
+	sensor, _ = readinesssensor.New(func(c *readinesssensor.Sensor) {
+		c.Context = context.Background()
+	})
+
+	go func() {
+		var state int
+		for {
+			time.Sleep(time.Second)
+			switch state {
+			case 0:
+				ok, match, missing := sensor.MatchTheProfile([]string{
+					"A",
+					"B",
+					"C",
+				})
+				if ok {
+					logger.InfoEvent().Title("readiness sensor - ALL SYSTEMS READY").
+                        Strs("match", match).Send()
+					state = 1
+				} else {
+					logger.InfoEvent().Title("readiness sensor - NOT READY, WAITING").
+                        Strs("match", match).Strs("missing", missing).Send()
+				}
+			case 1:
+				metrics.UpAndRunning.Inc()
+			}
+		}
+	}()
+
+    // start service A
+    serviceA := a.NewService(
+        // options
+        sensor.NewProbe("A")
+    )
+
+    // start service B
+    serviceB := b.NewService(
+        // options
+        sensor.NewProbe("B")
+    )
+
+    // start service C
+    serviceC := c.NewService(
+        // options
+        sensor.NewProbe("C")
+    )
+
+Then in any of those services, do:
+
+    s.ReadinessProbe.Ready()
+
+The benefit of this is that you don't need to hardcode the service name inside the service.
+Instead, you inject it from the main program.
 

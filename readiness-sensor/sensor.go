@@ -17,6 +17,11 @@ type Sensor struct {
 	DQF_Len int
 }
 
+type Probe struct {
+	Sensor *Sensor
+	Name   string
+}
+
 func New(of ...func(c *Sensor)) (s *Sensor, err error) {
 	s = &Sensor{
 		TTL:     time.Duration(0),
@@ -55,6 +60,17 @@ func (s *Sensor) Report(w string) {
 	s.DQF <- func(s *Sensor) {
 		s.Registry.Set(w, true)
 	}
+}
+
+func (s *Sensor) NewProbe(name string) *Probe {
+	return &Probe{
+		Sensor: s,
+		Name:   name,
+	}
+}
+
+func (p *Probe) Ready() {
+	p.Sensor.Report(p.Name)
 }
 
 func (s *Sensor) GetAllList() (all []string) {

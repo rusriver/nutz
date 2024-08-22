@@ -105,6 +105,19 @@ func (e *Event) Int(k string, v int) IEvent {
 	return e
 }
 
+func (e *Event) Float64(k string, v float64) IEvent {
+	if e.subLoggerInitChain != nil {
+		sub := e.subLoggerInitChain.zerologContext.Float64(k, v)
+		e.subLoggerInitChain.zerologContext = &sub
+	} else {
+		if e.IsInactive {
+			return e // bypass
+		}
+		e.zerologEvent.Float64(k, v)
+	}
+	return e
+}
+
 func (e *Event) Array(k string, v *zerolog.Array) IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Array(k, v)

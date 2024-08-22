@@ -58,6 +58,7 @@ type IEvent interface {
 	Strs(string, []string) IEvent
 	Time(string, time.Time) IEvent
 	Int(string, int) IEvent
+	Float64(string, float64) IEvent
 	Array(k string, v *zerolog.Array) (e IEvent)
 	Dict(k string, v *zerolog.Event) (e IEvent)
 

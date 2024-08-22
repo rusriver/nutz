@@ -62,7 +62,7 @@ func New(of ...func(r *Replicount)) (r *Replicount) {
 		state:                    mode_Slow,
 		mainTimer:                timmer.New(),
 		fastModeLengthTimer:      timmer.New(),
-		currentResult:            &ChangeableObject{NumberOfReplicas: 1},
+		currentResult:            &ChangeableObject{NumberOfReplicas: 0},
 	}
 	for _, f := range of {
 		f(r)
@@ -155,7 +155,7 @@ func (r *Replicount) scheduler() {
 								}
 								r.mainTimer.Restart( // immediate race-restart of the main timer
 									r.SlowPollPeriodPerReplica /
-										time.Duration(r.currentResult.NumberOfReplicas) /
+										time.Duration(atLeastOne(r.currentResult.NumberOfReplicas)) /
 										time.Duration(r.FastModeSpeedMultiple),
 								)
 								r.fastModeLengthTimer.Restart(r.fastModeLength)
@@ -163,7 +163,7 @@ func (r *Replicount) scheduler() {
 
 						} // dqf func
 						d := r.SlowPollPeriodPerReplica /
-							time.Duration(r.currentResult.NumberOfReplicas)
+							time.Duration(atLeastOne(r.currentResult.NumberOfReplicas))
 						r.mainTimer.Restart(d)
 					}() // go func
 
@@ -196,7 +196,7 @@ func (r *Replicount) scheduler() {
 							}
 						} // dqf func
 						d := r.SlowPollPeriodPerReplica /
-							time.Duration(r.currentResult.NumberOfReplicas) /
+							time.Duration(atLeastOne(r.currentResult.NumberOfReplicas)) /
 							time.Duration(r.FastModeSpeedMultiple)
 						r.mainTimer.Restart(d)
 					}() // go func
@@ -238,5 +238,13 @@ func (r *Replicount) accoutForTheReplica(idPtr *string) (void, newSlow, newFast 
 func (r *Replicount) log(msg string) {
 	if r.LogFunc != nil {
 		r.LogFunc(msg)
+	}
+}
+
+func atLeastOne(i int) int {
+	if i < 1 {
+		return 1
+	} else {
+		return i
 	}
 }

@@ -30,6 +30,10 @@ func Test_001(t *testing.T) {
 }
 
 func Test_002(t *testing.T) {
+	replSet0 := []string{
+		"0004a",
+	}
+
 	replSet1 := []string{
 		"0001",
 		"0002",
@@ -55,7 +59,9 @@ func Test_002(t *testing.T) {
 
 		r.PollFunc = func() (idPtr *string) {
 			var id string
-			if time.Now().Before(t0.Add(time.Second * 40)) {
+			if time.Now().Before(t0.Add(time.Second * 5)) {
+				id = replSet1[rand.Intn(len(replSet0))]
+			} else if time.Now().Before(t0.Add(time.Second * 40)) {
 				id = replSet1[rand.Intn(len(replSet1))]
 			} else {
 				id = replSet2[rand.Intn(len(replSet2))]

@@ -34,7 +34,7 @@ func Test_002(t *testing.T) {
 		"0001",
 		"0002",
 		"0003",
-		"0004",
+		"0004a",
 	}
 
 	replSet2 := []string{
@@ -66,6 +66,10 @@ func Test_002(t *testing.T) {
 
 		r.ReportResultsFunc = func(newResult *replicount.ChangeableObject) {
 			fmt.Printf("result %v %+v\n", newResult.NumberOfReplicas, newResult.ListOfReplicas)
+		}
+
+		r.LogFunc = func(s string) {
+			fmt.Println(s)
 		}
 	})
 
@@ -119,6 +123,10 @@ func Test_003(t *testing.T) {
 		r.ReportResultsFunc = func(newResult *replicount.ChangeableObject) {
 			fmt.Printf("result %v %+v\n", newResult.NumberOfReplicas, newResult.ListOfReplicas)
 		}
+
+		r.LogFunc = func(s string) {
+			fmt.Println(s)
+		}
 	})
 
 	time.Sleep(time.Second * 90)
@@ -171,6 +179,10 @@ func Test_004(t *testing.T) {
 
 		r.ReportResultsFunc = func(newResult *replicount.ChangeableObject) {
 			fmt.Printf("result %v %+v\n", newResult.NumberOfReplicas, newResult.ListOfReplicas)
+		}
+
+		r.LogFunc = func(s string) {
+			fmt.Println(s)
 		}
 	})
 

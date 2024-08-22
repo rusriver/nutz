@@ -2,7 +2,6 @@ package replicount
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/rusriver/nutz/timmer"
@@ -15,6 +14,7 @@ type Replicount struct {
 	FastModeSpeedMultiple    int           // relative to basic poll period
 	PollFunc                 PollFunc
 	ReportResultsFunc        func(newResult *ChangeableObject)
+	LogFunc                  func(string)
 	Context                  context.Context
 
 	DQF                 chan func(r *Replicount)
@@ -68,10 +68,10 @@ func New(of ...func(r *Replicount)) (r *Replicount) {
 	r.fastModeLength = r.slowTTL
 	r.fastTTL = r.slowTTL / time.Duration(r.FastModeSpeedMultiple)
 
-	r.slowCache = ttlcache.New[string, bool](ttlcache.WithDisableTouchOnHit[string, bool]())
+	r.slowCache = ttlcache.New(ttlcache.WithDisableTouchOnHit[string, bool]())
 	go r.slowCache.Start()
 
-	r.fastCache = ttlcache.New[string, bool](ttlcache.WithDisableTouchOnHit[string, bool]())
+	r.fastCache = ttlcache.New(ttlcache.WithDisableTouchOnHit[string, bool]())
 	go r.fastCache.Start()
 
 	// the main worker
@@ -155,7 +155,7 @@ func (r *Replicount) scheduler() {
 								return
 							}
 							if newFast {
-								fmt.Println("-- new fast / restart")
+								r.log("-- new fast / restart")
 								r.fastModeLengthTimer.Restart(r.fastModeLength)
 							}
 
@@ -185,7 +185,7 @@ func (r *Replicount) scheduler() {
 
 		case <-r.fastModeLengthTimer.C:
 			r.DQF <- func(r *Replicount) {
-				fmt.Println("-- slow mode")
+				r.log("-- slow mode")
 				r.state = mode_Slow
 			}
 
@@ -212,4 +212,10 @@ func (r *Replicount) accoutForTheReplica(idPtr *string) (void, newSlow, newFast 
 	r.fastCache.SetWithTTL(*idPtr, true, r.fastTTL)
 
 	return
+}
+
+func (r *Replicount) log(msg string) {
+	if r.LogFunc != nil {
+		r.LogFunc(msg)
+	}
 }

@@ -15,6 +15,7 @@ type Replicount struct {
 	PollFunc                 PollFunc
 	ReportResultsFunc        func(newResult *ChangeableObject)
 	LogFunc                  func(string)
+	MonitoringFunc           func(*Monitoring)
 	Context                  context.Context
 
 	DQF                 chan func(r *Replicount)
@@ -28,6 +29,10 @@ type Replicount struct {
 	fastModeLengthTimer *timmer.Timmer
 	fastModeLength      time.Duration
 	currentResult       *ChangeableObject
+}
+
+type Monitoring struct {
+	State int
 }
 
 type PollFunc func() (idPtr *string)
@@ -89,6 +94,22 @@ func New(of ...func(r *Replicount)) (r *Replicount) {
 	}()
 
 	go r.scheduler()
+
+	if r.MonitoringFunc != nil {
+		go func() {
+			t := time.NewTicker(time.Second)
+			for {
+				select {
+				case <-r.Context.Done():
+					return
+				case <-t.C:
+					r.MonitoringFunc(&Monitoring{
+						State: r.state,
+					})
+				}
+			}
+		}()
+	}
 
 	return
 }

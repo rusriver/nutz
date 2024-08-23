@@ -13,6 +13,9 @@ type Sensor struct {
 	TTL      time.Duration
 	Context  context.Context
 
+	// Called every time the list changes - when anything is added, or removed by TTL
+	ChangeFunc func(s *Sensor, what string)
+
 	DQF     chan func(s *Sensor)
 	DQF_Len int
 }
@@ -40,6 +43,15 @@ func New(of ...func(c *Sensor)) (s *Sensor, err error) {
 		s.Registry = ttlcache.New[string, bool]()
 	}
 
+	if s.ChangeFunc != nil {
+		s.Registry.OnInsertion(func(ctx context.Context, i *ttlcache.Item[string, bool]) {
+			s.ChangeFunc(s, i.Key())
+		})
+		s.Registry.OnEviction(func(ctx context.Context, er ttlcache.EvictionReason, i *ttlcache.Item[string, bool]) {
+			s.ChangeFunc(s, i.Key())
+		})
+	}
+
 	// main worker
 	go func() {
 		for {
@@ -56,9 +68,9 @@ func New(of ...func(c *Sensor)) (s *Sensor, err error) {
 	return
 }
 
-func (s *Sensor) Report(w string) {
+func (s *Sensor) Report(what string) {
 	s.DQF <- func(s *Sensor) {
-		s.Registry.Set(w, true)
+		s.Registry.Set(what, true)
 	}
 }
 

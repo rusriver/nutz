@@ -1,8 +1,10 @@
 # The XU chassis and the XU concept 📦📦📦
 
+    Spoiler: the XU is what some call "microservice" or just "service", in context of e.g. the k8s.
+
 First, let's explain what the heck this is:
 
-- 📦 XU, Execution Unit - the executable binary file;
+- 📦 XU, Execution Unit - the executable binary file, with all necessary artifacts and resources;
 - 🧬Chassis - the reusable chunk of tech, which can be used as a chassis for an XU;
 - 🚊Concept - like a "concept car" - a template ~~service~~, ~~application~~, project, XU, which can be taken as an example, to build your own XUs upon it;
 
@@ -30,13 +32,16 @@ Also, there's a common discussion point in Go development, how to lay out files 
 
 ![](2024-09-05-200113.png)
 
-- `/axu` - main folder for the project XU (an "application"); The "a" is there so that this folder gets sorted on to the top.
-  - `/bin`
+- `/axu` or `/axu_<name>` - main folder for the project's XU (an "application"); The "a" is there so that this folder gets sorted on to the top; one project may have several totally different XUs.
+  - `/ae` - packages, from which an executable files are built; The "a" is there so that it gets sorted up the list; easy to remember: "an executable", "an exe".
     - `/<name>`
     - `/<name>` - where the "main" function is, from which you build the executable file; if your project has CLI tools, they'll be here; if your project has single binary - it'll be here too;
   - `/core` - this is where the very main code is located; the root package of the XU, and a container for domains;
     - `/kernel.go` - a container for all XU housekeeping and all its domains and for the chassis.
       - `type Kernel struct { ... }`
+    - domain_A.go
+    - domain_B.go
+    - domain_N.go
   - `/core-types` - put here any data types, which are integral to the XU and its domains, but you need to pass it via the DI (dependency injections) down to facets and subsystems, and avoid "circular import" errors. (Passing the Kernel struct of the `/axu/core/kernel.go` won't work, obviously).
   - `/facets` - facets, it terms of Faceted Architecture (HGFA-2023-DI);
     - `/<name>`
@@ -53,12 +58,12 @@ Also, there's a common discussion point in Go development, how to lay out files 
   - `/pkg` - sometimes you get a package that doesn't fit in either category, then use this one;
 - `/deploy` or `/deployment`
   - among other things, this is the very place to put these things, __all of them belong to the deployment/operation__:
-    - DB migrations
-    - `.http` or `.rest` file collections, Postman collections
-    - configuration files for dev/stage/prod
-    - Docker files
-    - Env files
-    - CI/CD configs
+    - DB migrations, ops, changes;
+    - `.http` or `.rest` file collections, Postman collections;
+    - configuration files for dev/stage/prod;
+    - Docker files;
+    - Env files;
+    - CI/CD configs;
     - et al
 - `/docs`
 - `/tools` or `/utils`
@@ -73,9 +78,54 @@ Other folders are unspecified.
 - You SHOULD NOT have an `/src` folder.
 - PLEASE DON'T put your abstractions in subtrees, e.g. don't make `/models` et al - all this nicely fits into `/pub/abs/<my-something>`.
 
+### The `axu` vs `ae`, and having several XUs in a project
+
+Sometimes we want to build several XUs in a single project domain. Then the questions arise:
+
+1. Should we put them in the `/axu/ae`?
+2. What if they are different, and need to have very different core and facets?
+
+The answer is this:
+
+1. An XU may be built into different executable files - sometimes that's useful - in that case they all share the same core and facets, and their mains are put into the `/axu/ae/<some>`;
+2. One project may have several totally different XUs, which don't share the core and facets, have their own, and share only the `/pub`, as if they were in different projects. In that case, you create several `/axu` folders, by the pattern `/axu_<name>`.
+
+Here's an example of a project with a single XU with several options to build executable files, or several XUs sharing the same core:
+
+```
+    axu/
+      ae/
+        cmd1/
+        cmdN/
+      core/
+      core-types/
+      facets/
+```
+
+Here's an example of a project with several XUs, not sharing anything but `/pub`:
+
+```
+    axu_MyOne/
+      ae/
+        cmd1/
+        cmdN/
+      core/
+      core-types/
+      facets/
+
+    axu_MyTwo/
+      ae/
+        cmd1/
+        cmdN/
+      core/
+      core-types/
+      facets/
+```
+
 ## The architecture of the XU 
 
-The XU has:
+### The XU has:
+
 - Domains
 - Facets
 - Subsystems
@@ -107,7 +157,7 @@ Sometimes the __core__ has a lot of files, and to overcome the Go's limitation o
 
 ```
     axu/
-      bin/
+      ae/
       core/
         kernel.go
         main-... .go
@@ -122,7 +172,6 @@ Sometimes the __core__ has a lot of files, and to overcome the Go's limitation o
         domainC-... .go
       core-types/
       facets/
-        ...
 ```
 
 ### The Kernel
@@ -131,11 +180,12 @@ The core's core, the struct that contains the main context of the XU, we call it
 
 It's normally put into the `/axu/core/kernel.go` file. The Kernel normally is a container for all XU housekeeping and all its domains and for the chassis.
 
-In the above, there are main-*.go files - the "main" here is just another domain, but more often then not it is normally present in the XU. These are not the `main()` funcs, as found in the `/axu/bin/<name>`.
+In the above, there are main-*.go files - the "main" here is just another domain, but more often then not it is normally present in the XU. These are not the `main()` funcs, as found in the `/axu/ae/<name>`.
 
 ### Let's see it:
 
 ![](img-01.png)
+
 
 ## The Chassis. (What?)
 
@@ -165,11 +215,11 @@ Further info on the chassis see in the `/xu/chassis/README.md` file.
 
 ## XU Concepts (example prototypes)
 
-### ⮑ `concept01` and `concept02` 💾📌
+### ⮑ `concept01/C1` and `concept01/C2` 💾📌
 
 These are the basic concepts of the XU, the simplest ones, which can be looked at the first.
 
-The `concept01` uses the free-form config, and the `concept02` uses the structural config.
+The `concept01/C1` uses the free-form config, and the `concept01/C2` uses the structural config.
 
 Both provide:
 - HTTP GET /ping handle
@@ -178,8 +228,8 @@ Both provide:
 
 Feel comfortable to dig inside their source code and explore them.
 
-### ⮑ `concept03` 💾📌
+### ⮑ `concept02` 💾📌
 
-### ⮑ `concept04` 💾📌
+### ⮑ `concept03` 💾📌
 
 

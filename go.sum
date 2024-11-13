@@ -21,6 +21,8 @@ github.com/rusriver/config/v2 v2.27.0 h1:qN7LMm0uLkITfURfGX+N40fNLDQe+73gy4oz8QR
 github.com/rusriver/config/v2 v2.27.0/go.mod h1:sk+XaFlmD8U350UN3V5DYe7NlJEy3huRlSlF6jJmbkg=
 github.com/rusriver/ttlcache/v3 v3.0.12 h1:+MJCLlfaWSE9zsjG4ZItWBjqflvO/QKjs6c2SXqgimM=
 github.com/rusriver/ttlcache/v3 v3.0.12/go.mod h1:sqDSRqt1QQyeQ6gbr4bE62t1vD+3rU/1tJb+A9bGNVo=
+github.com/segmentio/ksuid v1.0.4 h1:sBo2BdShXjmcugAMwjugoGUdUV0pcxY5mW4xKRn3v4c=
+github.com/segmentio/ksuid v1.0.4/go.mod h1:/XUiZBD3kVx5SmUOl55voK5yeAbBNNIed+2O73XgrPE=
 github.com/shirou/gopsutil v3.21.11+incompatible h1:+1+c1VGhc88SSonWP6foOcLhvnKlUeu/erjjvaPEYiI=
 github.com/shirou/gopsutil v3.21.11+incompatible/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
 github.com/tklauser/go-sysconf v0.3.14 h1:g5vzr9iPFFz24v2KZXs/pvpvh8/V9Fw6vQK5ZZb78yU=

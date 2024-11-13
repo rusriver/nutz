@@ -10,7 +10,10 @@ func Get_8bits(key []byte, maxSuffixLength int) (hash int) {
 
 	h = uint8(ln)
 
-	for i := 0; i < ln && i < maxSuffixLength; i++ {
+	for i := 0; i < ln; i++ {
+		if maxSuffixLength > 0 && i >= maxSuffixLength {
+			break
+		}
 		h ^= key[ln-i-1]
 		h ^= h << 1
 	}
@@ -23,7 +26,7 @@ func Get_16bits(key []byte, maxSuffixLength int) (hash int) {
 	var h, hPrev uint8
 
 	var i1, i2 int = 0, len(key)
-	if i2 > maxSuffixLength {
+	if maxSuffixLength > 0 && i2 > maxSuffixLength {
 		i1 = i2 - maxSuffixLength
 	}
 

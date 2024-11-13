@@ -128,7 +128,7 @@ func (r *Replicount) scheduler() {
 					go func() {
 						idPtr := r.PollFunc()
 						r.DQF <- func(r *Replicount) {
-							void, newSlow, _ := r.accoutForTheReplica(idPtr)
+							void, newSlow, _ := r.accountForTheReplica(idPtr)
 							if void {
 								return
 							}
@@ -137,7 +137,7 @@ func (r *Replicount) scheduler() {
 							if cnt < 1 {
 								cnt = 1
 							}
-							if cnt != r.currentResult.NumberOfReplicas {
+							if cnt != r.currentResult.NumberOfReplicas || newSlow {
 								newRes := &ChangeableObject{
 									NumberOfReplicas: cnt,
 									ListOfReplicas:   r.slowCache.Keys(),
@@ -171,7 +171,7 @@ func (r *Replicount) scheduler() {
 					go func() {
 						idPtr := r.PollFunc()
 						r.DQF <- func(r *Replicount) {
-							void, _, newFast := r.accoutForTheReplica(idPtr)
+							void, _, newFast := r.accountForTheReplica(idPtr)
 							if void {
 								return
 							}
@@ -184,7 +184,7 @@ func (r *Replicount) scheduler() {
 							if cnt < 1 {
 								cnt = 1
 							}
-							if cnt != r.currentResult.NumberOfReplicas {
+							if cnt != r.currentResult.NumberOfReplicas || newFast {
 								newRes := &ChangeableObject{
 									NumberOfReplicas: cnt,
 									ListOfReplicas:   r.fastCache.Keys(),
@@ -214,7 +214,7 @@ func (r *Replicount) scheduler() {
 	} // for
 }
 
-func (r *Replicount) accoutForTheReplica(idPtr *string) (void, newSlow, newFast bool) {
+func (r *Replicount) accountForTheReplica(idPtr *string) (void, newSlow, newFast bool) {
 	if idPtr == nil || len(*idPtr) == 0 {
 		void = true
 		return

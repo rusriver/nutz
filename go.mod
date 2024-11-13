@@ -19,6 +19,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/rusriver/config/v2 v2.27.0
 	github.com/rusriver/ttlcache/v3 v3.0.12
+	github.com/segmentio/ksuid v1.0.4
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.8.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect

@@ -22,6 +22,7 @@ func ShuffleBytesX(key []byte, times int) {
 		for i := 0; i < len(key); i++ {
 			i2 := (i + 1) % len(key)
 			key[i] ^= key[i2]
+			key[i2] += key[i]
 		}
 	}
 }

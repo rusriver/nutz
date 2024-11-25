@@ -8,26 +8,18 @@ func UniformDistributionHash16(key []byte) int {
 		if !s01 {
 			h = uint16(key[i]) << 8
 			i2 := (i << 3) * int(h)
-			h += uint16(i2+(lenKey)) << 8
+			h += uint16(i2+lenKey) << 8
 		} else {
 			h += uint16(key[i])
 			i2 := (i << 3) * int(h)
-			h += uint16(i2 + (lenKey))
-			// getHash_applyNext(&hash, h)
-			hash += h + (h << 3)
-
+			h += uint16(i2 + lenKey)
+			hash += h + (h << 3) // apply next
 		}
 		s01 = !s01
-	}
+	} //for
 	if s01 {
-		// getHash_applyNext(&hash, h)
-		hash += h + (h << 3)
+		hash += h + (h << 3) // apply next
 	}
 	hash ^= (hash & 0xFF00) >> 8
 	return int(hash)
-}
-
-func getHash_applyNext(hash *uint16, h uint16) {
-	(*hash) += h + (h << 3)
-	return
 }

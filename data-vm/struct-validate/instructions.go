@@ -1,6 +1,7 @@
 package structvalidate
 
 import (
+	"math"
 	"reflect"
 
 	datavm "github.com/rusriver/nutz/data-vm"
@@ -25,11 +26,12 @@ const (
 )
 
 type Instruction struct {
-	Id      string
-	Command Command // program -> instruction -> command
-	Path    []string
-	Type    uint16
-	Values  []any
+	Id             string
+	Command        Command // program -> instruction -> command
+	Path           []string
+	Type           uint16
+	Values         []any
+	FloatPrecision float64
 }
 
 func (i *Instruction) Execute(s any) (err error) {
@@ -89,17 +91,45 @@ func (i *Instruction) Execute(s any) (err error) {
 		}
 
 	case Command_EqualsEitherValue:
-		v, er := lookup.P(s, i.Path...)
+		v1, er := lookup.P(s, i.Path...)
 		if er != nil {
 			err = datavm.StdErr(i.Id, i.Path, er.Error())
 			return
 		}
-		for _, v2 := range i.Values {
-			if assert.ObjectsAreEqual(v.Interface(), v2) {
+		for _, vE := range i.Values {
+			switch v1.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				v1 := datavm.TypeToInt64(v1.Interface())
+				vE := datavm.TypeToInt64(vE)
+				if v1 == vE {
+					return
+				}
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				v1 := datavm.TypeToUint64(v1.Interface())
+				vE := datavm.TypeToUint64(vE)
+				if v1 == vE {
+					return
+				}
+			case reflect.Float32, reflect.Float64:
+				v1 := datavm.TypeToFloat64(v1.Interface())
+				vE := datavm.TypeToFloat64(vE)
+				if math.Abs(v1-vE) <= i.FloatPrecision {
+					return
+				}
+			}
+			switch v1.Interface().(type) {
+			case []byte, []rune, string:
+				v1 := datavm.TypeToString(v1.Interface())
+				vE := datavm.TypeToString(vE)
+				if v1 == vE {
+					return
+				}
+			}
+			if assert.ObjectsAreEqual(v1.Interface(), vE) {
 				return
 			}
 		}
-		err = datavm.StdErr(i.Id, i.Path, "equal to neither")
+		err = datavm.StdErr(i.Id, i.Path, "equals to neither")
 		return
 
 	default:

@@ -6,7 +6,7 @@ import (
 
 	datavm "github.com/rusriver/nutz/data-vm"
 	structvalidate "github.com/rusriver/nutz/data-vm/struct-validate"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_01(t *testing.T) {
@@ -57,7 +57,7 @@ func Test_01(t *testing.T) {
 					Values:  []any{"some"},
 				},
 			},
-			"instr 2.0, path V1, error: equal to neither",
+			"instr 2.0, path V1, error: equals to neither",
 		},
 		{"3.0", data,
 			[]datavm.IInstruction{
@@ -123,6 +123,41 @@ func Test_01(t *testing.T) {
 			},
 			"",
 		},
+		{"7.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"A", "A", "B", "k2", "V3", "A", "V1"},
+					Values:  []any{"root"},
+				},
+				&structvalidate.Instruction{
+					Id:      "2.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"A", "A", "B", "k2", "V2"},
+					Values:  []any{15.0},
+				},
+				&structvalidate.Instruction{
+					Id:      "2.1",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"A", "A", "B", "k2", "V2"},
+					Values:  []any{byte(15)},
+				},
+				&structvalidate.Instruction{
+					Id:      "2.2",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"A", "A", "B", "k2", "V2"},
+					Values:  []any{"15.0"},
+				},
+				&structvalidate.Instruction{
+					Id:      "3.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"A", "A", "B", "k3", "V3"},
+					Values:  []any{"hello 123"},
+				},
+			},
+			"",
+		},
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)
@@ -131,6 +166,6 @@ func Test_01(t *testing.T) {
 		if err != nil {
 			errMsg = err.Error()
 		}
-		assert.Equal(t, cas.ExpectedMessage, errMsg)
+		require.Equal(t, cas.ExpectedMessage, errMsg)
 	}
 }

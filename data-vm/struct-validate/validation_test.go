@@ -245,6 +245,36 @@ func Test_01(t *testing.T) {
 			},
 			"instr 1.0, path V4, error: equals to neither",
 		},
+		{"16.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ExistsNonEmptyString,
+					Path:    []string{"V4"},
+				},
+			},
+			"instr 1.0, path V4, error: not a string",
+		},
+		{"17.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ExistsNonEmptyString,
+					Path:    []string{"B", "k4", "V1"},
+				},
+			},
+			"instr 1.0, path B.k4.V1, error: the string is empty",
+		},
+		{"18.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ExistsNonEmptyString,
+					Path:    []string{"V1"},
+				},
+			},
+			"",
+		},
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)

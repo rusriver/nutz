@@ -12,12 +12,13 @@ import (
 type Command [2]uint8
 
 var (
-	Command_IsType              = Command{1, 0}
-	Command_Exists              = Command{2, 0}
-	Command_Absent              = Command{3, 0}
-	Command_EqualsEitherValue   = Command{4, 0}
-	Command_ArrayContainsEither = Command{5, 0}
-	Command_ArrayContainsAll    = Command{6, 0}
+	Command_IsType               = Command{1, 0}
+	Command_Exists               = Command{2, 0}
+	Command_ExistsNonEmptyString = Command{2, 5}
+	Command_Absent               = Command{3, 0}
+	Command_EqualsEitherValue    = Command{4, 0}
+	Command_ArrayContainsEither  = Command{5, 0}
+	Command_ArrayContainsAll     = Command{6, 0}
 )
 
 const (
@@ -82,6 +83,24 @@ func (instr *Instruction) Execute(s any) (err error) {
 		_, er := lookup.P(s, instr.Path...)
 		if er != nil {
 			err = datavm.StdErr(instr.Id, instr.Path, er.Error())
+			return
+		}
+
+	case Command_ExistsNonEmptyString:
+		v1, er := lookup.P(s, instr.Path...)
+		if er != nil {
+			err = datavm.StdErr(instr.Id, instr.Path, er.Error())
+			return
+		}
+		switch v1.Interface().(type) {
+		case []byte, []rune, string:
+			v1 := datavm.TypeToString(v1.Interface())
+			if len(v1) == 0 {
+				err = datavm.StdErr(instr.Id, instr.Path, "the string is empty")
+				return
+			}
+		default:
+			err = datavm.StdErr(instr.Id, instr.Path, "not a string")
 			return
 		}
 

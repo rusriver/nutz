@@ -4,7 +4,7 @@ type Exception struct {
 	X interface{}
 }
 
-func Try(f func()) (e *Exception) {
+func Try(f func() (err error)) (e *Exception) {
 	defer func() {
 		if x := recover(); x != nil {
 			e = &Exception{
@@ -12,7 +12,12 @@ func Try(f func()) (e *Exception) {
 			}
 		}
 	}()
-	f()
+	err := f()
+	if err != nil {
+		e = &Exception{
+			X: err,
+		}
+	}
 	return
 }
 

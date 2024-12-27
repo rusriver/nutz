@@ -6,12 +6,14 @@ type A struct {
 	V1 string
 	V2 int
 	V3 any
+	V4 bool
 }
 
 func GetData_01() any {
 	data := &A{
 		B:  make(map[string]*A),
 		V1: "root",
+		V4: true,
 	}
 	data.A = data
 	data.B["k1"] = &A{V1: "k1-V1"}

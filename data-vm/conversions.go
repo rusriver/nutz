@@ -198,3 +198,43 @@ func TypeToString(v1 any) (v2 string) {
 	}
 	return
 }
+
+func TypeToBool(v1 any) (v2 bool) {
+	switch v := v1.(type) {
+	case int:
+		v2 = v > 0
+	case int8:
+		v2 = v > 0
+	case int16:
+		v2 = v > 0
+	case int32:
+		v2 = v > 0
+	case int64:
+		v2 = v > 0
+	case uint:
+		v2 = v > 0
+	case uint8:
+		v2 = v > 0
+	case uint16:
+		v2 = v > 0
+	case uint32:
+		v2 = v > 0
+	case uint64:
+		v2 = v > 0
+	case float32:
+		v2 = v > 0
+	case float64:
+		v2 = v > 0
+	case bool:
+		v2 = v
+	case string:
+		v2, _ = strconv.ParseBool(v)
+	case []byte:
+		v2, _ = strconv.ParseBool(string(v))
+	case []rune:
+		v2, _ = strconv.ParseBool(string(v))
+	default:
+		v2 = false
+	}
+	return
+}

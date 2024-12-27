@@ -212,6 +212,39 @@ func Test_01(t *testing.T) {
 			},
 			"instr 1.0, path B.k4.V3, error: contains neither",
 		},
+		{"13.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"V4"},
+					Values:  []any{"true"},
+				},
+			},
+			"",
+		},
+		{"14.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"V4"},
+					Values:  []any{1},
+				},
+			},
+			"",
+		},
+		{"15.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"V4"},
+					Values:  []any{0},
+				},
+			},
+			"instr 1.0, path V4, error: equals to neither",
+		},
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)

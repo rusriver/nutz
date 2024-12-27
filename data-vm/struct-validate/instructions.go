@@ -184,11 +184,16 @@ func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
 			return true
 		}
 	}
-	switch v1.Interface().(type) {
+	switch v := v1.Interface().(type) {
 	case []byte, []rune, string:
 		v1 := datavm.TypeToString(v1.Interface())
 		vE := datavm.TypeToString(vE)
 		if v1 == vE {
+			return true
+		}
+	case bool:
+		vE := datavm.TypeToBool(vE)
+		if v == vE {
 			return true
 		}
 	}

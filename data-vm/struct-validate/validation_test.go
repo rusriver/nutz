@@ -158,6 +158,60 @@ func Test_01(t *testing.T) {
 			},
 			"",
 		},
+		{"8.0", 1,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_Exists,
+					Path:    []string{"a"},
+				},
+			},
+			"instr 1.0, path a, error: not found",
+		},
+		{"9.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsAll,
+					Path:    []string{"B", "k4", "V3"},
+					Values:  []any{"aaa", "sss"},
+				},
+			},
+			"",
+		},
+		{"10.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsAll,
+					Path:    []string{"B", "k4", "V3"},
+					Values:  []any{"aaa", "sss", "ddd"},
+				},
+			},
+			"instr 1.0, path B.k4.V3, error: doesn't contain all",
+		},
+		{"11.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsEither,
+					Path:    []string{"B", "k4", "V3"},
+					Values:  []any{"ddd", "eee", "fff", "sss"},
+				},
+			},
+			"",
+		},
+		{"12.0", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsEither,
+					Path:    []string{"B", "k4", "V3"},
+					Values:  []any{"ddd", "eee", "fff"},
+				},
+			},
+			"instr 1.0, path B.k4.V3, error: contains neither",
+		},
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)

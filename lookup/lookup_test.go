@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestLookup_01(t *testing.T) {
+	_, err := P(1, "a")
+	assert.Equal(t, err.Error(), "not found")
+}
+
 func TestLookup_Map(t *testing.T) {
 	value, err := P(map[string]int{"foo": 42}, "foo")
 	assert.Nil(t, err)

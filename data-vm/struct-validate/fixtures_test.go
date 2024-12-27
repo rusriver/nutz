@@ -17,6 +17,7 @@ func GetData_01() any {
 	data.B["k1"] = &A{V1: "k1-V1"}
 	data.B["k2"] = &A{V1: "k2-V1", V2: 15, V3: data}
 	data.B["k3"] = &A{V3: []byte("hello 123")}
+	data.B["k4"] = &A{V3: []string{"aaa", "sss"}}
 
 	return data
 }

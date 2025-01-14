@@ -1,6 +1,10 @@
 package logger
 
-import "github.com/rs/zerolog"
+import (
+	"errors"
+
+	"github.com/rs/zerolog"
+)
 
 // An initial zerologger must be provided by yours explicitly.
 // Typical idiom:
@@ -56,6 +60,9 @@ func (l *Logger) ErrorEvent() (e IEvent) {
 }
 
 func (l *Logger) ErrEvent(err error) (e IEvent) {
+	if err == nil {
+		err = errors.New("<nil>")
+	}
 	return &Event{
 		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.ErrorLevel.String(),

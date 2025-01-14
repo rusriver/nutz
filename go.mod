@@ -22,6 +22,7 @@ require (
 	github.com/lithammer/shortuuid/v4 v4.0.0
 	github.com/rs/zerolog v1.33.0
 	github.com/rusriver/config/v2 v2.27.0
+	github.com/rusriver/dateparse v1.1.0
 	github.com/rusriver/ttlcache/v3 v3.0.12
 	github.com/segmentio/ksuid v1.0.4
 	github.com/stretchr/testify v1.10.0

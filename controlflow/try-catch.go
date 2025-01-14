@@ -1,21 +1,26 @@
 package controlflow
 
+import "fmt"
+
 type Exception struct {
-	X interface{}
+	X   interface{}
+	Err error
 }
 
 func Try(f func() (err error)) (e *Exception) {
 	defer func() {
 		if x := recover(); x != nil {
 			e = &Exception{
-				X: x,
+				X:   x,
+				Err: fmt.Errorf("%v", x),
 			}
 		}
 	}()
 	err := f()
 	if err != nil {
 		e = &Exception{
-			X: err,
+			X:   err,
+			Err: err,
 		}
 	}
 	return

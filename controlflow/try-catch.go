@@ -122,10 +122,6 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 	return
 }
 
-func Raise(x any) {
-	panic(x)
-}
-
 func Raise2(added_context any, x any) {
 	switch xv := x.(type) {
 	case *Exception:

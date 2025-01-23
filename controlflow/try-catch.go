@@ -1,19 +1,54 @@
 package controlflow
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Exception struct {
-	AttemptNb int
 	X         interface{}
 	Err       error
+	AttemptNb int
+	XChain    []any
+}
+
+func (e *Exception) String() string {
+	br := strings.Builder{}
+	for i := len(e.XChain) - 1; i >= 0; i-- {
+		x := e.XChain[i]
+		switch xv := x.(type) {
+		case error:
+			br.WriteString(xv.Error())
+			br.WriteString(" ")
+		case string:
+			br.WriteString(xv)
+			br.WriteString(" ")
+		default:
+			br.WriteString(fmt.Sprintf("%v ", xv))
+		}
+	}
+	br.WriteString(
+		e.Err.Error(),
+	)
+	return br.String()
 }
 
 func Try(f func() (err error)) (e *Exception) {
 	defer func() {
 		if x := recover(); x != nil {
-			e = &Exception{
-				X:   x,
-				Err: fmt.Errorf("%v", x),
+			switch xv := x.(type) {
+			case *Exception:
+				e = xv
+			case error:
+				e = &Exception{
+					X:   x,
+					Err: xv,
+				}
+			default:
+				e = &Exception{
+					X:   x,
+					Err: fmt.Errorf("%v", xv),
+				}
 			}
 		}
 	}()
@@ -50,9 +85,19 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 		func() {
 			defer func() {
 				if x := recover(); x != nil {
-					e = &Exception{
-						X:   x,
-						Err: fmt.Errorf("%v", x),
+					switch xv := x.(type) {
+					case *Exception:
+						e = xv
+					case error:
+						e = &Exception{
+							X:   x,
+							Err: xv,
+						}
+					default:
+						e = &Exception{
+							X:   x,
+							Err: fmt.Errorf("%v", xv),
+						}
 					}
 				}
 			}()
@@ -79,4 +124,24 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 
 func Raise(x any) {
 	panic(x)
+}
+
+func Raise2(added_context any, x any) {
+	switch xv := x.(type) {
+	case *Exception:
+		xv.XChain = append(xv.XChain, added_context)
+		panic(xv)
+	case error:
+		x2 := &Exception{
+			X:   xv,
+			Err: xv,
+		}
+		panic(x2)
+	default:
+		x2 := &Exception{
+			X:   xv,
+			Err: fmt.Errorf("%v", xv),
+		}
+		panic(x2)
+	}
 }

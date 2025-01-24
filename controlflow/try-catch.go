@@ -145,7 +145,7 @@ func Raise2(added_context any, x any) {
 }
 
 // You should not use Raise1() to re-raise exceptions - use Raise2() instead.
-// This one only for cases where you create a new exception.
+// This one is intended only for cases where you create a new exception.
 func Raise1(x any) {
 	switch xv := x.(type) {
 	case *Exception:

@@ -143,3 +143,24 @@ func Raise2(added_context any, x any) {
 		panic(x2)
 	}
 }
+
+// You should not use Raise1() to re-raise exceptions - use Raise2() instead.
+// This one only for cases where you create a new exception.
+func Raise1(x any) {
+	switch xv := x.(type) {
+	case *Exception:
+		panic(xv)
+	case error:
+		x2 := &Exception{
+			X:   xv,
+			Err: xv,
+		}
+		panic(x2)
+	default:
+		x2 := &Exception{
+			X:   xv,
+			Err: fmt.Errorf("%v", xv),
+		}
+		panic(x2)
+	}
+}

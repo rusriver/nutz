@@ -23,7 +23,7 @@ func Test_03(t *testing.T) {
 	fmt.Println("--2")
 
 	controlflow.Try(func() (err error) {
-		controlflow.Raise2("", "fail")
+		controlflow.Raise1("fail")
 		return
 	}).Catch(func(e *controlflow.Exception) {
 		fmt.Println("exception", e.X)
@@ -49,7 +49,7 @@ func Test_03_retry(t *testing.T) {
 			return nil
 		}
 		i++
-		controlflow.Raise2("", "fail")
+		controlflow.Raise1("fail")
 		return
 	}, func(e *controlflow.Exception) (end bool) {
 		fmt.Printf("attempt %v failed: %v; retry\n", e.AttemptNb, e.Err)
@@ -69,7 +69,7 @@ func Test_03_retry(t *testing.T) {
 			return nil
 		}
 		i++
-		controlflow.Raise2("", "fail")
+		controlflow.Raise1("fail")
 		return
 	}, func(e *controlflow.Exception) (end bool) {
 		if e.AttemptNb < 3 {

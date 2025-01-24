@@ -132,12 +132,14 @@ func Raise2(added_context any, x any) {
 			X:   xv,
 			Err: xv,
 		}
+		x2.XChain = append(x2.XChain, added_context)
 		panic(x2)
 	default:
 		x2 := &Exception{
 			X:   xv,
 			Err: fmt.Errorf("%v", xv),
 		}
+		x2.XChain = append(x2.XChain, added_context)
 		panic(x2)
 	}
 }

@@ -24,7 +24,7 @@ func Test_01(t *testing.T) {
 	fmt.Println("1-0", len(kcEncoded), kcEncoded)
 
 	kc2, err := keycontainer8.ParseBase64(gobed, kcEncoded)
-	controlflow.Checkerr2("df65fc0c9292", err)
+	controlflow.Checkerr2Exit("df65fc0c9292", err)
 
 	bb, _ := json.MarshalIndent(kc2, "", "    ")
 	fmt.Println("2-0", string(bb))

@@ -183,6 +183,9 @@ func (instr *Instruction) Execute(s any) (err error) {
 }
 
 func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
+	if v1.Kind() == reflect.Interface {
+		v1 = v1.Elem()
+	}
 	switch v1.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		v1 := datavm.TypeToInt64(v1.Interface())

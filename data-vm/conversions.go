@@ -203,29 +203,29 @@ func TypeToBool(v1 any) (v2, undef bool) {
 	var err error
 	switch v := v1.(type) {
 	case int:
-		v2 = v > 0
+		v2 = v >= 1
 	case int8:
-		v2 = v > 0
+		v2 = v >= 1
 	case int16:
-		v2 = v > 0
+		v2 = v >= 1
 	case int32:
-		v2 = v > 0
+		v2 = v >= 1
 	case int64:
-		v2 = v > 0
+		v2 = v >= 1
 	case uint:
-		v2 = v > 0
+		v2 = v >= 1
 	case uint8:
-		v2 = v > 0
+		v2 = v >= 1
 	case uint16:
-		v2 = v > 0
+		v2 = v >= 1
 	case uint32:
-		v2 = v > 0
+		v2 = v >= 1
 	case uint64:
-		v2 = v > 0
+		v2 = v >= 1
 	case float32:
-		v2 = v > 0
+		v2 = v >= 1
 	case float64:
-		v2 = v > 0
+		v2 = v >= 1
 	case bool:
 		v2 = v
 	case string:

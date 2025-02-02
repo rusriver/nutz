@@ -214,8 +214,8 @@ func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
 			return true
 		}
 	case bool:
-		vE := datavm.TypeToBool(vE)
-		if v == vE {
+		vE, undef := datavm.TypeToBool(vE)
+		if !undef && v == vE {
 			return true
 		}
 	}

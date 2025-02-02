@@ -7,6 +7,7 @@ type A struct {
 	V2 int
 	V3 any
 	V4 bool
+	V5 bool
 	M  map[string]any
 }
 
@@ -15,6 +16,7 @@ func GetData_01() any {
 		B:  make(map[string]*A),
 		V1: "root",
 		V4: true,
+		V5: false,
 		M: map[string]any{
 			"list": []any{"a", "b", "c", 1, 2, 3},
 		},

@@ -199,7 +199,8 @@ func TypeToString(v1 any) (v2 string) {
 	return
 }
 
-func TypeToBool(v1 any) (v2 bool) {
+func TypeToBool(v1 any) (v2, undef bool) {
+	var err error
 	switch v := v1.(type) {
 	case int:
 		v2 = v > 0
@@ -228,13 +229,16 @@ func TypeToBool(v1 any) (v2 bool) {
 	case bool:
 		v2 = v
 	case string:
-		v2, _ = strconv.ParseBool(v)
+		v2, err = strconv.ParseBool(v)
 	case []byte:
-		v2, _ = strconv.ParseBool(string(v))
+		v2, err = strconv.ParseBool(string(v))
 	case []rune:
-		v2, _ = strconv.ParseBool(string(v))
+		v2, err = strconv.ParseBool(string(v))
 	default:
 		v2 = false
+	}
+	if err != nil {
+		undef = true
 	}
 	return
 }

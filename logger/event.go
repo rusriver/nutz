@@ -150,7 +150,6 @@ func (e *Event) SendMsgf(s string, vv ...any) {
 	}
 	e.zerologEvent.Str(zerolog.MessageFieldName, fmt.Sprintf(s, vv...))
 	e.Send()
-	return
 }
 
 func (e *Event) SendMsg(s string) {
@@ -159,7 +158,6 @@ func (e *Event) SendMsg(s string) {
 	}
 	e.zerologEvent.Str(zerolog.MessageFieldName, s)
 	e.Send()
-	return
 }
 
 func (e *Event) Title(s string) IEvent {
@@ -185,7 +183,6 @@ func (e *Event) SendTitle(s string) {
 		return // bypass
 	}
 	e.Title(s).Send()
-	return
 }
 
 func (e *Event) Msgtag(msgtag *Msgtag, ss ...string) IEvent {
@@ -287,7 +284,6 @@ func (e *Event) Send() {
 	if doSend {
 		e.zerologEvent.Send()
 	}
-	return
 }
 
 func (e *Event) ILogger() ILogger {

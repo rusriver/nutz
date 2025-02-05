@@ -7,7 +7,7 @@ import "strings"
 type Msgtag []string
 
 func (msgtag *Msgtag) String() string {
-	return strings.Join(*msgtag, "-")
+	return strings.Join(*msgtag, " ")
 }
 
 func (msgtag *Msgtag) With(ss ...string) *Msgtag {

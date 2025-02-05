@@ -107,6 +107,30 @@ func Test_03_raise2(t *testing.T) {
 		})
 		return
 	}).Catch(func(e *controlflow.Exception) {
-		fmt.Println("46e59cc24375", e.String())
+		fmt.Println("46e59cc24375", e)
+	})
+}
+
+func Test_04_raise2(t *testing.T) {
+	controlflow.Try(func() (err error) {
+		controlflow.Try(func() (err error) {
+			controlflow.Try(func() (err error) {
+				controlflow.Try(func() (err error) {
+					e := errors.New("a17674b6 the problem cause")
+					panic(e)
+				}).Catch(func(e *controlflow.Exception) {
+					controlflow.Raise2("1e05a52a098f", e)
+				})
+				return
+			}).Catch(func(e *controlflow.Exception) {
+				controlflow.Raise2("71b9f65e73f1", e)
+			})
+			return
+		}).Catch(func(e *controlflow.Exception) {
+			controlflow.Raise2("927136578a67", e)
+		})
+		return
+	}).Catch(func(e *controlflow.Exception) {
+		fmt.Println("46e59cc24375", e)
 	})
 }

@@ -12,6 +12,14 @@ type Exception struct {
 	XChain    []any
 }
 
+var _ error = (*Exception)(nil)
+
+func (e *Exception) Error() string {
+	return e.String()
+}
+
+var _ fmt.Stringer = (*Exception)(nil)
+
 func (e *Exception) String() string {
 	br := strings.Builder{}
 	for i := len(e.XChain) - 1; i >= 0; i-- {

@@ -5,11 +5,12 @@ import "github.com/rs/zerolog"
 var _ IEvent = (*Event)(nil)
 
 type Event struct {
-	ParentLogger *Logger
-	IsInactive   bool   // per event
-	TheLevel     string // per event
-	TheMsgtag    Msgtag // per event
-	TheTitle     string // per event
+	ParentLogger      *Logger
+	IsInactive        bool   // per event
+	TheLevel          string // per event
+	TheMsgtag         Msgtag // per event
+	TheTitle          string // per event
+	theTitleIsDefault bool
 
 	subLoggerInitChain *subLoggerInitChain
 	zerologEvent       *zerolog.Event

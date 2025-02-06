@@ -169,10 +169,11 @@ func (e *Event) Title(s string) IEvent {
 		}
 	} else {
 		// this is to protect against losing the title if used twice mistakenly
-		if len(e.TheTitle) == 0 {
+		switch {
+		case len(e.TheTitle) == 0, e.theTitleIsDefault:
 			e.TheTitle = s
-		} else {
-			e.TheTitle += " " + s
+		default:
+			e.TheTitle += " -- " + s
 		}
 	}
 	return e

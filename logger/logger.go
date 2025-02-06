@@ -52,10 +52,12 @@ func (l *Logger) TraceEvent() (e IEvent) {
 
 func (l *Logger) ErrorEvent() (e IEvent) {
 	return &Event{
-		IsInactive:   l.IsInactive,
-		TheLevel:     zerolog.ErrorLevel.String(),
-		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Error(),
+		IsInactive:        l.IsInactive,
+		TheLevel:          zerolog.ErrorLevel.String(),
+		ParentLogger:      l,
+		zerologEvent:      l.zeroLogger.Error(),
+		TheTitle:          "ERROR", // the default title
+		theTitleIsDefault: true,
 	}
 }
 
@@ -64,20 +66,23 @@ func (l *Logger) ErrEvent(err error) (e IEvent) {
 		err = errors.New("<nil>")
 	}
 	return &Event{
-		IsInactive:   l.IsInactive,
-		TheLevel:     zerolog.ErrorLevel.String(),
-		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Err(err),
-		TheTitle:     "ERROR", // the default title
+		IsInactive:        l.IsInactive,
+		TheLevel:          zerolog.ErrorLevel.String(),
+		ParentLogger:      l,
+		zerologEvent:      l.zeroLogger.Err(err),
+		TheTitle:          "ERROR", // the default title
+		theTitleIsDefault: true,
 	}
 }
 
 func (l *Logger) WarnEvent() (e IEvent) {
 	return &Event{
-		IsInactive:   l.IsInactive,
-		TheLevel:     zerolog.WarnLevel.String(),
-		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Warn(),
+		IsInactive:        l.IsInactive,
+		TheLevel:          zerolog.WarnLevel.String(),
+		ParentLogger:      l,
+		zerologEvent:      l.zeroLogger.Warn(),
+		TheTitle:          "WARNING", // the default title
+		theTitleIsDefault: true,
 	}
 }
 

@@ -52,11 +52,11 @@ func Test_03_retry(t *testing.T) {
 		controlflow.Raise1("fail")
 		return
 	}, func(e *controlflow.Exception) (end bool) {
-		fmt.Printf("attempt %v failed: %v; retry\n", e.AttemptNb, e.Err)
+		fmt.Printf("attempt %v failed: %v; retry\n", e.AttemptNb, e)
 		time.Sleep(time.Millisecond * 500)
 		return
 	}).Catch(func(e *controlflow.Exception) {
-		fmt.Println("1 FAIL;", e.Err)
+		fmt.Println("1 FAIL;", e)
 	}).OK(func(e *controlflow.Exception) {
 		fmt.Println("1 OK")
 	})
@@ -73,16 +73,16 @@ func Test_03_retry(t *testing.T) {
 		return
 	}, func(e *controlflow.Exception) (end bool) {
 		if e.AttemptNb < 3 {
-			fmt.Printf("attempt %v failed: %v; retry\n", e.AttemptNb, e.Err)
+			fmt.Printf("attempt %v failed: %v; retry\n", e.AttemptNb, e)
 			time.Sleep(time.Millisecond * 500)
 			return
 		} else {
-			fmt.Printf("attempt %v failed: %v; yield\n", e.AttemptNb, e.Err)
+			fmt.Printf("attempt %v failed: %v; yield\n", e.AttemptNb, e)
 			end = true
 			return
 		}
 	}).Catch(func(e *controlflow.Exception) {
-		fmt.Println("2 FAIL;", e.Err)
+		fmt.Println("2 FAIL;", e)
 	}).OK(func(e *controlflow.Exception) {
 		fmt.Println("2 OK")
 	})

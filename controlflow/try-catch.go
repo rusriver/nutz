@@ -6,10 +6,10 @@ import (
 )
 
 type Exception struct {
-	X         interface{}
-	Err       error
-	AttemptNb int
-	XChain    []any
+	X             interface{}
+	TheCauseError error
+	AttemptNb     int
+	XChain        []any
 }
 
 var _ error = (*Exception)(nil)
@@ -36,7 +36,7 @@ func (e *Exception) String() string {
 		}
 	}
 	br.WriteString(
-		e.Err.Error(),
+		e.TheCauseError.Error(),
 	)
 	return br.String()
 }
@@ -49,13 +49,13 @@ func Try(f func() (err error)) (e *Exception) {
 				e = xv
 			case error:
 				e = &Exception{
-					X:   x,
-					Err: xv,
+					X:             x,
+					TheCauseError: xv,
 				}
 			default:
 				e = &Exception{
-					X:   x,
-					Err: fmt.Errorf("%v", xv),
+					X:             x,
+					TheCauseError: fmt.Errorf("%v", xv),
 				}
 			}
 		}
@@ -63,8 +63,8 @@ func Try(f func() (err error)) (e *Exception) {
 	err := f()
 	if err != nil {
 		e = &Exception{
-			X:   err,
-			Err: err,
+			X:             err,
+			TheCauseError: err,
 		}
 	}
 	return
@@ -98,13 +98,13 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 						e = xv
 					case error:
 						e = &Exception{
-							X:   x,
-							Err: xv,
+							X:             x,
+							TheCauseError: xv,
 						}
 					default:
 						e = &Exception{
-							X:   x,
-							Err: fmt.Errorf("%v", xv),
+							X:             x,
+							TheCauseError: fmt.Errorf("%v", xv),
 						}
 					}
 				}
@@ -112,8 +112,8 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 			err := f()
 			if err != nil {
 				e = &Exception{
-					X:   err,
-					Err: err,
+					X:             err,
+					TheCauseError: err,
 				}
 			}
 		}()
@@ -137,15 +137,15 @@ func Raise2(added_context any, x any) {
 		panic(xv)
 	case error:
 		x2 := &Exception{
-			X:   xv,
-			Err: xv,
+			X:             xv,
+			TheCauseError: xv,
 		}
 		x2.XChain = append(x2.XChain, added_context)
 		panic(x2)
 	default:
 		x2 := &Exception{
-			X:   xv,
-			Err: fmt.Errorf("%v", xv),
+			X:             xv,
+			TheCauseError: fmt.Errorf("%v", xv),
 		}
 		x2.XChain = append(x2.XChain, added_context)
 		panic(x2)
@@ -160,14 +160,14 @@ func Raise1(x any) {
 		panic(xv)
 	case error:
 		x2 := &Exception{
-			X:   xv,
-			Err: xv,
+			X:             xv,
+			TheCauseError: xv,
 		}
 		panic(x2)
 	default:
 		x2 := &Exception{
-			X:   xv,
-			Err: fmt.Errorf("%v", xv),
+			X:             xv,
+			TheCauseError: fmt.Errorf("%v", xv),
 		}
 		panic(x2)
 	}

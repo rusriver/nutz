@@ -2,6 +2,7 @@ package clickhouseclient
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -88,7 +89,7 @@ func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (err error) {
 		err = conn.Exec(ctx, prgText)
 		return
 	}).Catch(func(e *controlflow.Exception) {
-		err = e.Err
+		err = errors.New(e.String())
 	})
 	fmt.Println()
 	stats.Humanize()

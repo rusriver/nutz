@@ -118,6 +118,17 @@ func Test_02(t *testing.T) {
 			},
 			"instr 1.0, path V5, error: equals to neither",
 		},
+		{"4.3", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"V5"},
+					Values:  []any{"0"},
+				},
+			},
+			"",
+		},
 		{"5.1", data,
 			[]datavm.IInstruction{
 				&structvalidate.Instruction{

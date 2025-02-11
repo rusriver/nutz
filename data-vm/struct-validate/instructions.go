@@ -183,7 +183,7 @@ func (instr *Instruction) Execute(s any) (err error) {
 }
 
 func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
-	if v1.IsZero() {
+	if v1.Interface() == nil {
 		vE_val := reflect.ValueOf(vE)
 		switch {
 		case vE_val.IsZero():

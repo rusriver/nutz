@@ -129,6 +129,17 @@ func Test_02(t *testing.T) {
 			},
 			"",
 		},
+		{"4.4", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_EqualsEitherValue,
+					Path:    []string{"BoolFalseAny"},
+					Values:  []any{"0"},
+				},
+			},
+			"",
+		},
 		{"5.1", data,
 			[]datavm.IInstruction{
 				&structvalidate.Instruction{

@@ -1,14 +1,15 @@
 package structvalidate_test
 
 type A struct {
-	A  *A
-	B  map[string]*A
-	V1 string
-	V2 int
-	V3 any
-	V4 bool
-	V5 bool
-	M  map[string]any
+	A            *A
+	B            map[string]*A
+	V1           string
+	V2           int
+	V3           any
+	V4           bool
+	V5           bool
+	M            map[string]any
+	BoolFalseAny any
 }
 
 func GetData_01() any {
@@ -21,6 +22,7 @@ func GetData_01() any {
 			"list":   []any{"a", "b", "c", 1, 2, 3},
 			"list-2": []any{"a", "b", "c", 1, 2, 3, nil},
 		},
+		BoolFalseAny: false,
 	}
 	data.A = data
 	data.B["k1"] = &A{V1: "k1-V1"}

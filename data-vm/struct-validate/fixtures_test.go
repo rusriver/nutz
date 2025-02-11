@@ -18,7 +18,8 @@ func GetData_01() any {
 		V4: true,
 		V5: false,
 		M: map[string]any{
-			"list": []any{"a", "b", "c", 1, 2, 3},
+			"list":   []any{"a", "b", "c", 1, 2, 3},
+			"list-2": []any{"a", "b", "c", 1, 2, 3, nil},
 		},
 	}
 	data.A = data

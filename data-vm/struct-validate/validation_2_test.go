@@ -118,6 +118,28 @@ func Test_02(t *testing.T) {
 			},
 			"instr 1.0, path V5, error: equals to neither",
 		},
+		{"5.1", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsAll,
+					Path:    []string{"M", "list-2"},
+					Values:  []any{"a", "b"},
+				},
+			},
+			"",
+		},
+		{"5.2", data,
+			[]datavm.IInstruction{
+				&structvalidate.Instruction{
+					Id:      "1.0",
+					Command: structvalidate.Command_ArrayContainsAll,
+					Path:    []string{"M", "list-2", ""},
+					Values:  []any{"a", "b"},
+				},
+			},
+			"instr 1.0, path M.list-2., error: invalid index usage",
+		},
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)

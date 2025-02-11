@@ -6,6 +6,10 @@ import (
 )
 
 func TypeToUint64(v1 any) (v2 uint64) {
+	if v1 == nil {
+		v2 = 0
+		return
+	}
 	switch v := v1.(type) {
 	case int:
 		v2 = uint64(v)
@@ -65,6 +69,10 @@ func TypeToUint64(v1 any) (v2 uint64) {
 }
 
 func TypeToInt64(v1 any) (v2 int64) {
+	if v1 == nil {
+		v2 = 0
+		return
+	}
 	switch v := v1.(type) {
 	case int:
 		v2 = int64(v)
@@ -124,6 +132,10 @@ func TypeToInt64(v1 any) (v2 int64) {
 }
 
 func TypeToFloat64(v1 any) (v2 float64) {
+	if v1 == nil {
+		v2 = 0
+		return
+	}
 	switch v := v1.(type) {
 	case int:
 		v2 = float64(v)
@@ -183,6 +195,10 @@ func TypeToFloat64(v1 any) (v2 float64) {
 }
 
 func TypeToString(v1 any) (v2 string) {
+	if v1 == nil {
+		v2 = ""
+		return
+	}
 	switch v := v1.(type) {
 	case string:
 		v2 = v
@@ -200,6 +216,10 @@ func TypeToString(v1 any) (v2 string) {
 }
 
 func TypeToBool(v1 any) (v2, undef bool) {
+	if v1 == nil {
+		undef = true
+		return
+	}
 	var err error
 	switch v := v1.(type) {
 	case int:

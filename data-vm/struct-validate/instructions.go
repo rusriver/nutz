@@ -183,6 +183,15 @@ func (instr *Instruction) Execute(s any) (err error) {
 }
 
 func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
+	if v1.IsZero() {
+		vE_val := reflect.ValueOf(vE)
+		switch {
+		case vE_val.IsZero():
+			return true
+		default:
+			return false
+		}
+	}
 	if v1.Kind() == reflect.Interface {
 		v1 = v1.Elem()
 	}

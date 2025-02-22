@@ -24,26 +24,26 @@ type Factory[PRODUCT any] struct {
 	Hook_AfterStation func(pprec *ProductProgressRecord[PRODUCT])
 }
 
-func NewFactory[PRODUCT any]() Factory[PRODUCT] {
-	f := Factory[PRODUCT]{
+func NewFactory[PRODUCT any]() *Factory[PRODUCT] {
+	f := &Factory[PRODUCT]{
 		productionLines: map[string]*Line[PRODUCT]{},
 	}
 	return f
 }
 
-func (f Factory[PRODUCT]) AddLineOfObjects(name string) *Line[PRODUCT] {
+func (f *Factory[PRODUCT]) AddLineOfObjects(name string) *Line[PRODUCT] {
 	line := newLineOfObjects[PRODUCT]()
 	f.productionLines[name] = line
 	return line
 }
 
-func (f Factory[PRODUCT]) AddLineOfFuncs(name string) *Line[PRODUCT] {
+func (f *Factory[PRODUCT]) AddLineOfFuncs(name string) *Line[PRODUCT] {
 	line := newLineOfFuncs[PRODUCT]()
 	f.productionLines[name] = line
 	return line
 }
 
-func (f Factory[PRODUCT]) Line(name string) (line *Line[PRODUCT]) {
+func (f *Factory[PRODUCT]) Line(name string) (line *Line[PRODUCT]) {
 	if line, ok := f.productionLines[name]; ok {
 		return line
 	} else {
@@ -54,7 +54,7 @@ func (f Factory[PRODUCT]) Line(name string) (line *Line[PRODUCT]) {
 
 // To be used in a user-code managed loop, e.g. when each per-line progress
 // gets persistized. Alternatively, consider using ProcessFull().
-func (f Factory[PRODUCT]) ProcessOneLine(pprec *ProductProgressRecord[PRODUCT]) {
+func (f *Factory[PRODUCT]) ProcessOneLine(pprec *ProductProgressRecord[PRODUCT]) {
 	if len(pprec.JumpToLine) > 0 {
 		pprec.CurrentPosition.Line = pprec.JumpToLine
 		pprec.CurrentPosition.Station = 0
@@ -111,7 +111,7 @@ func (f Factory[PRODUCT]) ProcessOneLine(pprec *ProductProgressRecord[PRODUCT]) 
 	pprec.FullStopNow = true
 }
 
-func (f Factory[PRODUCT]) ProcessFull(pprec *ProductProgressRecord[PRODUCT]) {
+func (f *Factory[PRODUCT]) ProcessFull(pprec *ProductProgressRecord[PRODUCT]) {
 	for {
 		f.ProcessOneLine(pprec)
 		if pprec.FullStopNow {

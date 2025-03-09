@@ -1,4 +1,4 @@
-package logger
+package loggerapi
 
 import (
 	"time"
@@ -7,21 +7,16 @@ import (
 )
 
 type ILogger interface {
-	TraceEvent() IEvent
-	DebugEvent() IEvent
-	ErrorEvent() IEvent
-	ErrEvent(error) IEvent
-	WarnEvent() IEvent
-	InfoEvent() IEvent
+	TraceEvent(msgtag string) IEvent
+	DiagnosticEvent(msgtag string) IEvent
+	ErrorEvent(msgtag string) IEvent
+	ErrEvent(err error, msgtag string) IEvent
+	WarnEvent(msgtag string) IEvent
+	InfoEvent(msgtag string) IEvent
 
 	// Can be used if you intend to call ILogger() on it later.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
-	SubLoggerInitChain() IEvent
-
-	GetZeroLoggerPtr() *zerolog.Logger
-
-	// This is useful to access Settings later after init.
-	GetNutzLogger() *Logger
+	SubLoggerInitChain(msgtag string) IEvent
 
 	SetLevel(zerolog.Level) ILogger
 
@@ -58,7 +53,9 @@ type IEvent interface {
 	Strs(string, []string) IEvent
 	Time(string, time.Time) IEvent
 	Int(string, int) IEvent
+	Ints(string, []int) IEvent
 	Float64(string, float64) IEvent
+	Floats64(string, []float64) IEvent
 	Array(k string, v *zerolog.Array) (e IEvent)
 	Dict(k string, v *zerolog.Event) (e IEvent)
 
@@ -80,12 +77,6 @@ type IEvent interface {
 	// The same as Title().Send()
 	// Must not be used on sub-logger init chains.
 	SendTitle(string)
-
-	// Some first strings are reported to metrics, be careful to NOT put in them
-	// high-cardinality IDs. Doesn't apply to sub-logger init chains, must be set
-	// per each event individually.
-	// If the ActicationHook is set, it is called, and it can reactivate the event.
-	Msgtag(msgtag *Msgtag, ss ...string) IEvent
 
 	// Also must be reported to metrics.
 	SubSystem(string) IEvent

@@ -1,0 +1,3 @@
+{"level":"info","xu":"my-xu","ver":"1.2.3","lrid":"6FEDFASDsXjETtF39KMMfB","etc":[3,3,2,4],"msgtags":["7c38f2df","0050f962","52","54"],"title":"g2","time":"2025-03-09T21:05:02+03:00"}
+
+{: level info, xu my-xu, ver 1.2.3, lrid 6FEDFASDsXjETtF39KMMfB, etc [3 3 2 4], msgtags [7c38f2df 0050f962 52 54], title g2, ts 20250309-210502}

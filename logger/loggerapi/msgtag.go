@@ -1,19 +1,19 @@
-package logger
+package loggerapi
 
 import "strings"
 
 // Few first strings are reported to metrics, be careful to NOT put in them
 // high-cardinality IDs.
-type Msgtag []string
+type Msgtags []string
 
-func (msgtag *Msgtag) String() string {
+func (msgtag *Msgtags) String() string {
 	return strings.Join(*msgtag, " ")
 }
 
-func (msgtag *Msgtag) With(ss ...string) *Msgtag {
+func (msgtag *Msgtags) With(ss ...string) *Msgtags {
 	if msgtag == nil {
 		// msgtag = &Msgtag{ss...} // WTF, doesn't work (TODO)
-		msgtag_v := append(Msgtag{}, ss...)
+		msgtag_v := append(Msgtags{}, ss...)
 		return &msgtag_v
 	}
 	clone := append((*msgtag)[:0:0], *msgtag...)

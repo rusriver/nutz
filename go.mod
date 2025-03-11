@@ -1,6 +1,6 @@
 module github.com/rusriver/nutz
 
-go 1.21
+go 1.23
 
 toolchain go1.23.4
 
@@ -23,6 +23,8 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rusriver/configdb v0.0.0-20250311064937-bf6785942f72 // indirect
+	github.com/rusriver/configdb/v3 v3.6.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect

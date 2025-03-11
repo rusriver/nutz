@@ -97,7 +97,7 @@ Goals of making such a wrapper around the zerolog logger:
             If the logger was active, then any data set on event before the Inactive() will be set,
             and not bypassed.
 
-    16) Added support of LRID and Event Tracing Counters. The ETC are not a substitution for msgtags,
+    16) Added support of XUId and Event Tracing Counters. The ETC are not a substitution for msgtags,
         they serve different purpose - while the msgtags can locate the location of log point in source
         code, the ETC allow for two things: 1) see the exact order the events were produced, when the TS
         fail to be enough; 2) trace and relate events to each other, in highly concurrent systems.

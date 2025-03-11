@@ -2,25 +2,26 @@ package logger
 
 import (
 	"errors"
+	"os"
 	"sync"
 
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/rusriver/nutz/logger/loggerapi"
 )
 
 // Single-thread only! Use sub-loggers if want to use it concurrently
 type Logger struct {
-	RootContext  *RootContext
-	IsInactive   bool   // per whole logger instance
+	RootContext  *loggerapi.RootContext
+	IsInactive   bool   // per logger
 	TheSubsystem string // per logger
 	UserObject   any
-	ETC          EventTracingCounters
+	ETC          loggerapi.EventTracingCounters
 	Msgtags      *loggerapi.Msgtags
 
 	ZeroLogger *zerolog.Logger
 	mu         sync.Mutex // only some functions use it
+	_XUId      string
 }
 
 var _ loggerapi.ILogger = (*Logger)(nil)
@@ -37,28 +38,56 @@ var _ loggerapi.ILogger = (*Logger)(nil)
 
 	my.SimpleLogger = logger.New(nil) // will get the underlying logger automatically
 */
-func New(zl *zerolog.Logger, optFuncs ...func(rctx *RootContext)) (logger *Logger) {
-	rctx := &RootContext{
+func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger *Logger) {
+	rctx := &loggerapi.RootContext{
 		PanicOnMisuse: true,
 		MsgtagKey:     "msgtags",
-		LRIdKey:       "lrid",
+		XUIdKey:       "xuid",
 		ETCKey:        "etc",
 	}
 	for _, f := range optFuncs {
 		f(rctx)
 	}
-	if zl == nil {
-		zl = &log.Logger
+	if rctx.MainWriter == nil {
+		rctx.MainWriter = os.Stderr
 	}
-	if len(rctx.RootId) == 0 {
-		rctx.RootId = shortuuid.New()
+	{
+		zerolog.TimestampFieldName = "ts"
+		zerolog.TimeFieldFormat = "20060102-150405"
+		zerolog.LevelTraceValue = "TRACE"
+		zerolog.LevelDebugValue = "DIAGN"
+		zerolog.LevelInfoValue = "INFO"
+		zerolog.LevelWarnValue = "WARN"
+		zerolog.LevelErrorValue = "ERROR"
+		zerolog.LevelFatalValue = "FATAL"
+		zerolog.LevelPanicValue = "PANIC"
+	}
+	if zl == nil {
+		i := &Interceptor{rctx: rctx}
+		zlv := zerolog.New(i).With().Timestamp().Logger()
+		zl = &zlv
 	}
 	logger = &Logger{
 		RootContext: rctx,
 		ZeroLogger:  zl,
-		ETC:         EventTracingCounters{0},
+		ETC:         loggerapi.EventTracingCounters{0},
+		_XUId:       xuid,
+	}
+	if len(logger._XUId) == 0 {
+		logger._XUId = shortuuid.New()[:8]
 	}
 	return logger
+}
+
+func (l *Logger) TraceEvent(msgtag string) loggerapi.IEvent {
+	e := &Event{
+		IsInactive:   l.IsInactive,
+		TheLevel:     zerolog.TraceLevel.String(),
+		ParentLogger: l,
+		ZerologEvent: l.ZeroLogger.Trace(),
+	}
+	appendTracingData(e, msgtag)
+	return e
 }
 
 func (l *Logger) DiagnosticEvent(msgtag string) loggerapi.IEvent {
@@ -72,12 +101,25 @@ func (l *Logger) DiagnosticEvent(msgtag string) loggerapi.IEvent {
 	return e
 }
 
-func (l *Logger) TraceEvent(msgtag string) loggerapi.IEvent {
+func (l *Logger) InfoEvent(msgtag string) loggerapi.IEvent {
 	e := &Event{
 		IsInactive:   l.IsInactive,
-		TheLevel:     zerolog.TraceLevel.String(),
+		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: l,
-		ZerologEvent: l.ZeroLogger.Trace(),
+		ZerologEvent: l.ZeroLogger.Info(),
+	}
+	appendTracingData(e, msgtag)
+	return e
+}
+
+func (l *Logger) WarnEvent(msgtag string) loggerapi.IEvent {
+	e := &Event{
+		IsInactive:        l.IsInactive,
+		TheLevel:          zerolog.WarnLevel.String(),
+		ParentLogger:      l,
+		ZerologEvent:      l.ZeroLogger.Warn(),
+		TheTitle:          "WARNING", // the default title
+		theTitleIsDefault: true,
 	}
 	appendTracingData(e, msgtag)
 	return e
@@ -112,30 +154,6 @@ func (l *Logger) ErrEvent(err error, msgtag string) loggerapi.IEvent {
 	return e
 }
 
-func (l *Logger) WarnEvent(msgtag string) loggerapi.IEvent {
-	e := &Event{
-		IsInactive:        l.IsInactive,
-		TheLevel:          zerolog.WarnLevel.String(),
-		ParentLogger:      l,
-		ZerologEvent:      l.ZeroLogger.Warn(),
-		TheTitle:          "WARNING", // the default title
-		theTitleIsDefault: true,
-	}
-	appendTracingData(e, msgtag)
-	return e
-}
-
-func (l *Logger) InfoEvent(msgtag string) loggerapi.IEvent {
-	e := &Event{
-		IsInactive:   l.IsInactive,
-		TheLevel:     zerolog.InfoLevel.String(),
-		ParentLogger: l,
-		ZerologEvent: l.ZeroLogger.Info(),
-	}
-	appendTracingData(e, msgtag)
-	return e
-}
-
 func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.IEvent {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -147,6 +165,8 @@ func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.IEvent {
 		subLoggerInitChain: &subLoggerInitChain{
 			zerologContext: &zerologContext,
 			msgtags:        l.Msgtags.With(msgtag),
+			_ETC:           l.ETC.BranchSub(),
+			newRctx:        l.RootContext,
 		},
 		ParentLogger: l,
 	}
@@ -169,9 +189,9 @@ func appendTracingData(e *Event, msgtag string) {
 	e.ParentLogger.mu.Lock()
 	defer e.ParentLogger.mu.Unlock()
 
-	k := e.ParentLogger.RootContext.LRIdKey
+	k := e.ParentLogger.RootContext.XUIdKey
 	if len(k) != 0 {
-		e.ZerologEvent = e.ZerologEvent.Str(k, e.ParentLogger.RootContext.RootId)
+		e.ZerologEvent = e.ZerologEvent.Str(k, e.ParentLogger._XUId)
 	}
 
 	k = e.ParentLogger.RootContext.ETCKey

@@ -9,10 +9,10 @@ import (
 type ILogger interface {
 	TraceEvent(msgtag string) IEvent
 	DiagnosticEvent(msgtag string) IEvent
+	InfoEvent(msgtag string) IEvent
+	WarnEvent(msgtag string) IEvent
 	ErrorEvent(msgtag string) IEvent
 	ErrEvent(err error, msgtag string) IEvent
-	WarnEvent(msgtag string) IEvent
-	InfoEvent(msgtag string) IEvent
 
 	// Can be used if you intend to call ILogger() on it later.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
@@ -87,6 +87,7 @@ type IEvent interface {
 	// Must not be used on sub-logger init chains.
 	Send()
 
-	// Only works if you created a chain with With()
+	// Only works if you created a chain with SubLoggerInitChain()
+	WithClonedRootContext(optFuncs ...func(rctx *RootContext)) IEvent
 	ILogger() ILogger
 }

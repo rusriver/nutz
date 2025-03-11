@@ -10,9 +10,8 @@ import (
 )
 
 func Test_e1_01(t *testing.T) {
-	nutzLogger := logger.New(nil, func(rctx *logger.RootContext) {
-		rctx.RootId = shortuuid.New()
-	})
+
+	nutzLogger := logger.New(shortuuid.New()[:8], nil)
 
 	var Logger loggerapi.ILogger
 
@@ -29,27 +28,28 @@ func Test_e1_01(t *testing.T) {
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.SubLoggerInitChain("59fc7").Str("some", "data").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
-	wg := sync.WaitGroup{}
-	wg.Add(2)
+	wg2 := sync.WaitGroup{}
+	wg2.Add(2)
 	go func() {
 		Logger := Logger.SubLoggerInitChain("73853896").ILogger()
-		for i := 0; i < 20; i++ {
+		for i := 0; i < 5; i++ {
 			Logger.InfoEvent("41").Title("g1").Send()
 		}
-		wg.Done()
+		wg2.Done()
 	}()
 	go func() {
 		Logger := Logger.SubLoggerInitChain("5687595c").ILogger()
-		for i := 0; i < 20; i++ {
+		for i := 0; i < 5; i++ {
 			Logger.InfoEvent("48").Title("g2").Send()
 		}
-		wg.Done()
+		wg2.Done()
 	}()
-	wg.Wait()
+	wg2.Wait()
 	Logger.InfoEvent("d0ed6944").Title("complete").Send()
 	Logger.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+
 }

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -297,13 +298,51 @@ func (e *Event) Send() {
 	if len(e.TheTitle) > 0 {
 		e.ZerologEvent.Str("title", e.TheTitle) // gonna be the last, and that's great for readability
 	}
-	hook := e.ParentLogger.RootContext.OnSendHook
+	hook := e.ParentLogger.RootContext.IfSendHook
 	doSend := true
 	if hook != nil {
 		doSend = hook(e)
 	}
 	if doSend {
 		e.ZerologEvent.Send()
+	}
+}
+
+func (e *Event) WithClonedRootContext(optFuncs ...func(rctx *loggerapi.RootContext)) loggerapi.IEvent {
+	e.ParentLogger.mu.Lock()
+	defer e.ParentLogger.mu.Unlock()
+
+	if e.subLoggerInitChain != nil {
+		rctx0 := e.ParentLogger.RootContext
+		rctx := &loggerapi.RootContext{
+			MainWriter:      rctx0.MainWriter,
+			PanicOnMisuse:   rctx0.PanicOnMisuse,
+			MsgtagKey:       rctx0.MsgtagKey,
+			XUIdKey:         rctx0.XUIdKey,
+			ETCKey:          rctx0.ETCKey,
+			IfSendHook:      rctx0.IfSendHook,
+			EventOnWireHook: rctx0.EventOnWireHook,
+			ActivationHook:  rctx0.ActivationHook,
+		}
+		for _, f := range optFuncs {
+			f(rctx)
+		}
+		if rctx.MainWriter == nil {
+			rctx.MainWriter = os.Stderr
+		}
+
+		newCtx := e.subLoggerInitChain.zerologContext.Logger().Output(&Interceptor{rctx: rctx}).With()
+		e.subLoggerInitChain.zerologContext = &newCtx
+
+		e.subLoggerInitChain.newRctx = rctx
+
+		return e
+	} else {
+		if e.ParentLogger.RootContext.PanicOnMisuse {
+			panic("a4166aefd6c37d1599d6")
+		} else {
+			return nil
+		}
 	}
 }
 
@@ -314,18 +353,19 @@ func (e *Event) ILogger() loggerapi.ILogger {
 	if e.subLoggerInitChain != nil {
 		zeroLogger := e.subLoggerInitChain.zerologContext.Logger()
 		logger := &Logger{
-			RootContext:  e.ParentLogger.RootContext,
+			RootContext:  e.subLoggerInitChain.newRctx,
 			IsInactive:   e.subLoggerInitChain.isInactive, // inherit from the init chain
 			TheSubsystem: e.subLoggerInitChain.perLoggerSubsystem,
 			UserObject:   e.ParentLogger.UserObject,
 			ZeroLogger:   &zeroLogger,
-			ETC:          e.ParentLogger.ETC.BranchSub(),
+			ETC:          e.subLoggerInitChain._ETC,
 			Msgtags:      e.subLoggerInitChain.msgtags,
+			_XUId:        e.ParentLogger._XUId,
 		}
 		return logger
 	} else {
 		if e.ParentLogger.RootContext.PanicOnMisuse {
-			panic("5a2d0286d0bd4adca2ceda0f68f3b0fb")
+			panic("5a2d0286d0bd4adca2ceda")
 		} else {
 			return nil
 		}

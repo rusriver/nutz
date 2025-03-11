@@ -6,20 +6,18 @@ import "strings"
 // high-cardinality IDs.
 type Msgtags []string
 
-func (msgtag *Msgtags) String() string {
-	return strings.Join(*msgtag, " ")
+func (msgtags Msgtags) String() string {
+	return strings.Join(msgtags, " ")
 }
 
-func (msgtag *Msgtags) With(ss ...string) *Msgtags {
-	if msgtag == nil {
+func (msgtags Msgtags) With(ss ...string) Msgtags {
+	if msgtags == nil {
 		// msgtag = &Msgtag{ss...} // WTF, doesn't work (TODO)
-		msgtag_v := append(Msgtags{}, ss...)
-		return &msgtag_v
+		return append(Msgtags{}, ss...)
 	}
-	clone := append((*msgtag)[:0:0], *msgtag...)
-	msgtag = &clone
+	msgtags = append(msgtags[:0:0], msgtags...)
 	for _, s := range ss {
-		*msgtag = append(*msgtag, s)
+		msgtags = append(msgtags, s)
 	}
-	return msgtag
+	return msgtags
 }

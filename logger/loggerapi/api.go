@@ -19,6 +19,11 @@ type ILogger interface {
 	SubLoggerInitChain(msgtag string) IEvent
 
 	SetLevel(zerolog.Level) ILogger
+}
+
+type IEvent interface {
+	GetTraceContext() *TraceContext
+	GetUserObject() (uo any)
 
 	// Attach any user object to the event object, to be used later
 	// inside the callback hooks. Intended to pass user-level runtime data to the
@@ -26,14 +31,14 @@ type ILogger interface {
 	// Normally, the UO must be a pointer, and at the receiving side in the hook
 	// you do something along the lines:
 	//
-	//	myObject, _ := e.ParentLogger.UserObject.(*MyObject)
+	//	myObject, _ := e.GetUserObject().(*MyObject)
 	//	if myObject !=  nil {
 	//		...
 	//	}
-	AddUO(uo any) ILogger
-}
+	//
+	// Only works if you created a chain with SubLoggerInitChain()
+	AddUserObject(uo any) IEvent
 
-type IEvent interface {
 	// Inactivation applies to real events only, all data set ops will be bypassed.
 	// However, if applied to sub-logger init chain, nothing is bypassed.
 	Inactive() IEvent

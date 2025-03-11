@@ -356,11 +356,13 @@ func (e *Event) ILogger() loggerapi.ILogger {
 			RootContext:  e.subLoggerInitChain.newRctx,
 			IsInactive:   e.subLoggerInitChain.isInactive, // inherit from the init chain
 			TheSubsystem: e.subLoggerInitChain.perLoggerSubsystem,
-			UserObject:   e.ParentLogger.UserObject,
+			UserObject:   e.subLoggerInitChain.newUserObject,
 			ZeroLogger:   &zeroLogger,
-			ETC:          e.subLoggerInitChain._ETC,
-			Msgtags:      e.subLoggerInitChain.msgtags,
-			_XUId:        e.ParentLogger._XUId,
+			TraceContext: &loggerapi.TraceContext{
+				ETC:     e.subLoggerInitChain._ETC,
+				Msgtags: e.subLoggerInitChain.msgtags,
+			},
+			_XUId: e.ParentLogger._XUId,
 		}
 		return logger
 	} else {
@@ -370,4 +372,39 @@ func (e *Event) ILogger() loggerapi.ILogger {
 			return nil
 		}
 	}
+}
+
+func (e *Event) AddUserObject(uo any) loggerapi.IEvent {
+	e.ParentLogger.mu.Lock()
+	defer e.ParentLogger.mu.Unlock()
+
+	if e.subLoggerInitChain != nil {
+		e.subLoggerInitChain.newUserObject = uo
+		return e
+	} else {
+		if e.ParentLogger.RootContext.PanicOnMisuse {
+			panic("1bcf083fbd35fd851ffe")
+		} else {
+			return nil
+		}
+	}
+}
+
+func (e *Event) GetUserObject() (uo any) {
+	e.ParentLogger.mu.Lock()
+	defer e.ParentLogger.mu.Unlock()
+
+	if e.subLoggerInitChain == nil {
+		return e.ParentLogger.UserObject
+	} else {
+		if e.ParentLogger.RootContext.PanicOnMisuse {
+			panic("eea0b52027d065af248f")
+		} else {
+			return nil
+		}
+	}
+}
+
+func (e *Event) GetTraceContext() (tc *loggerapi.TraceContext) {
+	return e.ParentLogger.TraceContext
 }

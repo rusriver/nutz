@@ -9,7 +9,8 @@ type subLoggerInitChain struct {
 	zerologContext     *zerolog.Context
 	perLoggerSubsystem string
 	isInactive         bool // for new sub-logger
-	msgtags            *loggerapi.Msgtags
+	msgtags            loggerapi.Msgtags
 	_ETC               loggerapi.EventTracingCounters
 	newRctx            *loggerapi.RootContext
+	newUserObject      any
 }

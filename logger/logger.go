@@ -16,8 +16,7 @@ type Logger struct {
 	IsInactive   bool   // per logger
 	TheSubsystem string // per logger
 	UserObject   any
-	ETC          loggerapi.EventTracingCounters
-	Msgtags      *loggerapi.Msgtags
+	TraceContext *loggerapi.TraceContext
 
 	ZeroLogger *zerolog.Logger
 	mu         sync.Mutex // only some functions use it
@@ -26,18 +25,6 @@ type Logger struct {
 
 var _ loggerapi.ILogger = (*Logger)(nil)
 
-// Typical idiom:
-/*
-	import(
-		"github.com/rs/zerolog/log"
-	)
-	...
-	my.Logger = logger.New(&log.Logger, func(s *logger.Settings) {
-		s.PanicOnMisuse = false
-	})
-
-	my.SimpleLogger = logger.New(nil) // will get the underlying logger automatically
-*/
 func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger *Logger) {
 	rctx := &loggerapi.RootContext{
 		PanicOnMisuse: true,
@@ -70,8 +57,10 @@ func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootC
 	logger = &Logger{
 		RootContext: rctx,
 		ZeroLogger:  zl,
-		ETC:         loggerapi.EventTracingCounters{0},
-		_XUId:       xuid,
+		TraceContext: &loggerapi.TraceContext{
+			ETC: loggerapi.EventTracingCounters{0},
+		},
+		_XUId: xuid,
 	}
 	if len(logger._XUId) == 0 {
 		logger._XUId = shortuuid.New()[:8]
@@ -158,15 +147,16 @@ func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.IEvent {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	l.ETC.Inc()
+	l.TraceContext.ETC.Inc()
 
 	zerologContext := l.ZeroLogger.With()
 	e := &Event{
 		subLoggerInitChain: &subLoggerInitChain{
 			zerologContext: &zerologContext,
-			msgtags:        l.Msgtags.With(msgtag),
-			_ETC:           l.ETC.BranchSub(),
+			msgtags:        l.TraceContext.Msgtags.With(msgtag),
+			_ETC:           l.TraceContext.ETC.BranchSub(),
 			newRctx:        l.RootContext,
+			newUserObject:  l.UserObject,
 		},
 		ParentLogger: l,
 	}
@@ -174,14 +164,6 @@ func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.IEvent {
 }
 
 func (l *Logger) SetLevel(level zerolog.Level) loggerapi.ILogger {
-	return l
-}
-
-func (l *Logger) AddUO(uo any) loggerapi.ILogger {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
-	l.UserObject = uo
 	return l
 }
 
@@ -196,11 +178,11 @@ func appendTracingData(e *Event, msgtag string) {
 
 	k = e.ParentLogger.RootContext.ETCKey
 	if len(k) != 0 {
-		e.ParentLogger.ETC.Inc()
-		e.ZerologEvent = e.ZerologEvent.Ints(k, e.ParentLogger.ETC)
+		e.ParentLogger.TraceContext.ETC.Inc()
+		e.ZerologEvent = e.ZerologEvent.Ints(k, e.ParentLogger.TraceContext.ETC)
 	}
 
-	e.TheMsgtags = *e.ParentLogger.Msgtags.With(msgtag)
+	e.TheMsgtags = e.ParentLogger.TraceContext.Msgtags.With(msgtag)
 
 	// call the (re-)activation hook, if any
 	hook := e.ParentLogger.RootContext.ActivationHook

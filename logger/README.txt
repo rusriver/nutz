@@ -119,7 +119,7 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
     deserialize it back, which is absurd. With this wrapper, we are free to put and keep any attributes
     we want as scalars, and then use in our own sending hook.
 
-    Currently, in the reference implementation, the msgtag array, the title, level, and subsystem are
+    Currently, in the reference implementation, the msgtag array, the title and level are
     all available as scalars.
 
 --

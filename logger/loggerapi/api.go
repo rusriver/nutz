@@ -84,7 +84,6 @@ type IEvent interface {
 	SendTitle(string)
 
 	// Also must be reported to metrics.
-	SubSystem(string) IEvent
 	RequestId(string) IEvent
 	RawJSON(string, []byte) IEvent
 	Bytes(string, []byte) IEvent

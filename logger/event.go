@@ -228,20 +228,6 @@ func (e *Event) SendTitle(s string) {
 	e.Title(s).Send()
 }
 
-func (e *Event) SubSystem(s string) loggerapi.IEvent {
-	if e.subLoggerInitChain != nil {
-		sub := e.subLoggerInitChain.zerologContext.Str("subsystem", s)
-		e.subLoggerInitChain.zerologContext = &sub
-		e.subLoggerInitChain.perLoggerSubsystem = s
-	} else {
-		if e.IsInactive {
-			return e // bypass
-		}
-		e.ZerologEvent.Str("subsystem", s)
-	}
-	return e
-}
-
 func (e *Event) RequestId(s string) loggerapi.IEvent {
 	if e.subLoggerInitChain != nil {
 		sub := e.subLoggerInitChain.zerologContext.Str("requestId", s)
@@ -353,11 +339,10 @@ func (e *Event) ILogger() loggerapi.ILogger {
 	if e.subLoggerInitChain != nil {
 		zeroLogger := e.subLoggerInitChain.zerologContext.Logger()
 		logger := &Logger{
-			RootContext:  e.subLoggerInitChain.newRctx,
-			IsInactive:   e.subLoggerInitChain.isInactive, // inherit from the init chain
-			TheSubsystem: e.subLoggerInitChain.perLoggerSubsystem,
-			UserObject:   e.subLoggerInitChain.newUserObject,
-			ZeroLogger:   &zeroLogger,
+			RootContext: e.subLoggerInitChain.newRctx,
+			IsInactive:  e.subLoggerInitChain.isInactive, // inherit from the init chain
+			UserObject:  e.subLoggerInitChain.newUserObject,
+			ZeroLogger:  &zeroLogger,
 			TraceContext: &loggerapi.TraceContext{
 				ETC:     e.subLoggerInitChain._ETC,
 				Msgtags: e.subLoggerInitChain.msgtags,

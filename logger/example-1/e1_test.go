@@ -20,7 +20,7 @@ func Test_e1_01(t *testing.T) {
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.SubLoggerInitChain("a24487").
+	Logger = nutzLogger.SubLoggerInitChain("SUBSYSTEM-a24487").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -35,7 +35,7 @@ func Test_e1_01(t *testing.T) {
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
-		Logger := Logger.SubLoggerInitChain("73853896").ILogger()
+		Logger := Logger.SubLoggerInitChain("SUBSYSTEM-73853896").ILogger()
 		for i := 0; i < 5; i++ {
 			Logger.InfoEvent("41").Title("g1").Send()
 		}

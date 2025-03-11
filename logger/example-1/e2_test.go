@@ -249,7 +249,7 @@ func Test_e2_03(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Logger
 
-	Logger = Logger.SubLoggerInitChain("a24487").
+	Logger = Logger.SubLoggerInitChain("_TLK").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()

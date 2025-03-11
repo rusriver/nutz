@@ -13,8 +13,7 @@ import (
 // Single-thread only! Use sub-loggers if want to use it concurrently
 type Logger struct {
 	RootContext  *loggerapi.RootContext
-	IsInactive   bool   // per logger
-	TheSubsystem string // per logger
+	IsInactive   bool // per logger
 	UserObject   any
 	TraceContext *loggerapi.TraceContext
 

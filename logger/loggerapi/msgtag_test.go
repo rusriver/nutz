@@ -9,7 +9,7 @@ import (
 
 func Test_Msgtag_01(t *testing.T) {
 	s := struct {
-		Msgtag *loggerapi.Msgtags
+		Msgtag loggerapi.Msgtags
 	}{}
 
 	m := s.Msgtag.With("4174e39370e4")

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/rusriver/configdb/v3"
 )
 
 type ILogger interface {
@@ -16,14 +17,14 @@ type ILogger interface {
 
 	// Can be used if you intend to call ILogger() on it later.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
-	SubLoggerInitChain(msgtag string) IEvent
+	SubLoggerInitChain(msgtag string) ISubLoggerInitChain
 
-	SetLevel(zerolog.Level) ILogger
+	SwitchOnTheOfflineAccumulation() ILogger
+	FinishAccumulationAndFetch() (llines []*configdb.Root)
+	RestartTheAccumulation()
 }
 
-type IEvent interface {
-	GetTraceContext() *TraceContext
-	GetUserObject() (uo any)
+type ISubLoggerInitChain interface {
 
 	// Attach any user object to the event object, to be used later
 	// inside the callback hooks. Intended to pass user-level runtime data to the
@@ -35,9 +36,33 @@ type IEvent interface {
 	//	if myObject !=  nil {
 	//		...
 	//	}
-	//
-	// Only works if you created a chain with SubLoggerInitChain()
-	AddUserObject(uo any) IEvent
+	AddUserObject(uo any) ISubLoggerInitChain
+
+	// Inactivation applies to real events only, all data set ops will be bypassed.
+	// However, if applied to sub-logger init chain, nothing is bypassed.
+	Inactive() ISubLoggerInitChain
+
+	Caller(skip ...int) ISubLoggerInitChain
+	Str(string, string) ISubLoggerInitChain
+	Strf(string, string, ...any) ISubLoggerInitChain
+	Strs(string, []string) ISubLoggerInitChain
+	Time(string, time.Time) ISubLoggerInitChain
+	Int(string, int) ISubLoggerInitChain
+	Ints(string, []int) ISubLoggerInitChain
+	Float64(string, float64) ISubLoggerInitChain
+	Floats64(string, []float64) ISubLoggerInitChain
+	Array(k string, v *zerolog.Array) ISubLoggerInitChain
+	Dict(k string, v *zerolog.Event) ISubLoggerInitChain
+	RawJSON(string, []byte) ISubLoggerInitChain
+	Bytes(string, []byte) ISubLoggerInitChain
+
+	WithClonedRootContext(optFuncs ...func(rctx *RootContext)) ISubLoggerInitChain
+	ILogger() ILogger
+}
+
+type IEvent interface {
+	GetTraceContext() *TraceContext
+	GetUserObject() (uo any)
 
 	// Inactivation applies to real events only, all data set ops will be bypassed.
 	// However, if applied to sub-logger init chain, nothing is bypassed.
@@ -46,7 +71,7 @@ type IEvent interface {
 	// This is useful to do some work only if the event is activated, e.g. do some data prep
 	// or JSON marshalling, and waste no time otherwise.
 	//
-	//	     logger.InfoEvent().Inactive().Msgtag().IfActive(func(ev IEvent) {
+	//	     logger.InfoEvent("1212").Inactive().IfActive(func(ev loggerapi.IEvent) {
 	//				// do some heavy work, then
 	//				ev.RawJSON(b)
 	//			}).Title("my event").Send()
@@ -61,14 +86,10 @@ type IEvent interface {
 	Ints(string, []int) IEvent
 	Float64(string, float64) IEvent
 	Floats64(string, []float64) IEvent
-	Array(k string, v *zerolog.Array) (e IEvent)
-	Dict(k string, v *zerolog.Event) (e IEvent)
-
-	// Must not be used on sub-logger init chains.
-	SendMsgf(string, ...any)
-
-	// Must not be used on sub-logger init chains.
-	SendMsg(string)
+	Array(k string, v *zerolog.Array) IEvent
+	Dict(k string, v *zerolog.Event) IEvent
+	RawJSON(string, []byte) IEvent
+	Bytes(string, []byte) IEvent
 
 	// It's like Msg(), but sets the value to "title" field, and also
 	// can be used to report to metrics. Must be low-cardinality string.
@@ -80,18 +101,9 @@ type IEvent interface {
 	Title(string) IEvent
 
 	// The same as Title().Send()
-	// Must not be used on sub-logger init chains.
 	SendTitle(string)
 
-	// Also must be reported to metrics.
-	RequestId(string) IEvent
-	RawJSON(string, []byte) IEvent
-	Bytes(string, []byte) IEvent
-
-	// Must not be used on sub-logger init chains.
+	SendMsgf(string, ...any)
+	SendMsg(string)
 	Send()
-
-	// Only works if you created a chain with SubLoggerInitChain()
-	WithClonedRootContext(optFuncs ...func(rctx *RootContext)) IEvent
-	ILogger() ILogger
 }

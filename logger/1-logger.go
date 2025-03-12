@@ -2,11 +2,13 @@ package logger
 
 import (
 	"errors"
+	"io"
 	"os"
 	"sync"
 
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog"
+	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/logger/loggerapi"
 )
 
@@ -18,24 +20,29 @@ type Logger struct {
 	TraceContext *loggerapi.TraceContext
 
 	ZeroLogger *zerolog.Logger
-	mu         sync.Mutex // only some functions use it
-	_XUId      string
+
+	mu          sync.Mutex // only some functions use it
+	accumulator *Accumulator
+	interceptor *Interceptor
 }
 
 var _ loggerapi.ILogger = (*Logger)(nil)
 
 func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger *Logger) {
 	rctx := &loggerapi.RootContext{
-		PanicOnMisuse: true,
-		MsgtagKey:     "msgtags",
-		XUIdKey:       "xuid",
-		ETCKey:        "etc",
+		MsgtagKey: "msgtags",
+		XUIdKey:   "xuid",
+		ETCKey:    "etc",
 	}
 	for _, f := range optFuncs {
 		f(rctx)
 	}
 	if rctx.MainWriter == nil {
 		rctx.MainWriter = os.Stderr
+	}
+	rctx.XUId = xuid
+	if len(rctx.XUId) == 0 {
+		rctx.XUId = shortuuid.New()[:8]
 	}
 	{
 		zerolog.TimestampFieldName = "ts"
@@ -48,9 +55,9 @@ func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootC
 		zerolog.LevelFatalValue = "FATAL"
 		zerolog.LevelPanicValue = "PANIC"
 	}
+	interceptor := &Interceptor{rctx: rctx}
 	if zl == nil {
-		i := &Interceptor{rctx: rctx}
-		zlv := zerolog.New(i).With().Timestamp().Logger()
+		zlv := zerolog.New(interceptor).With().Timestamp().Logger()
 		zl = &zlv
 	}
 	logger = &Logger{
@@ -59,10 +66,7 @@ func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootC
 		TraceContext: &loggerapi.TraceContext{
 			ETC: loggerapi.EventTracingCounters{0},
 		},
-		_XUId: xuid,
-	}
-	if len(logger._XUId) == 0 {
-		logger._XUId = shortuuid.New()[:8]
+		interceptor: interceptor,
 	}
 	return logger
 }
@@ -142,28 +146,24 @@ func (l *Logger) ErrEvent(err error, msgtag string) loggerapi.IEvent {
 	return e
 }
 
-func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.IEvent {
+func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.ISubLoggerInitChain {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	l.TraceContext.ETC.Inc()
 
 	zerologContext := l.ZeroLogger.With()
-	e := &Event{
-		subLoggerInitChain: &subLoggerInitChain{
-			zerologContext: &zerologContext,
-			msgtags:        l.TraceContext.Msgtags.With(msgtag),
-			_ETC:           l.TraceContext.ETC.BranchSub(),
-			newRctx:        l.RootContext,
-			newUserObject:  l.UserObject,
+	slich := &subLoggerInitChain{
+		zerologContext: &zerologContext,
+		traceContext: &loggerapi.TraceContext{
+			ETC:     l.TraceContext.ETC.BranchSub(),
+			Msgtags: l.TraceContext.Msgtags.With(msgtag),
 		},
-		ParentLogger: l,
+		rctx:        l.RootContext,
+		uo:          l.UserObject,
+		interceptor: l.interceptor,
 	}
-	return e
-}
-
-func (l *Logger) SetLevel(level zerolog.Level) loggerapi.ILogger {
-	return l
+	return slich
 }
 
 func appendTracingData(e *Event, msgtag string) {
@@ -172,7 +172,7 @@ func appendTracingData(e *Event, msgtag string) {
 
 	k := e.ParentLogger.RootContext.XUIdKey
 	if len(k) != 0 {
-		e.ZerologEvent = e.ZerologEvent.Str(k, e.ParentLogger._XUId)
+		e.ZerologEvent = e.ZerologEvent.Str(k, e.ParentLogger.RootContext.XUId)
 	}
 
 	k = e.ParentLogger.RootContext.ETCKey
@@ -191,5 +191,47 @@ func appendTracingData(e *Event, msgtag string) {
 	k = e.ParentLogger.RootContext.MsgtagKey
 	if len(k) != 0 {
 		e.ZerologEvent.Strs(k, e.TheMsgtags)
+	}
+}
+
+func (l *Logger) SwitchOnTheOfflineAccumulation() loggerapi.ILogger {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	l.accumulator = NewAccumulator()
+
+	rctx := l.RootContext.Clone()
+
+	rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
+		l.accumulator.chUp <- p
+	}
+	rctx.MainWriter = io.Discard
+
+	l.interceptor = &Interceptor{rctx: rctx}
+
+	zlv := l.ZeroLogger.Output(l.interceptor)
+	l.ZeroLogger = &zlv
+
+	return l
+}
+
+func (l *Logger) FinishAccumulationAndFetch() (llines []*configdb.Root) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if l.accumulator == nil {
+		panic("401d5fc2a82e553f0eab")
+	}
+	return l.accumulator.FinishAccumulationAndFetch()
+}
+
+func (l *Logger) RestartTheAccumulation() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	l.accumulator = NewAccumulator()
+
+	l.RootContext.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
+		l.accumulator.chUp <- p
 	}
 }

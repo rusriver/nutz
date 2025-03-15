@@ -235,3 +235,14 @@ func (l *Logger) RestartTheAccumulation() {
 		l.accumulator.chUp <- p
 	}
 }
+
+func (l *Logger) GetUserObject() (uo any) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	return l.UserObject
+}
+
+func (l *Logger) GetTraceContext() (tc *loggerapi.TraceContext) {
+	return l.TraceContext
+}

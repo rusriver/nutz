@@ -8,6 +8,9 @@ import (
 )
 
 type ILogger interface {
+	GetTraceContext() *TraceContext
+	GetUserObject() (uo any)
+
 	TraceEvent(msgtag string) IEvent
 	DiagnosticEvent(msgtag string) IEvent
 	InfoEvent(msgtag string) IEvent

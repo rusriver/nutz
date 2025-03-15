@@ -2,11 +2,7 @@ package algoutils
 
 // Augments the https://pkg.go.dev/slices, https://pkg.go.dev/slices#Contains
 
-type Fiber interface {
-	string | []byte
-}
-
-func HasPrefixSequence_Fibers[T Fiber](s1, s2 []T) bool {
+func HasPrefixSequence_Fibers[T IFiber](s1, s2 []T) bool {
 	if len(s2) > len(s1) {
 		return false
 	}
@@ -37,7 +33,7 @@ func HasPrefixSequence_Comparables[T comparable](s1, s2 []T) bool {
 	return true
 }
 
-func HasSubSequence_Fibers[T Fiber](s1, s2 []T) bool {
+func HasSubSequence_Fibers[T IFiber](s1, s2 []T) bool {
 	for {
 		if len(s1) == 0 {
 			return false

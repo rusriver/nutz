@@ -3,6 +3,7 @@ package example1_test
 import (
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 	"testing"
 
@@ -457,6 +458,149 @@ func Test_e2_04(t *testing.T) {
 	require.Equal(t, howManyIterations, controlCriteria["3,1,2"])
 	require.Equal(t, howManyIterations, controlCriteria["3,1,3"])
 	require.Equal(t, howManyIterations, controlCriteria["3,1,4"])
+	require.Equal(t, 1, controlCriteria["d0ed6944"])
+
+	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
+
+	fmt.Println("===========================================")
+
+	// now try to reuse the same logger for accumulation again
+
+	OfflineLogger.RestartTheAccumulation()
+
+	for i := 0; i < 5; i++ {
+		OfflineLogger.InfoEvent("c67f9c71").Send()
+	}
+
+	// you can even use the Zerologger directly, and its output will be accumulated too:
+	zerologger := OfflineLogger.(*logger.Logger).ZeroLogger
+	zerologger.Info().Msgf("Hello from Zerologger!")
+
+	LogsAccumulated = OfflineLogger.FinishAccumulationAndFetch()
+	for i, llinedb := range LogsAccumulated {
+		_ = i
+		fmt.Println("LOGLINE", i, string(configdb.MustRenderJson(llinedb.Data, 0)))
+	}
+}
+
+func Test_e2_05(t *testing.T) {
+
+	// create a normal logger
+	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {})
+
+	var Logger loggerapi.ILogger
+
+	Logger = nutzLogger
+
+	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
+	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
+	RootLogger := Logger
+
+	Logger = Logger.SubLoggerInitChain("_TLK").
+		Str("xu", "my-xu").
+		Str("ver", "1.2.3").
+		ILogger()
+
+	// create a sub-logger, with disabled and intercepted output
+
+	howManyIterations := 10000
+
+	OfflineLogger := Logger.SubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
+
+	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
+	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
+
+	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+
+	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
+
+	wg2 := sync.WaitGroup{}
+	wg2.Add(4)
+	go func() {
+		Logger := OfflineLogger.SubLoggerInitChain("73853896").ILogger()
+		for i := 0; i < howManyIterations; i++ {
+			Logger.InfoEvent("290").Title("g1").Send()
+		}
+		wg2.Done()
+	}()
+	go func() {
+		Logger := OfflineLogger.SubLoggerInitChain("5687595c").ILogger()
+		for i := 0; i < howManyIterations; i++ {
+			Logger.InfoEvent("297").Title("g2").Send()
+		}
+		wg2.Done()
+	}()
+	go func() {
+		Logger := OfflineLogger.SubLoggerInitChain("5141c5c5").ILogger()
+		for i := 0; i < howManyIterations; i++ {
+			Logger.InfoEvent("304").Title("g3").Send()
+		}
+		wg2.Done()
+	}()
+	go func() {
+		Logger := OfflineLogger.SubLoggerInitChain("a5042f9c").ILogger()
+		for i := 0; i < howManyIterations; i++ {
+			Logger.InfoEvent("311").Title("g4").Send()
+		}
+		wg2.Done()
+	}()
+	wg2.Wait()
+	OfflineLogger.InfoEvent("d0ed6944").Title("complete").Send()
+	Logger.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+
+	LogsAccumulated := OfflineLogger.FinishAccumulationAndFetch()
+
+	fmt.Println("===========================================")
+
+	controlCriteria := map[string]int{}
+
+	for i, llinedb := range LogsAccumulated {
+		_ = i
+		// fmt.Println("LOGLINE", i, string(configdb.MustRenderJson(llinedb.Data, 0)))
+
+		// c59145cfdde048f5a3ef
+
+		fmtt_msgtags := algoutils.FMTTF[bool, string]{
+			"d0ed6944": {func(kk []string) bool {
+				fmt.Println("Gotcha!")
+				controlCriteria[strings.Join(kk, " ")]++
+				return true
+			}, nil},
+		}
+
+		fmtt_etc := algoutils.FMTTF[bool, int]{
+			3: {nil, algoutils.FMTTF[bool, int]{
+				1: {nil, algoutils.FMTTF[bool, int]{
+					1: {func(kk []int) bool {
+						controlCriteria[fmt.Sprint(kk)]++
+						return true
+					}, nil},
+					2: {func(kk []int) bool {
+						controlCriteria[fmt.Sprint(kk)]++
+						return true
+					}, nil},
+					3: {func(kk []int) bool {
+						controlCriteria[fmt.Sprint(kk)]++
+						return true
+					}, nil},
+					4: {func(kk []int) bool {
+						controlCriteria[fmt.Sprint(kk)]++
+						return true
+					}, nil},
+				}},
+			}},
+		}
+
+		fmtt_msgtags.FastMatch(llinedb.P("msgtags").ListString())
+
+		fmtt_etc.FastMatch(llinedb.P("etc").ListInt())
+	}
+
+	fmt.Printf("CONTROL CRITERIA: %+v\n", controlCriteria)
+	require.Equal(t, howManyIterations, controlCriteria["[3 1 1]"])
+	require.Equal(t, howManyIterations, controlCriteria["[3 1 2]"])
+	require.Equal(t, howManyIterations, controlCriteria["[3 1 3]"])
+	require.Equal(t, howManyIterations, controlCriteria["[3 1 4]"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
 	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")

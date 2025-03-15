@@ -15,7 +15,7 @@ import (
 // Single-thread only! Use sub-loggers if want to use it concurrently
 type Logger struct {
 	RootContext  *loggerapi.RootContext
-	IsInactive   bool // per logger
+	IsInactive   bool
 	UserObject   any
 	TraceContext *loggerapi.TraceContext
 
@@ -146,7 +146,43 @@ func (l *Logger) ErrEvent(err error, msgtag string) loggerapi.IEvent {
 	return e
 }
 
-func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.ISubLoggerInitChain {
+func appendTracingData(e *Event, tag string) {
+	e.ParentLogger.mu.Lock()
+	defer e.ParentLogger.mu.Unlock()
+
+	tc := e.ParentLogger.TraceContext
+	rc := e.ParentLogger.RootContext
+
+	k := rc.XUIdKey
+	if len(k) != 0 {
+		e.ZerologEvent = e.ZerologEvent.Str(k, rc.XUId)
+	}
+
+	k = rc.ETCKey
+	if len(k) != 0 {
+		tc.ETC.Inc()
+		e.ZerologEvent = e.ZerologEvent.Ints(k, tc.ETC)
+	}
+
+	tc.Msgtags = append(tc.Msgtags, tag)
+	// The "pop" operation is at the e.Send(), and it's race-unsafe intentionally -
+	// because if we e.g. lock the mutex, we have the risk to dead-lock incorrect user
+	// program. The choise is made to prefer incorrect tagging, but not dead-locking,
+	// in that case.
+
+	// call the (re-)activation hook, if any
+	hook := rc.ActivationHook
+	if hook != nil {
+		e.IsInactive = hook(e)
+		tc.IsInactive = e.IsInactive
+	}
+	k = rc.MsgtagKey
+	if len(k) != 0 {
+		e.ZerologEvent.Strs(k, tc.Msgtags)
+	}
+}
+
+func (l *Logger) NewSubLoggerInitChain(msgtag string) loggerapi.ISubLoggerInitChain {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -156,42 +192,20 @@ func (l *Logger) SubLoggerInitChain(msgtag string) loggerapi.ISubLoggerInitChain
 	slich := &subLoggerInitChain{
 		zerologContext: &zerologContext,
 		traceContext: &loggerapi.TraceContext{
-			ETC:     l.TraceContext.ETC.BranchSub(),
-			Msgtags: l.TraceContext.Msgtags.With(msgtag),
+			ETC:     l.TraceContext.ETC.CloneBranchSub(),
+			Msgtags: l.TraceContext.Msgtags.CloneWith(msgtag),
 		},
 		rctx:        l.RootContext,
 		uo:          l.UserObject,
 		interceptor: l.interceptor,
 	}
+
+	h := l.RootContext.NewSubLoggerHook
+	if h != nil {
+		h(slich.traceContext)
+	}
+
 	return slich
-}
-
-func appendTracingData(e *Event, msgtag string) {
-	e.ParentLogger.mu.Lock()
-	defer e.ParentLogger.mu.Unlock()
-
-	k := e.ParentLogger.RootContext.XUIdKey
-	if len(k) != 0 {
-		e.ZerologEvent = e.ZerologEvent.Str(k, e.ParentLogger.RootContext.XUId)
-	}
-
-	k = e.ParentLogger.RootContext.ETCKey
-	if len(k) != 0 {
-		e.ParentLogger.TraceContext.ETC.Inc()
-		e.ZerologEvent = e.ZerologEvent.Ints(k, e.ParentLogger.TraceContext.ETC)
-	}
-
-	e.TheMsgtags = e.ParentLogger.TraceContext.Msgtags.With(msgtag)
-
-	// call the (re-)activation hook, if any
-	hook := e.ParentLogger.RootContext.ActivationHook
-	if hook != nil {
-		e.IsInactive = hook(e)
-	}
-	k = e.ParentLogger.RootContext.MsgtagKey
-	if len(k) != 0 {
-		e.ZerologEvent.Strs(k, e.TheMsgtags)
-	}
 }
 
 func (l *Logger) SwitchOnTheOfflineAccumulation() loggerapi.ILogger {
@@ -245,4 +259,36 @@ func (l *Logger) GetUserObject() (uo any) {
 
 func (l *Logger) GetTraceContext() (tc *loggerapi.TraceContext) {
 	return l.TraceContext
+}
+
+func (l *Logger) SpanBegin(tag string) loggerapi.ILogger {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	tc := l.TraceContext
+
+	tc.ETC = append(tc.ETC, 0)
+	tc.Msgtags = append(tc.Msgtags, tag)
+
+	h := l.RootContext.SpanBeginHook
+	if h != nil {
+		h(tc)
+	}
+
+	return l
+}
+
+func (l *Logger) SpanEnd() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	tc := l.TraceContext
+
+	h := l.RootContext.SpanEndHook
+	if h != nil {
+		h(tc)
+	}
+
+	tc.ETC = tc.ETC[:len(tc.ETC)-1]
+	tc.Msgtags = tc.Msgtags[:len(tc.Msgtags)-1]
 }

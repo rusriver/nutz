@@ -156,7 +156,7 @@ Common idioms:
 
     Make a sub-logger:
 
-            logger = logger.SubLoggerInitChain().
+            logger = logger.NewSubLoggerInitChain().
                 Str("executable", "my service").
                 Str("version", "1.234.0").
                 Caller().

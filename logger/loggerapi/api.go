@@ -18,9 +18,14 @@ type ILogger interface {
 	ErrorEvent(msgtag string) IEvent
 	ErrEvent(err error, msgtag string) IEvent
 
-	// Can be used if you intend to call ILogger() on it later.
+	// Creates new sub-logger, suitable for another thread.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
-	SubLoggerInitChain(msgtag string) ISubLoggerInitChain
+	NewSubLoggerInitChain(msgtag string) ISubLoggerInitChain
+
+	// Faster single-thread-only alternative to creating a sub-logger; avoids unnecessary
+	// allocations, and calls hooks. Doesn't create another logger, modifies existing one.
+	SpanBegin(msgtag string) ILogger
+	SpanEnd() // counterpart for SpanBegin()
 
 	SwitchOnTheOfflineAccumulation() ILogger
 	FinishAccumulationAndFetch() (llines []*configdb.Root)
@@ -60,7 +65,7 @@ type ISubLoggerInitChain interface {
 	Bytes(string, []byte) ISubLoggerInitChain
 
 	WithClonedRootContext(optFuncs ...func(rctx *RootContext)) ISubLoggerInitChain
-	ILogger() ILogger
+	ILogger() ILogger // (!) Each ILogger must be used in single thread, otherwise you'll get inconsistent tagging
 }
 
 type IEvent interface {

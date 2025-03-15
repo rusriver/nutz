@@ -10,10 +10,9 @@ import (
 
 type Event struct {
 	ParentLogger      *Logger
-	IsInactive        bool              // per event
-	TheLevel          string            // per event
-	TheMsgtags        loggerapi.Msgtags // per event
-	TheTitle          string            // per event
+	IsInactive        bool   // per event
+	TheLevel          string // per event
+	TheTitle          string // per event
 	theTitleIsDefault bool
 	ZerologEvent      *zerolog.Event
 }
@@ -175,6 +174,13 @@ func (e *Event) Bytes(k string, bb []byte) loggerapi.IEvent {
 }
 
 func (e *Event) Send() {
+	tc := e.ParentLogger.TraceContext
+	rc := e.ParentLogger.RootContext
+
+	defer func() {
+		tc.Msgtags = tc.Msgtags[:len(tc.Msgtags)-1]
+	}()
+
 	if e.IsInactive {
 		return // bypass
 	}
@@ -189,7 +195,7 @@ func (e *Event) Send() {
 	if len(e.TheTitle) > 0 {
 		e.ZerologEvent.Str("title", e.TheTitle) // gonna be the last, and that's great for readability
 	}
-	hook := e.ParentLogger.RootContext.IfSendHook
+	hook := rc.IfSendHook
 	doSend := true
 	if hook != nil {
 		doSend = hook(e)

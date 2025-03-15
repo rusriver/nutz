@@ -3,14 +3,17 @@ package loggerapi
 import "io"
 
 type RootContext struct {
-	MainWriter      io.Writer
-	MsgtagKey       string
-	XUIdKey         string // XU logger root id
-	ETCKey          string // event tracing counters
-	IfSendHook      func(e IEventInHook) (doSend bool)
-	EventOnWireHook func(e IEventInHook, p []byte)
-	ActivationHook  func(e IEventInHook) (inactivate bool) // If the ActicationHook is set, it is called, and it can reactivate the event.
-	XUId            string
+	MainWriter       io.Writer
+	MsgtagKey        string
+	XUIdKey          string // XU logger root id
+	ETCKey           string // event tracing counters
+	IfSendHook       func(e IEventInHook) (doSend bool)
+	EventOnWireHook  func(e IEventInHook, p []byte)
+	ActivationHook   func(e IEventInHook) (inactivate bool) // If the ActicationHook is set, it is called, and it can reactivate the event.
+	NewSubLoggerHook func(tc *TraceContext)
+	SpanBeginHook    func(tc *TraceContext)
+	SpanEndHook      func(tc *TraceContext)
+	XUId             string
 }
 
 type IEventInHook interface {

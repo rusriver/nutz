@@ -10,7 +10,7 @@ func (msgtags Msgtags) String() string {
 	return strings.Join(msgtags, " ")
 }
 
-func (msgtags Msgtags) With(ss ...string) Msgtags {
+func (msgtags Msgtags) CloneWith(ss ...string) Msgtags {
 	if msgtags == nil {
 		// msgtag = &Msgtag{ss...} // WTF, doesn't work (TODO)
 		return append(Msgtags{}, ss...)

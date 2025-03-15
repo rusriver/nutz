@@ -96,7 +96,7 @@ func Test_e2_01(t *testing.T) {
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.SubLoggerInitChain("a24487").
+	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -104,21 +104,21 @@ func Test_e2_01(t *testing.T) {
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.NewSubLoggerInitChain("59fc7").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
-		Logger := Logger.SubLoggerInitChain("73853896").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("73853896").ILogger()
 		for i := 0; i < 20; i++ {
 			Logger.InfoEvent("41").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := Logger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < 20; i++ {
 			Logger.InfoEvent("48").Title("g2").Send()
 		}
@@ -174,7 +174,7 @@ func Test_e2_02(t *testing.T) {
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.SubLoggerInitChain("a24487").
+	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -182,21 +182,21 @@ func Test_e2_02(t *testing.T) {
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.NewSubLoggerInitChain("59fc7").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
-		Logger := Logger.SubLoggerInitChain("73853896").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("73853896").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("41").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := Logger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("48").Title("g2").Send()
 		}
@@ -250,7 +250,7 @@ func Test_e2_03(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Logger
 
-	Logger = Logger.SubLoggerInitChain("_TLK").
+	Logger = Logger.NewSubLoggerInitChain("_TLK").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -272,7 +272,7 @@ func Test_e2_03(t *testing.T) {
 		wg1.Done()
 	}()
 
-	OfflineLogger := Logger.SubLoggerInitChain("06fca0faf7").WithClonedRootContext(func(rctx *loggerapi.RootContext) {
+	OfflineLogger := Logger.NewSubLoggerInitChain("06fca0faf7").WithClonedRootContext(func(rctx *loggerapi.RootContext) {
 		rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
 			ChLogsAcc <- p
 		}
@@ -282,35 +282,35 @@ func Test_e2_03(t *testing.T) {
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.NewSubLoggerInitChain("59fc7").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("73853896").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("73853896").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5141c5c5").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5141c5c5").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("a5042f9c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("a5042f9c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("311").Title("g4").Send()
 		}
@@ -373,7 +373,7 @@ func Test_e2_04(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Logger
 
-	Logger = Logger.SubLoggerInitChain("_TLK").
+	Logger = Logger.NewSubLoggerInitChain("_TLK").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -382,40 +382,40 @@ func Test_e2_04(t *testing.T) {
 
 	howManyIterations := 10000
 
-	OfflineLogger := Logger.SubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
+	OfflineLogger := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.NewSubLoggerInitChain("59fc7").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("73853896").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("73853896").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5141c5c5").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5141c5c5").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("a5042f9c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("a5042f9c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("311").Title("g4").Send()
 		}
@@ -496,7 +496,7 @@ func Test_e2_05(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Logger
 
-	Logger = Logger.SubLoggerInitChain("_TLK").
+	Logger = Logger.NewSubLoggerInitChain("_TLK").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -505,40 +505,40 @@ func Test_e2_05(t *testing.T) {
 
 	howManyIterations := 10000
 
-	OfflineLogger := Logger.SubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
+	OfflineLogger := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").ILogger() // just make a sublogger
+	Logger = Logger.NewSubLoggerInitChain("59fc7").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("73853896").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("73853896").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("5141c5c5").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("5141c5c5").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := OfflineLogger.SubLoggerInitChain("a5042f9c").ILogger()
+		Logger := OfflineLogger.NewSubLoggerInitChain("a5042f9c").ILogger()
 		for i := 0; i < howManyIterations; i++ {
 			Logger.InfoEvent("311").Title("g4").Send()
 		}

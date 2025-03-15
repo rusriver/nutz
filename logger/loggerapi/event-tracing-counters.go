@@ -11,7 +11,7 @@ func (etc EventTracingCounters) Inc() {
 	etc[len(etc)-1] = c
 }
 
-func (etc EventTracingCounters) BranchSub() EventTracingCounters {
+func (etc EventTracingCounters) CloneBranchSub() EventTracingCounters {
 	etc2 := make(EventTracingCounters, len(etc)+1)
 	copy(etc2, etc)
 	return etc2

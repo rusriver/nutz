@@ -20,7 +20,7 @@ func Test_e1_01(t *testing.T) {
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.SubLoggerInitChain("SUBSYSTEM-a24487").
+	Logger = nutzLogger.NewSubLoggerInitChain("SUBSYSTEM-a24487").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()
@@ -28,21 +28,28 @@ func Test_e1_01(t *testing.T) {
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
 
-	Logger = Logger.SubLoggerInitChain("59fc7").Str("some", "data").ILogger() // just make a sublogger
+	Logger.SpanBegin("SPAN-3a7ce735")
+	Logger.InfoEvent("32").SendMsg("hello")
+	Logger.InfoEvent("33").SendMsg("again")
+	Logger.SpanEnd()
+
+	Logger.InfoEvent("66afccbd").Title("some title 1").Send()
+
+	Logger = Logger.NewSubLoggerInitChain("59fc7").Str("some", "data").ILogger() // just make a sublogger
 
 	Logger.InfoEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
-		Logger := Logger.SubLoggerInitChain("SUBSYSTEM-73853896").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("SUBSYSTEM-73853896").ILogger()
 		for i := 0; i < 5; i++ {
 			Logger.InfoEvent("41").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
-		Logger := Logger.SubLoggerInitChain("5687595c").ILogger()
+		Logger := Logger.NewSubLoggerInitChain("5687595c").ILogger()
 		for i := 0; i < 5; i++ {
 			Logger.InfoEvent("48").Title("g2").Send()
 		}

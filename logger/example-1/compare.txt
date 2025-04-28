@@ -1,3 +1,9 @@
 {"level":"info","xu":"my-xu","ver":"1.2.3","xuid":"6FEDFASDsXjETtF39KMMfB","etc":[3,3,2,4],"msgtags":["7c38f2df","0050f962","52","54"],"title":"g2","time":"2025-03-09T21:05:02+03:00"}
 
 {: level info, xu my-xu, ver 1.2.3, xuid 6FEDFASDsXjETtF39KMMfB, etc [3 3 2 4], msgtags [7c38f2df 0050f962 52 54], title g2, ts 20250309-210502}
+
+--
+
+{"level":"INFO","name":"R1","xuid":"2EdpWjVw","etc":[1,4],"msgtags":["1e0194","29"],"fresh":["SUBSYSTEM-03"],"ready":["SUBSYSTEM-01"],"ceded":["SUBSYSTEM-02"],"message":"SUBSYSTEM-02 signalled","ts":"20250428-102442"}
+
+{: level INFO, name R1, xuid 2EdpWjVw, etc [1 4], msgtags [1e0194 29], fresh [SUBSYSTEM-03], ready [SUBSYSTEM-01], ceded [SUBSYSTEM-02], message "SUBSYSTEM-02 signalled", ts 20250428-102442}

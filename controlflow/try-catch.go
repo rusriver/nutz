@@ -27,12 +27,12 @@ func (e *Exception) String() string {
 		switch xv := x.(type) {
 		case error:
 			br.WriteString(xv.Error())
-			br.WriteString(" ")
+			br.WriteString("; ")
 		case string:
 			br.WriteString(xv)
-			br.WriteString(" ")
+			br.WriteString("; ")
 		default:
-			br.WriteString(fmt.Sprintf("%v ", xv))
+			br.WriteString(fmt.Sprintf("%v; ", xv))
 		}
 	}
 	br.WriteString(

@@ -208,6 +208,10 @@ func (l *Logger) NewSubLoggerInitChain(msgtag string) loggerapi.ISubLoggerInitCh
 	return slich
 }
 
+func (l *Logger) NSLIC(msgtag string) loggerapi.ISubLoggerInitChain {
+	return l.NewSubLoggerInitChain(msgtag)
+}
+
 func (l *Logger) SwitchOnTheOfflineAccumulation() loggerapi.ILogger {
 	l.mu.Lock()
 	defer l.mu.Unlock()

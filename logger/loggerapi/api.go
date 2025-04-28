@@ -21,6 +21,7 @@ type ILogger interface {
 	// Creates new sub-logger, suitable for another thread.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
 	NewSubLoggerInitChain(msgtag string) ISubLoggerInitChain
+	NSLIC(msgtag string) ISubLoggerInitChain // synonym for NewSubLoggerInitChain()
 
 	// Faster single-thread-only alternative to creating a sub-logger; avoids unnecessary
 	// allocations, and calls hooks. Doesn't create another logger, modifies existing one.

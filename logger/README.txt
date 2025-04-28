@@ -126,6 +126,26 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
 
 Common idioms:
 
+    Simplest form:
+
+        import (
+            "github.com/rusriver/nutz/logger"
+            "github.com/rusriver/nutz/logger/loggerapi"
+        )
+
+        ...
+
+    	nutzLogger := logger.New(shortuuid.New()[:8], nil)
+
+        var Logger loggerapi.ILogger
+
+        Logger = nutzLogger
+
+
+    ---------------------------------------
+    -- EXAMPLES OUTDATED BELOW THIS LINE --
+    ---------------------------------------
+
     Init the logger:
 
             "github.com/rs/zerolog/log"

@@ -126,7 +126,7 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
 
 Common idioms:
 
-    Simplest form:
+    General (not so) minimal form:
 
         import (
             "github.com/rusriver/nutz/logger"
@@ -135,7 +135,7 @@ Common idioms:
 
         ...
 
-    	nutzLogger := logger.New(nil)
+    	nutzLogger := logger.New(nil).NSLIC("app-name").ILogger.(*logger.Logger)
 
         var Logger loggerapi.ILogger
 

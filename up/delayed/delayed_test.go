@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lithammer/shortuuid/v4"
 	"github.com/rusriver/nutz/logger"
 	"github.com/rusriver/nutz/up/delayed"
 )
@@ -26,7 +25,7 @@ func Test_Delayed_01(t *testing.T) {
 			d.Logger.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(shortuuid.New()[:8], nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")
@@ -51,7 +50,7 @@ func Test_Delayed_02(t *testing.T) {
 			d.Logger.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(shortuuid.New()[:8], nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")
@@ -75,7 +74,7 @@ func Test_Delayed_03(t *testing.T) {
 			d.Logger.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(shortuuid.New()[:8], nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")

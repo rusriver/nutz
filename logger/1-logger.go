@@ -6,7 +6,6 @@ import (
 	"os"
 	"sync"
 
-	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog"
 	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/logger/loggerapi"
@@ -28,10 +27,9 @@ type Logger struct {
 
 var _ loggerapi.ILogger = (*Logger)(nil)
 
-func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger *Logger) {
+func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger loggerapi.ILogger) {
 	rctx := &loggerapi.RootContext{
 		MsgtagKey: "msgtags",
-		XUIdKey:   "xuid",
 		ETCKey:    "etc",
 	}
 	for _, f := range optFuncs {
@@ -39,10 +37,6 @@ func New(xuid string, zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootC
 	}
 	if rctx.MainWriter == nil {
 		rctx.MainWriter = os.Stderr
-	}
-	rctx.XUId = xuid
-	if len(rctx.XUId) == 0 {
-		rctx.XUId = shortuuid.New()[:8]
 	}
 	{
 		zerolog.TimestampFieldName = "ts"
@@ -153,12 +147,7 @@ func appendTracingData(e *Event, tag string) {
 	tc := e.ParentLogger.TraceContext
 	rc := e.ParentLogger.RootContext
 
-	k := rc.XUIdKey
-	if len(k) != 0 {
-		e.ZerologEvent = e.ZerologEvent.Str(k, rc.XUId)
-	}
-
-	k = rc.ETCKey
+	k := rc.ETCKey
 	if len(k) != 0 {
 		tc.ETC.Inc()
 		e.ZerologEvent = e.ZerologEvent.Ints(k, tc.ETC)

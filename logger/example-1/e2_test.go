@@ -83,11 +83,11 @@ func Test_e2_01(t *testing.T) {
 	}()
 
 	// create a logger
-	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {
+	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
 		rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
 			ChLogsAcc <- p
 		}
-	})
+	}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
@@ -97,8 +97,7 @@ func Test_e2_01(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
 	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
-		Str("xu", "my-xu").
-		Str("ver", "1.2.3").
+		Str("xu-ver", "1.2.3").
 		ILogger()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
@@ -161,11 +160,11 @@ func Test_e2_02(t *testing.T) {
 	}()
 
 	// create a logger
-	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {
+	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
 		rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
 			ChLogsAcc <- p
 		}
-	})
+	}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
@@ -175,8 +174,7 @@ func Test_e2_02(t *testing.T) {
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
 	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
-		Str("xu", "my-xu").
-		Str("ver", "1.2.3").
+		Str("xu-ver", "1.2.3").
 		ILogger()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
@@ -223,24 +221,24 @@ func Test_e2_02(t *testing.T) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 3, 2}) {
-			controlCriteria["3,3,2"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 3, 2}) {
+			controlCriteria["1,3,3,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 3, 3}) {
-			controlCriteria["3,3,3"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 3, 3}) {
+			controlCriteria["1,3,3,3"]++
 		}
 	}
 
 	fmt.Printf("CONTROL CRITERIA: %+v\n", controlCriteria)
-	require.Equal(t, howManyIterations, controlCriteria["3,3,2"])
-	require.Equal(t, howManyIterations, controlCriteria["3,3,3"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,3,2"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,3,3"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 }
 
 func Test_e2_03(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {})
+	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
@@ -251,8 +249,7 @@ func Test_e2_03(t *testing.T) {
 	RootLogger := Logger
 
 	Logger = Logger.NewSubLoggerInitChain("_TLK").
-		Str("xu", "my-xu").
-		Str("ver", "1.2.3").
+		Str("xu-ver", "1.2.3").
 		ILogger()
 
 	// create a sub-logger, with disabled and intercepted output
@@ -335,25 +332,25 @@ func Test_e2_03(t *testing.T) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 1}) {
-			controlCriteria["3,1,1"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 1}) {
+			controlCriteria["1,3,1,1"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 2}) {
-			controlCriteria["3,1,2"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 2}) {
+			controlCriteria["1,3,1,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 3}) {
-			controlCriteria["3,1,3"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 3}) {
+			controlCriteria["1,3,1,3"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 4}) {
-			controlCriteria["3,1,4"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 4}) {
+			controlCriteria["1,3,1,4"]++
 		}
 	}
 
 	fmt.Printf("CONTROL CRITERIA: %+v\n", controlCriteria)
-	require.Equal(t, howManyIterations, controlCriteria["3,1,1"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,2"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,3"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,4"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,1"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,2"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,3"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,4"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
 	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
@@ -363,7 +360,7 @@ func Test_e2_03(t *testing.T) {
 func Test_e2_04(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {})
+	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
@@ -374,8 +371,7 @@ func Test_e2_04(t *testing.T) {
 	RootLogger := Logger
 
 	Logger = Logger.NewSubLoggerInitChain("_TLK").
-		Str("xu", "my-xu").
-		Str("ver", "1.2.3").
+		Str("xu-ver", "1.2.3").
 		ILogger()
 
 	// create a sub-logger, with disabled and intercepted output
@@ -439,25 +435,25 @@ func Test_e2_04(t *testing.T) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 1}) {
-			controlCriteria["3,1,1"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 1}) {
+			controlCriteria["1,3,1,1"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 2}) {
-			controlCriteria["3,1,2"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 2}) {
+			controlCriteria["1,3,1,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 3}) {
-			controlCriteria["3,1,3"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 3}) {
+			controlCriteria["1,3,1,3"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{3, 1, 4}) {
-			controlCriteria["3,1,4"]++
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 4}) {
+			controlCriteria["1,3,1,4"]++
 		}
 	}
 
 	fmt.Printf("CONTROL CRITERIA: %+v\n", controlCriteria)
-	require.Equal(t, howManyIterations, controlCriteria["3,1,1"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,2"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,3"])
-	require.Equal(t, howManyIterations, controlCriteria["3,1,4"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,1"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,2"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,3"])
+	require.Equal(t, howManyIterations, controlCriteria["1,3,1,4"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
 	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
@@ -486,7 +482,7 @@ func Test_e2_04(t *testing.T) {
 func Test_e2_05(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(shortuuid.New()[:8], nil, func(rctx *loggerapi.RootContext) {})
+	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
@@ -497,8 +493,7 @@ func Test_e2_05(t *testing.T) {
 	RootLogger := Logger
 
 	Logger = Logger.NewSubLoggerInitChain("_TLK").
-		Str("xu", "my-xu").
-		Str("ver", "1.2.3").
+		Str("xu-ver", "1.2.3").
 		ILogger()
 
 	// create a sub-logger, with disabled and intercepted output

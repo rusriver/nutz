@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lithammer/shortuuid/v4"
 	"github.com/rusriver/nutz/controlflow"
 	"github.com/rusriver/nutz/logger"
 	"github.com/rusriver/nutz/up/reactor"
@@ -20,7 +19,9 @@ const (
 )
 
 func Test_Reactor_01(t *testing.T) {
-	logger := logger.New(shortuuid.New()[:8], nil)
+	logger := logger.New(nil)
+
+	logger = logger.NSLIC("xuid here").ILogger()
 
 	r := &reactor.Reactor{
 		Name:    "R1",
@@ -69,7 +70,7 @@ func Test_Reactor_01(t *testing.T) {
 
 // lightweight version
 func Test_Reactor_02(t *testing.T) {
-	logger := logger.New(shortuuid.New()[:8], nil)
+	logger := logger.New(nil)
 
 	r := &reactor.Reactor{
 		Name:    "R1",
@@ -116,7 +117,7 @@ func Test_Reactor_02(t *testing.T) {
 }
 
 func Test_Reactor_03(t *testing.T) {
-	logger := logger.New(shortuuid.New()[:8], nil)
+	logger := logger.New(nil)
 
 	controlflow.Try(func() (err error) {
 

@@ -11,7 +11,7 @@ import (
 
 func Test_e1_01(t *testing.T) {
 
-	nutzLogger := logger.New(shortuuid.New()[:8], nil)
+	nutzLogger := logger.New(nil).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 

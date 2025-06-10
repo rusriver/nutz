@@ -135,12 +135,24 @@ Common idioms:
 
         ...
 
-    	nutzLogger := logger.New(shortuuid.New()[:8], nil)
+    	nutzLogger := logger.New(nil)
 
         var Logger loggerapi.ILogger
 
         Logger = nutzLogger
 
+
+    ---------------------------------------
+    -- EXAMPLES OUTDATED BELOW THIS LINE --
+    ---------------------------------------
+
+    ---------------------------------------
+    -- EXAMPLES OUTDATED BELOW THIS LINE --
+    ---------------------------------------
+
+    ---------------------------------------
+    -- EXAMPLES OUTDATED BELOW THIS LINE --
+    ---------------------------------------
 
     ---------------------------------------
     -- EXAMPLES OUTDATED BELOW THIS LINE --
@@ -176,8 +188,7 @@ Common idioms:
 
     Make a sub-logger:
 
-            logger = logger.NewSubLoggerInitChain().
-                Str("executable", "my service").
+            logger = logger.NewSubLoggerInitChain("my service").
                 Str("version", "1.234.0").
                 Caller().
                 ILogger()

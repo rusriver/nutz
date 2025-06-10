@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lithammer/shortuuid/v4"
 	"github.com/rusriver/nutz/logger"
 	readinesssensor "github.com/rusriver/nutz/readiness-sensor"
 )
@@ -17,7 +16,7 @@ func Test_Sensor_0111(t *testing.T) {
 	wg1.Add(1)
 
 	sensor, _ := readinesssensor.New(func(c *readinesssensor.Sensor) {
-		c.Logger = logger.New(shortuuid.New()[:8], nil)
+		c.Logger = logger.New(nil)
 		c.F = func(s *readinesssensor.Sensor) {
 			status := s.StatusInternal()
 			s.Logger.InfoEvent("23").

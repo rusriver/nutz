@@ -5,7 +5,6 @@ import "io"
 type RootContext struct {
 	MainWriter       io.Writer
 	MsgtagKey        string
-	XUIdKey          string // XU logger root id
 	ETCKey           string // event tracing counters
 	IfSendHook       func(e IEventInHook) (doSend bool)
 	EventOnWireHook  func(e IEventInHook, p []byte)
@@ -13,7 +12,6 @@ type RootContext struct {
 	NewSubLoggerHook func(tc *TraceContext)
 	SpanBeginHook    func(tc *TraceContext)
 	SpanEndHook      func(tc *TraceContext)
-	XUId             string
 }
 
 type IEventInHook interface {
@@ -25,7 +23,6 @@ func (rctx0 *RootContext) Clone() *RootContext {
 	rctx2 := &RootContext{
 		MainWriter:       rctx0.MainWriter,
 		MsgtagKey:        rctx0.MsgtagKey,
-		XUIdKey:          rctx0.XUIdKey,
 		ETCKey:           rctx0.ETCKey,
 		IfSendHook:       rctx0.IfSendHook,
 		EventOnWireHook:  rctx0.EventOnWireHook,
@@ -33,7 +30,6 @@ func (rctx0 *RootContext) Clone() *RootContext {
 		NewSubLoggerHook: rctx0.NewSubLoggerHook,
 		SpanBeginHook:    rctx0.SpanBeginHook,
 		SpanEndHook:      rctx0.SpanEndHook,
-		XUId:             rctx0.XUId,
 	}
 	return rctx2
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/logger/loggerapi"
+	"github.com/rusriver/nutz/logger/loggerapi/accumapi"
 )
 
 // Single-thread only! Use sub-loggers if want to use it concurrently
@@ -26,6 +27,7 @@ type Logger struct {
 }
 
 var _ loggerapi.ILogger = (*Logger)(nil)
+var _ accumapi.ILogsAccumulator = (*Logger)(nil)
 
 func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggerapi.RootContext)) (logger loggerapi.ILogger) {
 	rctx := &loggerapi.RootContext{

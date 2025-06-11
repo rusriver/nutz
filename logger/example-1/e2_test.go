@@ -12,6 +12,7 @@ import (
 	"github.com/rusriver/nutz/algoutils"
 	"github.com/rusriver/nutz/logger"
 	"github.com/rusriver/nutz/logger/loggerapi"
+	"github.com/rusriver/nutz/logger/loggerapi/accumapi"
 	"github.com/stretchr/testify/require"
 )
 
@@ -378,7 +379,9 @@ func Test_e2_04(t *testing.T) {
 
 	howManyIterations := 10000
 
-	OfflineLogger := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
+	ol1 := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger()
+	var OfflineLogger accumapi.ILogsAccumulator = ol1.(*logger.Logger) // because of stupid cycle import ban in Go
+	OfflineLogger.SwitchOnTheOfflineAccumulation()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()
@@ -500,7 +503,9 @@ func Test_e2_05(t *testing.T) {
 
 	howManyIterations := 10000
 
-	OfflineLogger := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger().SwitchOnTheOfflineAccumulation()
+	ol1 := Logger.NewSubLoggerInitChain("06fca0faf7").ILogger()
+	var OfflineLogger accumapi.ILogsAccumulator = ol1.(*logger.Logger) // because of stupid cycle import ban in Go
+	OfflineLogger.SwitchOnTheOfflineAccumulation()
 
 	Logger.InfoEvent("111b7de0").Title("some title 1").Send()
 	Logger.InfoEvent("e3466c79").Title("some title 1").Send()

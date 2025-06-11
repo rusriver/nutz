@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
-	"github.com/rusriver/configdb/v3"
 )
 
 type ILogger interface {
@@ -27,10 +26,6 @@ type ILogger interface {
 	// allocations, and calls hooks. Doesn't create another logger, modifies existing one.
 	SpanBegin(msgtag string) ILogger
 	SpanEnd() // counterpart for SpanBegin()
-
-	SwitchOnTheOfflineAccumulation() ILogger
-	FinishAccumulationAndFetch() (llines []*configdb.Root)
-	RestartTheAccumulation()
 }
 
 type ISubLoggerInitChain interface {

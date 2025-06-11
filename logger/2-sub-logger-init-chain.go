@@ -7,7 +7,6 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rusriver/nutz/logger/loggerapi"
-	"github.com/rusriver/nutz/logger/loggerapi/accumapi"
 )
 
 type subLoggerInitChain struct {
@@ -129,12 +128,6 @@ func (slich *subLoggerInitChain) WithClonedRootContext(optFuncs ...func(rctx *lo
 }
 
 func (slich *subLoggerInitChain) ILogger() loggerapi.ILogger {
-	return slich.Logger()
-}
-func (slich *subLoggerInitChain) ILogsAccumulator() accumapi.ILogsAccumulator {
-	return slich.Logger()
-}
-func (slich *subLoggerInitChain) Logger() *Logger {
 	zeroLogger := slich.zerologContext.Logger()
 	logger := &Logger{
 		RootContext: slich.rctx,

@@ -126,20 +126,61 @@ Some technical details: why wasn't standard hooks mechanism of zerolog wasn't en
 
 Common idioms:
 
-    General (not so) minimal form:
+    General minimal form:
 
         import (
             "github.com/rusriver/nutz/logger"
             "github.com/rusriver/nutz/logger/loggerapi"
         )
 
-        ...
+    	ilogger := logger.New(nil).NSLIC("app-name").ILogger()
 
-    	nutzLogger := logger.New(nil).NSLIC("app-name").ILogger.(*logger.Logger)
+        ilogger.InfoEvent("1234").SendMsg("hello")
+
+
+    More example:
+
+        import (
+            "github.com/rusriver/nutz/logger"
+            "github.com/rusriver/nutz/logger/loggerapi"
+        )
 
         var Logger loggerapi.ILogger
 
-        Logger = nutzLogger
+        Logger := logger.New(nil).NSLIC(shortuuid.New()[:8]).ILogger()
+
+        // get a zerolog logger (sometimes that's needed to inject into some deps)
+        {
+            zl := ilogger.(*logger.Logger).ZeroLogger
+
+            // now log something
+            zl.Info().Msg("Here's the zerologger output")
+        }
+
+
+
+    For the source-of-truth examples, please take a look at tests in example-1 folder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     ---------------------------------------

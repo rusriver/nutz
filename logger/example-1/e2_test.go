@@ -84,7 +84,7 @@ func Test_e2_01(t *testing.T) {
 	}()
 
 	// create a logger
-	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
+	ilogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
 		rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
 			ChLogsAcc <- p
 		}
@@ -92,12 +92,12 @@ func Test_e2_01(t *testing.T) {
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
+	Logger = ilogger.NewSubLoggerInitChain("a24487").
 		Str("xu-ver", "1.2.3").
 		ILogger()
 
@@ -161,7 +161,7 @@ func Test_e2_02(t *testing.T) {
 	}()
 
 	// create a logger
-	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
+	ilogger := logger.New(nil, func(rctx *loggerapi.RootContext) {
 		rctx.EventOnWireHook = func(e loggerapi.IEventInHook, p []byte) {
 			ChLogsAcc <- p
 		}
@@ -169,12 +169,12 @@ func Test_e2_02(t *testing.T) {
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.NewSubLoggerInitChain("a24487").
+	Logger = ilogger.NewSubLoggerInitChain("a24487").
 		Str("xu-ver", "1.2.3").
 		ILogger()
 
@@ -239,11 +239,11 @@ func Test_e2_02(t *testing.T) {
 func Test_e2_03(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
+	ilogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
@@ -361,11 +361,11 @@ func Test_e2_03(t *testing.T) {
 func Test_e2_04(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
+	ilogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
@@ -485,11 +485,11 @@ func Test_e2_04(t *testing.T) {
 func Test_e2_05(t *testing.T) {
 
 	// create a normal logger
-	nutzLogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
+	ilogger := logger.New(nil, func(rctx *loggerapi.RootContext) {}).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()

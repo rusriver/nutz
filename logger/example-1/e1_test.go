@@ -11,16 +11,16 @@ import (
 
 func Test_e1_01(t *testing.T) {
 
-	nutzLogger := logger.New(nil).NSLIC(shortuuid.New()[:8]).ILogger()
+	ilogger := logger.New(nil).NSLIC(shortuuid.New()[:8]).ILogger()
 
 	var Logger loggerapi.ILogger
 
-	Logger = nutzLogger
+	Logger = ilogger
 
 	Logger.InfoEvent("d3740cd9").Title("some title 1").Send()
 	Logger.InfoEvent("05c1e865").Title("some title 1").Send()
 
-	Logger = nutzLogger.NewSubLoggerInitChain("SUBSYSTEM-a24487").
+	Logger = ilogger.NewSubLoggerInitChain("SUBSYSTEM-a24487").
 		Str("xu", "my-xu").
 		Str("ver", "1.2.3").
 		ILogger()

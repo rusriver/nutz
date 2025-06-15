@@ -3,8 +3,8 @@ package loggerapi
 import "strings"
 
 type TraceContext struct {
-	ETC        EventTracingCounters
-	Msgtags    Msgtags
+	ETC        EventTracingCounters // []int
+	Msgtags    Msgtags              // []string
 	IsInactive bool
 }
 

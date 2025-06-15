@@ -89,34 +89,10 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 	attemptNb := 0
 	for {
 		attemptNb++
-		e = nil
-		func() {
-			defer func() {
-				if x := recover(); x != nil {
-					switch xv := x.(type) {
-					case *Exception:
-						e = xv
-					case error:
-						e = &Exception{
-							X:             x,
-							TheCauseError: xv,
-						}
-					default:
-						e = &Exception{
-							X:             x,
-							TheCauseError: fmt.Errorf("%v", xv),
-						}
-					}
-				}
-			}()
-			err := f()
-			if err != nil {
-				e = &Exception{
-					X:             err,
-					TheCauseError: err,
-				}
-			}
-		}()
+		e = Try(func() (err error) {
+			err = f()
+			return
+		})
 		if e == nil {
 			break
 		} else {
@@ -130,8 +106,10 @@ func Retry(f func() (err error), f2 func(e *Exception) (end bool)) (e *Exception
 	return
 }
 
-func Raise2(added_context any, x any) {
-	switch xv := x.(type) {
+// If you added context's string representation is longer than 15 bytes, then
+// maybe you are using it wrongly. In 99% of cases, the added context should be a string.
+func Raise2(added_context any, reason any) {
+	switch xv := reason.(type) {
 	case *Exception:
 		xv.XChain = append(xv.XChain, added_context)
 		panic(xv)
@@ -152,10 +130,10 @@ func Raise2(added_context any, x any) {
 	}
 }
 
-// You should not use Raise1() to re-raise exceptions - use Raise2() instead.
-// This one is intended only for cases where you create a new exception.
-func Raise1(x any) {
-	switch xv := x.(type) {
+// You better not use Raise1() to re-raise exceptions - use Raise2() instead.
+// This one is best intended for cases where you create a new exception.
+func Raise1(reason any) {
+	switch xv := reason.(type) {
 	case *Exception:
 		panic(xv)
 	case error:

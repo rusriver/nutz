@@ -1,13 +1,14 @@
 package accumapi
 
 import (
+	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
 )
 
 type ILogsAccumulator interface {
 	loggeterrapi.ITracer
 	SwitchOnTheOfflineAccumulation() loggeterrapi.ITracer
-	// FinishAccumulationAndFetch() (llines []*configdb.Root)
+	FinishAccumulationAndFetch() (llines []*configdb.Root)
 	RestartTheAccumulation()
 }
 

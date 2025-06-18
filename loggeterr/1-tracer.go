@@ -8,6 +8,7 @@ import (
 
 	"github.com/rs/zerolog"
 	// "github.com/rusriver/configdb/v3"
+	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/controlflow"
 	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
 	"github.com/rusriver/nutz/loggeterr/loggeterrapi/accumapi"
@@ -237,15 +238,15 @@ func (t *Tracer) SwitchOnTheOfflineAccumulation() loggeterrapi.ITracer {
 	return t
 }
 
-// func (t *Tracer) FinishAccumulationAndFetch() (llines []*configdb.Root) {
-// 	t.mu.Lock()
-// 	defer t.mu.Unlock()
+func (t *Tracer) FinishAccumulationAndFetch() (llines []*configdb.Root) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 
-// 	if t.accumulator == nil {
-// 		panic("401d5fc2a82e553f0eab")
-// 	}
-// 	return t.accumulator.FinishAccumulationAndFetch()
-// }
+	if t.accumulator == nil {
+		panic("401d5fc2a82e553f0eab")
+	}
+	return t.accumulator.FinishAccumulationAndFetch()
+}
 
 func (t *Tracer) RestartTheAccumulation() {
 	t.mu.Lock()

@@ -3,7 +3,7 @@ package loggeterrapi
 import (
 	"io"
 
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi/trace"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type RootContext struct {

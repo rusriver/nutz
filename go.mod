@@ -5,7 +5,7 @@ go 1.23
 toolchain go1.23.4
 
 require (
-	github.com/rusriver/configdb/v3 v3.6.0
+	github.com/rusriver/configdb/v3 v3.10.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 )
 

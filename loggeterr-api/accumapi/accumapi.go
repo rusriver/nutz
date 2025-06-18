@@ -2,7 +2,7 @@ package accumapi
 
 import (
 	"github.com/rusriver/configdb/v3"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 )
 
 type ILogsAccumulator interface {

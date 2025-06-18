@@ -1,4 +1,4 @@
-package loggeterr_test
+package loggeterrzl_test
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 	"testing"
 
-	"github.com/rusriver/nutz/loggeterr"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 )
 
 func Test_StacktraceReadableOneliner(t *testing.T) {
@@ -26,7 +26,7 @@ func Test_StacktraceReadableOneliner(t *testing.T) {
 	fmt.Println()
 
 	ll = &LL{
-		Stacktrace: loggeterr.StacktraceReadableOneliner(debug.Stack()),
+		Stacktrace: loggeterrzl.StacktraceReadableOneliner(debug.Stack()),
 	}
 	bb, _ = json.Marshal(ll)
 	fmt.Println(string(bb))

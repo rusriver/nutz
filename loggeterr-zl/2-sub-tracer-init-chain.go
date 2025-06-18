@@ -1,4 +1,4 @@
-package loggeterr
+package loggeterrzl
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi/trace"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type subTracerInitChain struct {

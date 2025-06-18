@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/rusriver/nutz/loggeterr"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 )
 
 func Test_e1_01(t *testing.T) {
 
-	tracer := loggeterr.New(nil).NSTIC(shortuuid.New()[:8]).ITracer()
+	tracer := loggeterrzl.New(nil).NSTIC(shortuuid.New()[:8]).ITracer()
 
 	var Tracer loggeterrapi.ITracer
 

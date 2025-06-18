@@ -1,3 +1,7 @@
+TLDR: Implements loggeterr-api, uses zerologger under the hood.
+
+---
+
 This is a very small and simple interface wrapper over the zerolog logger,
 including the reference implementation of the wrapper. It is production ready,
 and used since 2021 privately, until open sourced in 2024. Open sourced version

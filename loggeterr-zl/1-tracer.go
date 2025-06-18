@@ -1,4 +1,4 @@
-package loggeterr
+package loggeterrzl
 
 import (
 	"errors"
@@ -10,9 +10,9 @@ import (
 	// "github.com/rusriver/configdb/v3"
 	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/controlflow"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi/accumapi"
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi/trace"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	"github.com/rusriver/nutz/loggeterr-api/accumapi"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 // Single-thread only! Use sub-loggers if want to use it concurrently

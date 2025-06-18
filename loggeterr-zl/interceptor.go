@@ -1,9 +1,9 @@
-package loggeterr
+package loggeterrzl
 
 import (
 	"io"
 
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 )
 
 type Interceptor struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rusriver/nutz/loggeterr/loggeterrapi/trace"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type Event struct {
@@ -168,8 +168,22 @@ func (existing_event *Event) Reraise(added_backtrace_point *trace.BacktracePoint
 	panic(existing_event)
 }
 
-// Example usage: controlflow.RaiseCause(tracer.GetForwardtrace(), trace.BacktracePointf("123123", "the cause"))
-// controlflow.RaiseCause(nil, trace.BacktracePointf("123123", "the cause"))
+/*
+Example usage:
+
+	controlflow.RaiseCause(tracer.GetForwardtrace(), trace.BacktracePointf("123123", "the cause"))
+	controlflow.RaiseCause(nil, trace.BacktracePointf("123123", "the cause"))
+
+Sometimes, some function want to raise the cause, but it's too tedious to pass the tracer in it;
+in this case, the function may raise it with nil forwardtrace (and it's okay), and then the user
+of it will catch the event, and set actual forwardtrace directly. Example, inside such a function:
+
+	controlflow.RaiseCause(nil, trace.BacktracePointf("123123", err.Error()))
+
+And then at first interception point:
+
+	event.Forwardtrace = tracer.GetForwardtrace()
+*/
 func RaiseCause(forward_trace *trace.Forwardtrace, first_backtrace_point *trace.BacktracePoint) {
 	event := NewEvent(forward_trace, first_backtrace_point)
 	panic(event)

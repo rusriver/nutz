@@ -36,5 +36,5 @@ type Logger struct {
 	TheSubsystem string // per logger
 	UserObject   any
 
-	zeroLogger *zerolog.Logger
+	ZeroLogger *zerolog.Logger
 }

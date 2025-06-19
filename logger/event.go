@@ -295,7 +295,7 @@ func (e *Event) ILogger() ILogger {
 			IsInactive:   e.subLoggerInitChain.isInactive, // inherit from the init chain
 			TheSubsystem: e.subLoggerInitChain.perLoggerSubsystem,
 			UserObject:   e.ParentLogger.UserObject,
-			zeroLogger:   &zeroLogger,
+			ZeroLogger:   &zeroLogger,
 		}
 		return logger
 	} else {

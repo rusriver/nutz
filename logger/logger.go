@@ -27,7 +27,7 @@ func New(zl *zerolog.Logger, optFuncs ...func(s *Settings)) (logger *Logger) {
 	}
 	logger = &Logger{
 		Settings:   settings,
-		zeroLogger: zl,
+		ZeroLogger: zl,
 	}
 	return logger
 }
@@ -37,7 +37,7 @@ func (l *Logger) DebugEvent() (e IEvent) {
 		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.DebugLevel.String(),
 		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Debug(),
+		zerologEvent: l.ZeroLogger.Debug(),
 	}
 }
 
@@ -46,7 +46,7 @@ func (l *Logger) TraceEvent() (e IEvent) {
 		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.TraceLevel.String(),
 		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Trace(),
+		zerologEvent: l.ZeroLogger.Trace(),
 	}
 }
 
@@ -55,7 +55,7 @@ func (l *Logger) ErrorEvent() (e IEvent) {
 		IsInactive:        l.IsInactive,
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      l,
-		zerologEvent:      l.zeroLogger.Error(),
+		zerologEvent:      l.ZeroLogger.Error(),
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
 	}
@@ -69,7 +69,7 @@ func (l *Logger) ErrEvent(err error) (e IEvent) {
 		IsInactive:        l.IsInactive,
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      l,
-		zerologEvent:      l.zeroLogger.Err(err),
+		zerologEvent:      l.ZeroLogger.Err(err),
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
 	}
@@ -80,7 +80,7 @@ func (l *Logger) WarnEvent() (e IEvent) {
 		IsInactive:        l.IsInactive,
 		TheLevel:          zerolog.WarnLevel.String(),
 		ParentLogger:      l,
-		zerologEvent:      l.zeroLogger.Warn(),
+		zerologEvent:      l.ZeroLogger.Warn(),
 		TheTitle:          "WARNING", // the default title
 		theTitleIsDefault: true,
 	}
@@ -91,12 +91,12 @@ func (l *Logger) InfoEvent() (e IEvent) {
 		IsInactive:   l.IsInactive,
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: l,
-		zerologEvent: l.zeroLogger.Info(),
+		zerologEvent: l.ZeroLogger.Info(),
 	}
 }
 
 func (l *Logger) SubLoggerInitChain() IEvent {
-	zerologContext := l.zeroLogger.With()
+	zerologContext := l.ZeroLogger.With()
 	e := &Event{
 		subLoggerInitChain: &subLoggerInitChain{
 			zerologContext: &zerologContext,
@@ -107,7 +107,7 @@ func (l *Logger) SubLoggerInitChain() IEvent {
 }
 
 func (l *Logger) GetZeroLoggerPtr() *zerolog.Logger {
-	return l.zeroLogger
+	return l.ZeroLogger
 }
 
 func (l *Logger) GetNutzLogger() *Logger {

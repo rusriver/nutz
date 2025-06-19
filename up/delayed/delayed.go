@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/rusriver/nutz/logger/loggerapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 )
 
 type Delayed struct {
 	Name       string
 	Context    context.Context
-	Logger     loggerapi.ILogger
+	Tracer     loggeterrapi.ITracer
 	Duration   time.Duration
 	F          func(d *Delayed)
 	F_canceled func(d *Delayed)

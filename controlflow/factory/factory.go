@@ -1,9 +1,8 @@
 package factory
 
 import (
-	"fmt"
-
 	"github.com/rusriver/nutz/controlflow"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 // This has absolutely nothing to do with the bullshit "factory pattern" popularized by
@@ -47,7 +46,7 @@ func (f *Factory[PRODUCT]) Line(name string) (line *Line[PRODUCT]) {
 	if line, ok := f.productionLines[name]; ok {
 		return line
 	} else {
-		controlflow.Raise1(fmt.Sprintf("55ade7fa04a4ec89729a line '%v' missing", name))
+		controlflow.RaiseCause(nil, trace.BacktracePointf("55ade7fa04a4ec89729a", "line '%v' missing", name))
 	}
 	return
 }

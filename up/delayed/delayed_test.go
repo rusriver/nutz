@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rusriver/nutz/logger"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 	"github.com/rusriver/nutz/up/delayed"
 )
 
@@ -19,13 +19,13 @@ func Test_Delayed_01(t *testing.T) {
 		Context:  ctx,
 		Duration: time.Second * 1,
 		F: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("38").SendMsg("fired")
+			d.Tracer.InfoEvent("38").SendMsg("fired")
 		},
 		F_canceled: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Tracer = loggeterrzl.New(nil).NSTIC("fb2b9").Str("name", d.Name).ITracer()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")
@@ -44,13 +44,13 @@ func Test_Delayed_02(t *testing.T) {
 		Context:  ctx,
 		Duration: time.Second * 5,
 		F: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("38").SendMsg("fired")
+			d.Tracer.InfoEvent("38").SendMsg("fired")
 		},
 		F_canceled: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Tracer = loggeterrzl.New(nil).NSTIC("fb2b9").Str("name", d.Name).ITracer()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")
@@ -68,13 +68,13 @@ func Test_Delayed_03(t *testing.T) {
 		Context:  ctx,
 		Duration: time.Second * 5,
 		F: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("38").SendMsg("fired")
+			d.Tracer.InfoEvent("38").SendMsg("fired")
 		},
 		F_canceled: func(d *delayed.Delayed) {
-			d.Logger.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.InfoEvent("41").SendMsg("canceled")
 		},
 	}
-	d.Logger = logger.New(nil).NSLIC("fb2b9").Str("name", d.Name).ILogger()
+	d.Tracer = loggeterrzl.New(nil).NSTIC("fb2b9").Str("name", d.Name).ITracer()
 	delayed.Start(d)
 
 	fmt.Println("STARTED")

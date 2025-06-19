@@ -1,7 +1,9 @@
 package controlflow
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/rusriver/nutz/loggeterr-api/trace"
@@ -40,14 +42,15 @@ type BacktraceDomainChain []*trace.BacktracePoint
 // E.g. to get the one before last, use Last(-2);
 // The purpose is to easily get the last thing. Also used internally
 func (b FullBacktrace) Last(neg_i int) *BacktraceDomainChain {
+	none := &BacktraceDomainChain{trace.BacktracePointf("4319f4a0f592", "non-existing backtrace chain")}
 	if neg_i >= 0 {
-		return &BacktraceDomainChain{}
+		return none
 	}
 	i := len(b) + neg_i
-	if i > 0 {
+	if i >= 0 {
 		return b[i]
 	} else {
-		return &BacktraceDomainChain{}
+		return none
 	}
 }
 
@@ -58,7 +61,7 @@ func (b BacktraceDomainChain) Last(neg_i int) *trace.BacktracePoint {
 		return nil
 	}
 	i := len(b) + neg_i
-	if i > 0 {
+	if i >= 0 {
 		return b[i]
 	} else {
 		return nil
@@ -74,55 +77,115 @@ func (e *Event) Error() string {
 var _ fmt.Stringer = (*Event)(nil)
 
 func (e *Event) String() string {
+	return e.Serk()
+}
+
+func (e *Event) Serk() string {
 	/*
 		Example string:
-			{: Forwardtrace {: ETC [1 2 3 4 5], Tags [qq ww ee]}, Backtrace {[123123 "detail"] [123123 "detail"] [123123 "detail"], [123123 "detail"] [123123 "detail"]}}
+			{: FORWARDTRACE {: ETC [1 2 3 4 5], TAGS [qq ww ee]}, BACKTRACE { [123123 "detail"] [123123 "detail"] [123123 "detail"], [123123 "detail"] [123123 "detail"]}}
 	*/
-	br := strings.Builder{}
-	for i := len(e.Backtrace) - 1; i >= 0; i-- {
-		// x := e.Backtrace[i]
-		// switch xv := x.(type) {
-		// case error:
-		// 	br.WriteString(xv.Error())
-		// 	br.WriteString("; ")
-		// case string:
-		// 	br.WriteString(xv)
-		// 	br.WriteString("; ")
-		// default:
-		// 	br.WriteString(fmt.Sprintf("%v; ", xv))
-		// }
+
+	quote_f := func(s1 string) string {
+		if strings.Contains(s1, " ") || strings.Contains(s1, "\t") || strings.Contains(s1, "\n") {
+			return `"` + s1 + `"`
+		} else {
+			return s1
+		}
 	}
-	// br.WriteString(
-	// 	e.TheCauseError.Error(),
-	// )
+
+	br := strings.Builder{}
+	br.WriteString("{: ")
+	{
+		br.WriteString("FORWARDTRACE {: ")
+		{
+			br.WriteString("ETC [")
+			{
+				l := len(e.Forwardtrace.ETC) - 1
+				for i, v := range e.Forwardtrace.ETC {
+					br.WriteString(strconv.Itoa(v))
+					if i < l {
+						br.WriteString(" ")
+					}
+				}
+			}
+			br.WriteString("], ")
+			//
+			br.WriteString("TAGS [")
+			{
+				l := len(e.Forwardtrace.Tags) - 1
+				for i, v := range e.Forwardtrace.Tags {
+					br.WriteString(quote_f(v))
+					if i < l {
+						br.WriteString(" ")
+					}
+				}
+			}
+			br.WriteString("]")
+		}
+		br.WriteString("}, ")
+		//
+		br.WriteString("BACKTRACE { ")
+		{
+			l1 := len(e.Backtrace) - 1
+			for i1, dc := range e.Backtrace {
+
+				l2 := len(*dc) - 1
+				for i2, bp := range *dc {
+					br.WriteString("[")
+					br.WriteString(quote_f(bp.Id))
+					br.WriteString(" ")
+					br.WriteString(quote_f(fmt.Sprintf("%v", bp.Detail)))
+					br.WriteString("]")
+					if i2 < l2 {
+						br.WriteString(" ")
+					}
+				}
+
+				if i1 < l1 {
+					br.WriteString(", ")
+				}
+			}
+		}
+		br.WriteString("}")
+	}
+	br.WriteString("}")
+
 	return br.String()
 }
 
-func Try(f func() (err error)) (e *Event) {
+func (e *Event) JSON() string {
+	bb, _ := json.Marshal(e)
+	return string(bb)
+}
+
+func Try(f func() (err any)) (e *Event) {
 	defer func() {
-		// if x := recover(); x != nil {
-		// 	switch xv := x.(type) {
-		// 	case *Event:
-		// 		e = xv
-		// 	case error:
-		// 		e = &Event{
-		// 			Cause:         x,
-		// 			TheCauseError: xv,
-		// 		}
-		// 	default:
-		// 		e = &Event{
-		// 			Cause:         x,
-		// 			TheCauseError: fmt.Errorf("%v", xv),
-		// 		}
-		// 	}
-		// }
+		if x := recover(); x != nil {
+			switch xv := x.(type) {
+			case *trace.BacktracePoint:
+				e = NewEvent(nil, xv)
+			case *Event:
+				e = xv
+			case error:
+				e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe1", x})
+			default:
+				e = NewEvent(nil, trace.BacktracePointf("24ba97c201fe2", "%v", xv))
+			}
+		}
 	}()
-	err := f()
-	if err != nil {
-		// e = &Event{
-		// 	Cause:         err,
-		// 	TheCauseError: err,
-		// }
+	x := f()
+	if x != nil {
+		switch xv := x.(type) {
+		case *trace.BacktracePoint:
+			e = NewEvent(nil, xv)
+		case *Event:
+			e = xv
+		case error:
+			e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe3", x})
+		default:
+			e = NewEvent(nil, trace.BacktracePointf("24ba97c201fe4", "%v", xv))
+		}
 	}
 	return
 }
@@ -134,27 +197,27 @@ func (e *Event) Catch(f func(e *Event)) *Event {
 	return e
 }
 
-func (e *Event) OK(f func(e *Event)) *Event {
+func (e *Event) OK(f func()) *Event {
 	if e == nil {
-		f(e)
+		f()
 	}
 	return e
 }
 
 // Allows to try and retry an operation several times.
-func Retry(f func() (err error), f2 func(e *Event) (end bool)) (e *Event) {
+func Retry(f_do func() (err any), f_failure func(e *Event) (end bool)) (e *Event) {
 	attemptNb := 0
 	for {
 		attemptNb++
-		e = Try(func() (err error) {
-			err = f()
+		e = Try(func() (err any) {
+			err = f_do()
 			return
 		})
 		if e == nil {
 			break
 		} else {
 			e.RetryAttemptNb = attemptNb
-			end := f2(e)
+			end := f_failure(e)
 			if end {
 				break
 			}

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/rusriver/nutz/controlflow"
-	"github.com/rusriver/nutz/logger"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 	"github.com/rusriver/nutz/up/reactor"
 	"github.com/stretchr/testify/require"
 )
@@ -19,9 +19,9 @@ const (
 )
 
 func Test_Reactor_01(t *testing.T) {
-	logger := logger.New(nil)
+	tracer := loggeterrzl.New(nil)
 
-	logger = logger.NSLIC("xuid here").ILogger()
+	tracer = tracer.NSTIC("xuid here").ITracer()
 
 	r := &reactor.Reactor{
 		Name:    "R1",
@@ -29,25 +29,25 @@ func Test_Reactor_01(t *testing.T) {
 		F: func(r *reactor.Reactor, m *reactor.Msg) {
 			switch m.Signal {
 			case reactor.Signal_End:
-				r.Logger.InfoEvent("22").SendMsg("end")
+				r.Tracer.InfoEvent("22").SendMsg("end")
 
 			case reactor.Signal_Ready, reactor.Signal_Cede:
-				r.Logger.InfoEvent("24").SendMsg("ready signal")
+				r.Tracer.InfoEvent("24").SendMsg("ready signal")
 				status := r.Status()
-				r.Logger.InfoEvent("29").
+				r.Tracer.InfoEvent("29").
 					Strs("fresh", status.Fresh).
 					Strs("ready", status.Ready).
 					Strs("ceded", status.Ceded).
 					SendMsg(m.PId + " signalled")
 				if status.AllDone {
-					r.Logger.InfoEvent("35").SendMsg("DO THE NEXT STEP")
+					r.Tracer.InfoEvent("35").SendMsg("DO THE NEXT STEP")
 					r.End()
 					// do something
 				}
 			}
 		},
 	}
-	r.Logger = logger.NSLIC("1e0194").Str("name", r.Name).ILogger()
+	r.Tracer = tracer.NSTIC("1e0194").Str("name", r.Name).ITracer()
 	reactor.Start(r, []string{Subsystem01, Subsystem02, Subsystem03})
 
 	fmt.Println("STARTED")
@@ -70,7 +70,7 @@ func Test_Reactor_01(t *testing.T) {
 
 // lightweight version
 func Test_Reactor_02(t *testing.T) {
-	logger := logger.New(nil)
+	tracer := loggeterrzl.New(nil)
 
 	r := &reactor.Reactor{
 		Name:    "R1",
@@ -79,15 +79,15 @@ func Test_Reactor_02(t *testing.T) {
 			switch m.Signal {
 			case reactor.Signal_Ready:
 
-				r.Logger.InfoEvent("24").SendMsg("ready signal")
+				r.Tracer.InfoEvent("24").SendMsg("ready signal")
 				status := r.Status()
-				r.Logger.InfoEvent("29").
+				r.Tracer.InfoEvent("29").
 					Strs("fresh", status.Fresh).
 					Strs("ready", status.Ready).
 					Strs("ceded", status.Ceded).
 					SendMsg(m.PId + " ready")
 				if status.AllDone {
-					r.Logger.InfoEvent("35").SendMsg("DO THE NEXT STEP")
+					r.Tracer.InfoEvent("35").SendMsg("DO THE NEXT STEP")
 					r.End()
 					// do something
 				}
@@ -95,7 +95,7 @@ func Test_Reactor_02(t *testing.T) {
 			} //switch
 		},
 	}
-	r.Logger = logger.NSLIC("1e0194").Str("name", r.Name).ILogger()
+	r.Tracer = tracer.NSTIC("1e0194").Str("name", r.Name).ITracer()
 	reactor.Start(r, []string{Subsystem01, Subsystem02, Subsystem03})
 
 	fmt.Println("STARTED")
@@ -117,9 +117,9 @@ func Test_Reactor_02(t *testing.T) {
 }
 
 func Test_Reactor_03(t *testing.T) {
-	logger := logger.New(nil)
+	tracer := loggeterrzl.New(nil)
 
-	controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
 
 		r := &reactor.Reactor{
 			Name:    "R1",
@@ -127,25 +127,25 @@ func Test_Reactor_03(t *testing.T) {
 			F: func(r *reactor.Reactor, m *reactor.Msg) {
 				switch m.Signal {
 				case reactor.Signal_End:
-					r.Logger.InfoEvent("22").SendMsg("end")
+					r.Tracer.InfoEvent("22").SendMsg("end")
 
 				case reactor.Signal_Ready, reactor.Signal_Cede:
-					r.Logger.InfoEvent("24").SendMsg("ready signal")
+					r.Tracer.InfoEvent("24").SendMsg("ready signal")
 					status := r.Status()
-					r.Logger.InfoEvent("29").
+					r.Tracer.InfoEvent("29").
 						Strs("fresh", status.Fresh).
 						Strs("ready", status.Ready).
 						Strs("ceded", status.Ceded).
 						SendMsg(m.PId + " signalled")
 					if status.AllDone {
-						r.Logger.InfoEvent("35").SendMsg("DO THE NEXT STEP")
+						r.Tracer.InfoEvent("35").SendMsg("DO THE NEXT STEP")
 						r.End()
 						// do something
 					}
 				}
 			},
 		}
-		r.Logger = logger.NSLIC("1e0194").Str("name", r.Name).ILogger()
+		r.Tracer = tracer.NSTIC("1e0194").Str("name", r.Name).ITracer()
 		reactor.Start(r, []string{Subsystem01, Subsystem02, Subsystem03})
 
 		fmt.Println("STARTED")
@@ -164,6 +164,6 @@ func Test_Reactor_03(t *testing.T) {
 		return
 	}).Catch(func(e *controlflow.Event) {
 		fmt.Println(e)
-		require.Equal(t, "send on closed channel; 01967ad5b672bff68807 reactor is not inited or has been ended", e.String())
+		require.Equal(t, `{: FORWARDTRACE {: ETC [1 2], TAGS [1e0194]}, BACKTRACE { [eae98cf2227f "send on closed channel"] [01967ad5b672bff68807 "reactor is not inited or has been ended"]}}`, e.String())
 	})
 }

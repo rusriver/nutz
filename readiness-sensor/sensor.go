@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/rusriver/nutz/highperformance/dqf"
-	"github.com/rusriver/nutz/logger/loggerapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 	"github.com/rusriver/ttlcache/v3"
 )
 
@@ -13,7 +13,7 @@ type Sensor struct {
 	Registry *ttlcache.Cache[string, uint8]
 	TTL      time.Duration
 	Context  context.Context
-	Logger   loggerapi.ILogger
+	Tracer   loggeterrapi.ITracer
 	F        func(s *Sensor)
 
 	// Called every time the list changes - when anything is added, or removed by TTL

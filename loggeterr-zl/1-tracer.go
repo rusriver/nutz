@@ -129,7 +129,7 @@ func (t *Tracer) ErrorEvent(msgtag string) loggeterrapi.ILogEvent {
 	return e
 }
 
-func (t *Tracer) ErrEvent(err error, msgtag string) loggeterrapi.ILogEvent {
+func (t *Tracer) ErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 	if err == nil {
 		err = errors.New("<nil>")
 	}
@@ -137,9 +137,14 @@ func (t *Tracer) ErrEvent(err error, msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:        t.IsInactive,
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      t,
-		ZerologEvent:      t.ZeroLogger.Err(err),
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
+	}
+	switch ev := err.(type) {
+	case *controlflow.Event:
+		e.ZerologEvent = t.ZeroLogger.Error()
+	case error:
+		e.ZerologEvent = t.ZeroLogger.Err(ev)
 	}
 	appendTracingData(e, msgtag)
 	return e

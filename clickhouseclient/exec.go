@@ -19,7 +19,7 @@ type Creds struct {
 	MaxExecTime time.Duration
 }
 
-func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (err error) {
+func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (e *controlflow.Event) {
 	opts := &Creds{
 		// defaults here
 		MaxExecTime: time.Minute,
@@ -70,7 +70,7 @@ func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (err error) {
 	defer conn.Close()
 
 	stats := &Statistics{}
-	controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
 		var el time.Duration
 		ctx := clickhouse.Context(ctx, clickhouse.WithProgress(func(p *clickhouse.Progress) {
 			if p.Elapsed-el > time.Second*3 {

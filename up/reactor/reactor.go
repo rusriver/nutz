@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/rusriver/nutz/controlflow"
-	"github.com/rusriver/nutz/logger/loggerapi"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type Reactor struct {
 	Name       string
 	Context    context.Context
-	Logger     loggerapi.ILogger
+	Tracer     loggeterrapi.ITracer
 	F          func(r *Reactor, msg *Msg)
 	subsystems subsystems
 	chUp       chan *Msg
@@ -49,7 +50,7 @@ func Start(r *Reactor, _subsystems []string, of ...func(opts *Options)) *Reactor
 				}
 
 				if r.F == nil {
-					controlflow.Raise1("01967ae6cdb08172b74c reactor func is nil")
+					controlflow.RaiseCause(r.Tracer.GetForwardtrace(), trace.BacktracePointf("01967ae6cdb08172b74c", "reactor func is nil"))
 				}
 				r.F(r, m)
 
@@ -68,7 +69,8 @@ func Start(r *Reactor, _subsystems []string, of ...func(opts *Options)) *Reactor
 func (r *Reactor) Send(m *Msg) {
 	defer func() {
 		if x := recover(); x != nil {
-			controlflow.Reraise(x, "01967ad5b672bff68807 reactor is not inited or has been ended")
+			event := controlflow.NewEvent(r.Tracer.GetForwardtrace(), &trace.BacktracePoint{"eae98cf2227f", x})
+			event.Reraise(trace.BacktracePointf("01967ad5b672bff68807", "reactor is not inited or has been ended"))
 		}
 	}()
 	r.chUp <- m

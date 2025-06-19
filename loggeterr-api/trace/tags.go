@@ -20,7 +20,7 @@ func (tags Tags) Last(neg_i int) string {
 		return ""
 	}
 	i := len(tags) + neg_i
-	if i > 0 {
+	if i >= 0 {
 		return tags[i]
 	} else {
 		return ""

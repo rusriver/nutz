@@ -14,7 +14,7 @@ func Test_03(t *testing.T) {
 
 	fmt.Println("--1")
 
-	controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
 		fmt.Println("ok")
 		return
 	}).Catch(func(e *controlflow.Event) {
@@ -23,7 +23,7 @@ func Test_03(t *testing.T) {
 
 	fmt.Println("--2")
 
-	controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
 		controlflow.RaiseCause(nil, trace.BacktracePointf("27", "fail"))
 		return
 	}).Catch(func(e *controlflow.Event) {
@@ -32,7 +32,7 @@ func Test_03(t *testing.T) {
 
 	fmt.Println("--3")
 
-	controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
 		return errors.New("error 3")
 	}).Catch(func(e *controlflow.Event) {
 		fmt.Println("exception", e.String())
@@ -44,7 +44,7 @@ func Test_03_retry(t *testing.T) {
 
 	fmt.Println("--1")
 	i := 1
-	controlflow.Retry(func() (err error) {
+	controlflow.Retry(func() (err any) {
 		fmt.Println("some work", i)
 		if i >= 5 {
 			return nil
@@ -58,13 +58,13 @@ func Test_03_retry(t *testing.T) {
 		return
 	}).Catch(func(e *controlflow.Event) {
 		fmt.Println("1 FAIL;", e)
-	}).OK(func(e *controlflow.Event) {
+	}).OK(func() {
 		fmt.Println("1 OK")
 	})
 
 	fmt.Println("--2")
 	i = 1
-	controlflow.Retry(func() (err error) {
+	controlflow.Retry(func() (err any) {
 		fmt.Println("some work", i)
 		if i >= 5 {
 			return nil
@@ -84,16 +84,16 @@ func Test_03_retry(t *testing.T) {
 		}
 	}).Catch(func(e *controlflow.Event) {
 		fmt.Println("2 FAIL;", e)
-	}).OK(func(e *controlflow.Event) {
+	}).OK(func() {
 		fmt.Println("2 OK")
 	})
 }
 
 func Test_03_raise2(t *testing.T) {
-	controlflow.Try(func() (err error) {
-		controlflow.Try(func() (err error) {
-			controlflow.Try(func() (err error) {
-				controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
+		controlflow.Try(func() (err any) {
+			controlflow.Try(func() (err any) {
+				controlflow.Try(func() (err any) {
 					panic("the problem cause")
 				}).Catch(func(e *controlflow.Event) {
 					e.Reraise(&trace.BacktracePoint{"1e05a52a098f", nil})
@@ -113,10 +113,10 @@ func Test_03_raise2(t *testing.T) {
 }
 
 func Test_04_raise2(t *testing.T) {
-	controlflow.Try(func() (err error) {
-		controlflow.Try(func() (err error) {
-			controlflow.Try(func() (err error) {
-				controlflow.Try(func() (err error) {
+	controlflow.Try(func() (err any) {
+		controlflow.Try(func() (err any) {
+			controlflow.Try(func() (err any) {
+				controlflow.Try(func() (err any) {
 					e := errors.New("a17674b6 the problem cause")
 					panic(e)
 				}).Catch(func(e *controlflow.Event) {

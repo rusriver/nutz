@@ -1,6 +1,9 @@
 package factory
 
-import "github.com/rusriver/nutz/controlflow"
+import (
+	"github.com/rusriver/nutz/controlflow"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
+)
 
 const (
 	LineType_Undef = iota
@@ -35,7 +38,7 @@ func (line *Line[PRODUCT]) AddStationAsObject(s IStation[PRODUCT]) *Line[PRODUCT
 	case LineType_Object:
 		*line.line_Objects = append(*line.line_Objects, s)
 	default:
-		controlflow.Raise1("99af009653ac0982d60e incompatible station type")
+		controlflow.RaiseCause(nil, trace.BacktracePointf("99af009653ac0982d60e", "incompatible station type"))
 	}
 	return line
 }
@@ -45,7 +48,7 @@ func (line *Line[PRODUCT]) AddStationAsFunc(s StationFunc[PRODUCT]) *Line[PRODUC
 	case LineType_Func:
 		*line.line_Funcs = append(*line.line_Funcs, s)
 	default:
-		controlflow.Raise1("2830f927ef5e22d213d incompatible station type")
+		controlflow.RaiseCause(nil, trace.BacktracePointf("2830f927ef5e22d213d", "incompatible station type"))
 	}
 	return line
 }

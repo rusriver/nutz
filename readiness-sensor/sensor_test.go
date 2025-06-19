@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rusriver/nutz/logger"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 	readinesssensor "github.com/rusriver/nutz/readiness-sensor"
 )
 
@@ -16,16 +16,16 @@ func Test_Sensor_0111(t *testing.T) {
 	wg1.Add(1)
 
 	sensor, _ := readinesssensor.New(func(c *readinesssensor.Sensor) {
-		c.Logger = logger.New(nil)
+		c.Tracer = loggeterrzl.New(nil)
 		c.F = func(s *readinesssensor.Sensor) {
 			status := s.StatusInternal()
-			s.Logger.InfoEvent("23").
+			s.Tracer.InfoEvent("23").
 				Strs("fresh", status.Fresh).
 				Strs("ready", status.Ready).
 				Strs("ceded", status.Ceded).
 				SendMsg("signalled")
 			if status.AllDone {
-				s.Logger.InfoEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
+				s.Tracer.InfoEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
 				wg1.Done()
 			}
 		}

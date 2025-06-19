@@ -17,7 +17,7 @@ type ITracer interface {
 	InfoEvent(msgtag string) ILogEvent
 	WarnEvent(msgtag string) ILogEvent
 	ErrorEvent(msgtag string) ILogEvent
-	ErrEvent(err error, msgtag string) ILogEvent
+	ErrEvent(err any, msgtag string) ILogEvent
 	LogEvent(msgtag string) ILogEvent // without legacy level, pure event; may default to INFO
 
 	// Creates new sub-logger, suitable for another thread.

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/rusriver/nutz/controlflow"
 	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
@@ -148,6 +149,11 @@ func (e *LogEvent) Title(s string) loggeterrapi.ILogEvent {
 	default:
 		e.TheTitle += " -- " + s
 	}
+	return e
+}
+
+func (e *LogEvent) ControlflowEvent(key string, event *controlflow.Event) loggeterrapi.ILogEvent {
+	//--todo
 	return e
 }
 

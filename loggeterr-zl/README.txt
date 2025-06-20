@@ -1,5 +1,9 @@
 TLDR: Implements loggeterr-api, uses zerologger under the hood.
 
+Allows to develop reliable and highly maintainable software.
+
+See example-1 folder with tests for usage examples and usage idioms.
+
 ---
 
 This is a very small and simple interface wrapper over the zerolog logger,

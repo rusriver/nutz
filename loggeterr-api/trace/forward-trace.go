@@ -5,7 +5,7 @@ import "strings"
 type Forwardtrace struct {
 	ETC        EventTracingCounters // []int
 	Tags       Tags                 // []string
-	IsInactive bool
+	IsInactive bool                 `json:"-"`
 }
 
 // faster alternative to the ...CloneWith("*****").String() idiom

@@ -5,7 +5,9 @@ import (
 	"testing"
 
 	"github.com/lithammer/shortuuid/v4"
+	"github.com/rusriver/nutz/controlflow"
 	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 )
 
@@ -58,4 +60,35 @@ func Test_e1_01(t *testing.T) {
 	wg2.Wait()
 	Tracer.InfoEvent("d0ed6944").Title("complete").Send()
 	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+}
+
+func Test_e1_02(t *testing.T) {
+
+	tracer := loggeterrzl.New(nil).NSTIC("XBegK8r2").ITracer()
+
+	tracer = tracer.NewSubTracerInitChain("SUBSYSTEM-a24487").
+		Str("xu", "my-xu").
+		Str("ver", "1.2.3").
+		ITracer()
+
+	tracer.InfoEvent("111b7de0").Title("some title 1").Send()
+
+	var e1 *controlflow.Event
+
+	tracer.SpanBegin("SPAN-3a7ce735")
+	{
+		tracer.InfoEvent("32").SendMsg("hello")
+		tracer.SpanBegin("00")
+		{
+			e1 = tracer.NewControlflowEvent(trace.BacktracePointf("777", "the cause"))
+
+			tracer.SmartErrEvent(e1, "85").Send()
+		}
+		tracer.SpanEnd()
+	}
+	tracer.SpanEnd()
+
+	e1.Wrap(trace.BacktracePointf("88", "error"))
+
+	tracer.InfoEvent("89").AddControlflowEvent("e1", e1).Send()
 }

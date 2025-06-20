@@ -32,7 +32,7 @@ type ITracer interface {
 
 	// example use: tracer.RaiseCause(trace.BacktracePointf("123123", "the reason"))
 	RaiseCause(first_backtrace_point *trace.BacktracePoint)
-	ControlflowEvent(first_backtrace_point *trace.BacktracePoint) *controlflow.Event
+	NewControlflowEvent(first_backtrace_point *trace.BacktracePoint) *controlflow.Event
 }
 
 type ISubTracerInitChain interface {
@@ -114,7 +114,7 @@ type ILogEvent interface {
 	// designed to not bypass in inactive events.
 	Title(string) ILogEvent
 
-	ControlflowEvent(key string, event *controlflow.Event) ILogEvent
+	AddControlflowEvent(key string, event *controlflow.Event) ILogEvent
 
 	SendMsgf(string, ...any)
 	SendMsg(string)

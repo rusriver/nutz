@@ -152,8 +152,12 @@ func (e *LogEvent) Title(s string) loggeterrapi.ILogEvent {
 	return e
 }
 
-func (e *LogEvent) ControlflowEvent(key string, event *controlflow.Event) loggeterrapi.ILogEvent {
-	//--todo
+func (e *LogEvent) AddControlflowEvent(key string, event *controlflow.Event) loggeterrapi.ILogEvent {
+	if e.IsInactive {
+		return e // bypass
+	}
+	bb := event.JSON()
+	e.ZerologEvent.RawJSON(key, bb)
 	return e
 }
 

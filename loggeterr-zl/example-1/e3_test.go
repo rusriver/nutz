@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/rusriver/nutz/logger"
+	loggeterrzl "github.com/rusriver/nutz/loggeterr-zl"
 )
 
 func Test_e3_01(t *testing.T) {
 
-	ilogger := logger.New(nil).NSLIC(shortuuid.New()[:8]).ILogger()
+	itracer := loggeterrzl.New(nil).NSTIC(shortuuid.New()[:8]).ITracer()
 
 	// get a zerolog logger
-	zl := ilogger.(*logger.Logger).ZeroLogger
+	zl := itracer.(*loggeterrzl.Tracer).ZeroLogger
 
 	// now log something
 	zl.Info().Msg("Here's the zerologger output")

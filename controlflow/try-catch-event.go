@@ -6,20 +6,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rusriver/configdb/v3/deepcopy"
 	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type Event struct {
-	RetryAttemptNb int
+	RetryAttemptNb int `json:"-"`
 	Forwardtrace   *trace.Forwardtrace
 	Backtrace      FullBacktrace
 }
-
-// First element is most specific, last ones are least specific - this is the inverse of forwardtrace tags;
-type FullBacktrace []*BacktraceDomainChain
-
-// First element is most specific, last ones are least specific - this is the inverse of forwardtrace tags;
-type BacktraceDomainChain []*trace.BacktracePoint
 
 /*
 	Forwardtrace has last elements most specific; backtrace is the inverse, the most
@@ -38,35 +33,6 @@ type BacktraceDomainChain []*trace.BacktracePoint
 	Get the very root cause:
 		bp = event.Backtrace.Last[0][0]
 */
-
-// E.g. to get the one before last, use Last(-2);
-// The purpose is to easily get the last thing. Also used internally
-func (b FullBacktrace) Last(neg_i int) *BacktraceDomainChain {
-	none := &BacktraceDomainChain{trace.BacktracePointf("4319f4a0f592", "non-existing backtrace chain")}
-	if neg_i >= 0 {
-		return none
-	}
-	i := len(b) + neg_i
-	if i >= 0 {
-		return b[i]
-	} else {
-		return none
-	}
-}
-
-// E.g. to get the one before last, use Last(-2);
-// The purpose is to easily get the last thing. Also used internally
-func (b BacktraceDomainChain) Last(neg_i int) *trace.BacktracePoint {
-	if neg_i >= 0 {
-		return nil
-	}
-	i := len(b) + neg_i
-	if i >= 0 {
-		return b[i]
-	} else {
-		return nil
-	}
-}
 
 var _ error = (*Event)(nil)
 
@@ -97,33 +63,39 @@ func (e *Event) Serk() string {
 	br := strings.Builder{}
 	br.WriteString("{: ")
 	{
-		br.WriteString("FORWARDTRACE {: ")
-		{
-			br.WriteString("ETC [")
+		if len(e.Forwardtrace.ETC) > 0 || len(e.Forwardtrace.Tags) > 0 {
+			br.WriteString("FORWARDTRACE {: ")
 			{
-				l := len(e.Forwardtrace.ETC) - 1
-				for i, v := range e.Forwardtrace.ETC {
-					br.WriteString(strconv.Itoa(v))
-					if i < l {
-						br.WriteString(" ")
+				if len(e.Forwardtrace.ETC) > 0 {
+					br.WriteString("ETC [")
+					{
+						l := len(e.Forwardtrace.ETC) - 1
+						for i, v := range e.Forwardtrace.ETC {
+							br.WriteString(strconv.Itoa(v))
+							if i < l {
+								br.WriteString(" ")
+							}
+						}
 					}
+					br.WriteString("], ")
+				}
+				//
+				if len(e.Forwardtrace.Tags) > 0 {
+					br.WriteString("TAGS [")
+					{
+						l := len(e.Forwardtrace.Tags) - 1
+						for i, v := range e.Forwardtrace.Tags {
+							br.WriteString(quote_f(v))
+							if i < l {
+								br.WriteString(" ")
+							}
+						}
+					}
+					br.WriteString("]")
 				}
 			}
-			br.WriteString("], ")
-			//
-			br.WriteString("TAGS [")
-			{
-				l := len(e.Forwardtrace.Tags) - 1
-				for i, v := range e.Forwardtrace.Tags {
-					br.WriteString(quote_f(v))
-					if i < l {
-						br.WriteString(" ")
-					}
-				}
-			}
-			br.WriteString("]")
+			br.WriteString("}, ")
 		}
-		br.WriteString("}, ")
 		//
 		br.WriteString("BACKTRACE { ")
 		{
@@ -154,9 +126,9 @@ func (e *Event) Serk() string {
 	return br.String()
 }
 
-func (e *Event) JSON() string {
+func (e *Event) JSON() []byte {
 	bb, _ := json.Marshal(e)
-	return string(bb)
+	return bb
 }
 
 func Try(f func() (err any)) (e *Event) {
@@ -168,7 +140,7 @@ func Try(f func() (err any)) (e *Event) {
 			case *Event:
 				e = xv
 			case error:
-				e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe1", x})
+				e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe1", xv.Error()})
 			default:
 				e = NewEvent(nil, trace.BacktracePointf("24ba97c201fe2", "%v", xv))
 			}
@@ -182,7 +154,7 @@ func Try(f func() (err any)) (e *Event) {
 		case *Event:
 			e = xv
 		case error:
-			e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe3", x})
+			e = NewEvent(nil, &trace.BacktracePoint{"24ba97c201fe3", xv.Error()})
 		default:
 			e = NewEvent(nil, trace.BacktracePointf("24ba97c201fe4", "%v", xv))
 		}
@@ -227,8 +199,12 @@ func Retry(f_do func() (err any), f_failure func(e *Event) (end bool)) (e *Event
 }
 
 func (existing_event *Event) Reraise(added_backtrace_point *trace.BacktracePoint) {
-	existing_event.Wrap(added_backtrace_point)
-	panic(existing_event)
+	if existing_event != nil {
+		if added_backtrace_point != nil {
+			existing_event.Wrap(added_backtrace_point)
+		}
+		panic(existing_event)
+	}
 }
 
 /*
@@ -259,7 +235,7 @@ func NewEvent(forward_trace *trace.Forwardtrace, first_backtrace_point *trace.Ba
 		forward_trace = &trace.Forwardtrace{}
 	}
 	event := &Event{
-		Forwardtrace: forward_trace,
+		Forwardtrace: deepcopy.Copy(forward_trace).(*trace.Forwardtrace),
 		Backtrace: FullBacktrace{
 			&BacktraceDomainChain{},
 		},
@@ -269,7 +245,7 @@ func NewEvent(forward_trace *trace.Forwardtrace, first_backtrace_point *trace.Ba
 }
 
 // Creates new domain chain on the backtrace
-func (existing_event *Event) Contain(added_backtrace_point *trace.BacktracePoint) *Event {
+func (existing_event *Event) ContainAndWrap(added_backtrace_point *trace.BacktracePoint) *Event {
 	existing_event.Backtrace = append(existing_event.Backtrace, &BacktraceDomainChain{})
 	dc := existing_event.Backtrace.Last(-1)
 	*dc = append(*dc, added_backtrace_point)

@@ -7,7 +7,7 @@ Usage idiom:
 		c.Database = ENV_DATABASE
 	}
 
-	err := clickhouseclient.Exec(boot.Context, creds, clickhouseclient.SQL(`
+	e := clickhouseclient.Exec(boot.Context, creds, clickhouseclient.SQL(`
 		SHOW ${x}
 	`, func(s string) string {
 		switch s {
@@ -16,5 +16,5 @@ Usage idiom:
 		}
 		return ""
 	}))
-	controlflow.Checkerr(err)
+	e.Reraise(nil)
 

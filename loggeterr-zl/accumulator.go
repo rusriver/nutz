@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/rusriver/configdb/v3"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 )
 
 type Accumulator struct {
@@ -12,7 +13,7 @@ type Accumulator struct {
 	wg              sync.WaitGroup
 }
 
-func NewAccumulator() *Accumulator {
+func NewAccumulator(tracer loggeterrapi.ITracer) *Accumulator {
 	a := &Accumulator{
 		chUp: make(chan []byte, 100),
 	}
@@ -21,7 +22,7 @@ func NewAccumulator() *Accumulator {
 
 	go func() {
 		for lline := range a.chUp {
-			db := (&configdb.InitContext{}).FromBytes(lline).Load()
+			db := (&configdb.InitContext{}).WithTracer(tracer).FromBytes(lline).Load().DontPanic()
 			a.logsAccumulated = append(a.logsAccumulated, db)
 		}
 		a.wg.Done()

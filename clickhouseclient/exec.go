@@ -2,12 +2,12 @@ package clickhouseclient
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/rusriver/nutz/controlflow"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 type Creds struct {
@@ -60,11 +60,11 @@ func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (e *controlfl
 
 	conn, err := clickhouse.Open(dbOpts)
 	if err != nil {
-		return err
+		return controlflow.NewEvent(nil, &trace.BacktracePoint{"82b632e1458c", err.Error()})
 	}
 	v, err := conn.ServerVersion()
 	if err != nil {
-		return err
+		return controlflow.NewEvent(nil, &trace.BacktracePoint{"637b217976b1", err.Error()})
 	}
 	fmt.Println(v, "connected...")
 	defer conn.Close()
@@ -88,13 +88,13 @@ func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (e *controlfl
 		fmt.Print("exec..")
 		err = conn.Exec(ctx, prgText)
 		return
-	}).Catch(func(e *controlflow.Event) {
-		err = errors.New(e.String())
+	}).Catch(func(e2 *controlflow.Event) {
+		e = e2
 	})
 	fmt.Println()
 	stats.Humanize()
-	if err != nil {
-		stats.Status = err.Error()
+	if e != nil {
+		stats.Status = e.String()
 	} else {
 		stats.Status = "OK"
 	}

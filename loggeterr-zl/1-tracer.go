@@ -1,7 +1,9 @@
 package loggeterrzl
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"sync"
@@ -143,12 +145,15 @@ func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 	switch ev := err.(type) {
 	case *controlflow.Event:
 		e.ZerologEvent = t.ZeroLogger.Error()
-		//--todo
+		bb, _ := json.Marshal(ev)
+		e.ZerologEvent = t.ZeroLogger.Error().RawJSON("error-controlflow-event", bb)
 	case *trace.BacktracePoint:
-		e.ZerologEvent = t.ZeroLogger.Error()
-		//--todo
+		bb, _ := json.Marshal(ev)
+		e.ZerologEvent = t.ZeroLogger.Error().RawJSON("error-backtracepoint", bb)
 	case error:
 		e.ZerologEvent = t.ZeroLogger.Err(ev)
+	default:
+		e.ZerologEvent = t.ZeroLogger.Error().Str("error-unknown", fmt.Sprintf("%+v", ev))
 	}
 	appendTracingData(e, msgtag)
 	return e
@@ -230,7 +235,7 @@ func (t *Tracer) SwitchOnTheOfflineAccumulation() loggeterrapi.ITracer {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	t.accumulator = NewAccumulator()
+	t.accumulator = NewAccumulator(t)
 
 	rctx := t.RootContext.Clone()
 
@@ -261,7 +266,7 @@ func (t *Tracer) RestartTheAccumulation() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	t.accumulator = NewAccumulator()
+	t.accumulator = NewAccumulator(t)
 
 	t.RootContext.EventOnWireHook = func(e loggeterrapi.IEventInHook, p []byte) {
 		t.accumulator.chUp <- p
@@ -321,7 +326,7 @@ func (t *Tracer) RaiseCause(first_backtrace_point *trace.BacktracePoint) {
 	controlflow.RaiseCause(t.Forwardtrace, first_backtrace_point)
 }
 
-func (t *Tracer) ControlflowEvent(first_backtrace_point *trace.BacktracePoint) *controlflow.Event {
+func (t *Tracer) NewControlflowEvent(first_backtrace_point *trace.BacktracePoint) *controlflow.Event {
 	e := controlflow.NewEvent(t.Forwardtrace, first_backtrace_point)
 	return e
 }

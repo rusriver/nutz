@@ -13,10 +13,26 @@ type TTracerKey struct{}
 
 var TracerKey TTracerKey
 
-func Test_001(t *testing.T) {
+func Test_CtxValueAccessor_001(t *testing.T) {
 	ctx := context.Background()
 	tracer := loggeterrzl.New(nil)
 	ctxvaluea := &controlflow.CtxValueAccessor[loggeterrapi.ITracer]{Key: TracerKey}
+
+	ctx = ctxvaluea.SetObjectToCtx(ctx, tracer)
+
+	tracer = ctxvaluea.GetObjectFromCtx(ctx)
+	_ = tracer
+}
+
+func Test_CtxValueAccessor_002(t *testing.T) {
+	ctx := context.Background()
+	tracer := loggeterrzl.New(nil)
+	ctxvaluea := &controlflow.CtxValueAccessor[loggeterrapi.ITracer]{
+		Key: TracerKey,
+		ConstructIfMissing_Func: func() loggeterrapi.ITracer {
+			return loggeterrzl.New(nil)
+		},
+	}
 
 	ctx = ctxvaluea.SetObjectToCtx(ctx, tracer)
 

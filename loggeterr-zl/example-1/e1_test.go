@@ -1,6 +1,8 @@
 package example1_test
 
 import (
+	"errors"
+	"fmt"
 	"sync"
 	"testing"
 
@@ -81,6 +83,44 @@ func Test_e1_02(t *testing.T) {
 		tracer.SpanBegin("00")
 		{
 			e1 = tracer.NewControlflowEvent(trace.BacktracePointf("777", "the cause"))
+
+			fmt.Println("--- ", e1)
+
+			tracer.SmartErrEvent(e1, "85").Send()
+		}
+		tracer.SpanEnd()
+	}
+	tracer.SpanEnd()
+
+	e1.Wrap(trace.BacktracePointf("88", "error"))
+
+	tracer.InfoEvent("89").AddControlflowEvent("e1", e1).Send()
+}
+
+func Test_e1_03(t *testing.T) {
+
+	tracer := loggeterrzl.New(nil).NSTIC("XBegK8r2").ITracer()
+
+	tracer = tracer.NewSubTracerInitChain("SUBSYSTEM-a24487").
+		Str("xu", "my-xu").
+		Str("ver", "1.2.3").
+		ITracer()
+
+	tracer.InfoEvent("111b7de0").Title("some title 1").Send()
+
+	var e1 *controlflow.Event
+
+	tracer.SpanBegin("SPAN-3a7ce735")
+	{
+		tracer.InfoEvent("32").SendMsg("hello")
+		tracer.SpanBegin("00")
+		{
+			err1 := errors.New("some cause error")
+			err2 := fmt.Errorf("wrapped; %w", err1)
+
+			e1 = tracer.NewControlflowEvent(&trace.BacktracePoint{"777", err2})
+
+			fmt.Println("--- ", e1)
 
 			tracer.SmartErrEvent(e1, "85").Send()
 		}

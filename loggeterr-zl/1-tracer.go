@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"github.com/rs/zerolog"
-	// "github.com/rusriver/configdb/v3"
 	"github.com/rusriver/configdb/v3"
 	"github.com/rusriver/nutz/controlflow"
 	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
@@ -38,6 +37,7 @@ func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (
 	rctx := &loggeterrapi.RootContext{
 		ForwardtraceTagsKey: "tags",
 		ForwardtraceETCKey:  "etc",
+		MessageKey:          "msg",
 	}
 	for _, f := range optFuncs {
 		f(rctx)
@@ -77,9 +77,10 @@ func (t *Tracer) TraceEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:   t.IsInactive,
 		TheLevel:     zerolog.TraceLevel.String(),
 		ParentLogger: t,
+		Tag:          msgtag,
 		ZerologEvent: t.ZeroLogger.Trace(),
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -88,9 +89,10 @@ func (t *Tracer) DiagnosticEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:   t.IsInactive,
 		TheLevel:     zerolog.DebugLevel.String(),
 		ParentLogger: t,
+		Tag:          msgtag,
 		ZerologEvent: t.ZeroLogger.Debug(),
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -99,9 +101,10 @@ func (t *Tracer) InfoEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:   t.IsInactive,
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: t,
+		Tag:          msgtag,
 		ZerologEvent: t.ZeroLogger.Info(),
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -110,11 +113,12 @@ func (t *Tracer) WarnEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:        t.IsInactive,
 		TheLevel:          zerolog.WarnLevel.String(),
 		ParentLogger:      t,
+		Tag:               msgtag,
 		ZerologEvent:      t.ZeroLogger.Warn(),
 		TheTitle:          "WARNING", // the default title
 		theTitleIsDefault: true,
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -123,11 +127,12 @@ func (t *Tracer) ErrorEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:        t.IsInactive,
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      t,
+		Tag:               msgtag,
 		ZerologEvent:      t.ZeroLogger.Error(),
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -139,6 +144,7 @@ func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:        t.IsInactive,
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      t,
+		Tag:               msgtag,
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
 	}
@@ -155,7 +161,7 @@ func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 	default:
 		e.ZerologEvent = t.ZeroLogger.Error().Str("error-unknown", fmt.Sprintf("%+v", ev))
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
@@ -164,40 +170,19 @@ func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
 		IsInactive:   t.IsInactive,
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: t,
+		Tag:          msgtag,
 		ZerologEvent: t.ZeroLogger.Info(),
 	}
-	appendTracingData(e, msgtag)
+	activationHook(e)
 	return e
 }
 
-func appendTracingData(e *LogEvent, tag string) {
-	e.ParentLogger.mu.Lock()
-	defer e.ParentLogger.mu.Unlock()
-
-	tc := e.ParentLogger.Forwardtrace
-	rc := e.ParentLogger.RootContext
-
-	k := rc.ForwardtraceETCKey
-	if len(k) != 0 {
-		tc.ETC.Inc()
-		e.ZerologEvent = e.ZerologEvent.Ints(k, tc.ETC)
-	}
-
-	tc.Tags = append(tc.Tags, tag)
-	// The "pop" operation is at the e.Send(), and it's race-unsafe intentionally -
-	// because if we e.g. lock the mutex, we have the risk to dead-lock incorrect user
-	// program. The choise is made to prefer incorrect tagging, but not dead-locking,
-	// in that case.
-
+func activationHook(e *LogEvent) {
 	// call the (re-)activation hook, if any
+	rc := e.ParentLogger.RootContext
 	hook := rc.ActivationHook
 	if hook != nil {
 		e.IsInactive = hook(e)
-		tc.IsInactive = e.IsInactive
-	}
-	k = rc.ForwardtraceTagsKey
-	if len(k) != 0 {
-		e.ZerologEvent.Strs(k, tc.Tags)
 	}
 }
 

@@ -3,9 +3,8 @@ package trace
 import "strings"
 
 type Forwardtrace struct {
-	ETC        EventTracingCounters // []int
-	Tags       Tags                 // []string
-	IsInactive bool                 `json:"-"`
+	ETC  EventTracingCounters // []int
+	Tags Tags                 // []string
 }
 
 // faster alternative to the ...CloneWith("*****").String() idiom

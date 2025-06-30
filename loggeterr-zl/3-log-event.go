@@ -12,9 +12,11 @@ import (
 
 type LogEvent struct {
 	ParentLogger      *Tracer
-	IsInactive        bool   // per event
-	TheLevel          string // per event
-	TheTitle          string // per event
+	Tag               string
+	IsInactive        bool
+	TheLevel          string
+	TheTitle          string
+	TheMessage        string
 	theTitleIsDefault bool
 	ZerologEvent      *zerolog.Event
 }
@@ -22,7 +24,7 @@ type LogEvent struct {
 var _ loggeterrapi.ILogEvent = (*LogEvent)(nil)
 
 func (e *LogEvent) Inactive() loggeterrapi.ILogEvent {
-	e.IsInactive = true // per event
+	e.IsInactive = true
 	return e
 }
 
@@ -129,7 +131,7 @@ func (e *LogEvent) SendMsgf(s string, vv ...any) {
 	if e.IsInactive {
 		return // bypass
 	}
-	e.ZerologEvent.Str(zerolog.MessageFieldName, fmt.Sprintf(s, vv...))
+	e.TheMessage = fmt.Sprintf(s, vv...)
 	e.Send()
 }
 
@@ -137,7 +139,7 @@ func (e *LogEvent) SendMsg(s string) {
 	if e.IsInactive {
 		return // bypass
 	}
-	e.ZerologEvent.Str(zerolog.MessageFieldName, s)
+	e.TheMessage = s
 	e.Send()
 }
 
@@ -178,27 +180,44 @@ func (e *LogEvent) Bytes(k string, bb []byte) loggeterrapi.ILogEvent {
 }
 
 func (e *LogEvent) Send() {
-	tc := e.ParentLogger.Forwardtrace
+	ft := e.ParentLogger.Forwardtrace
 	rc := e.ParentLogger.RootContext
 
-	defer func() {
-		tc.Tags = tc.Tags[:len(tc.Tags)-1]
-	}()
+	e.ParentLogger.mu.Lock()
+	defer e.ParentLogger.mu.Unlock()
+	// this also synchronizes the access to the interceptor
 
 	if e.IsInactive {
 		return // bypass
 	}
 
-	e.ParentLogger.mu.Lock()
-	defer e.ParentLogger.mu.Unlock()
-	// this also synchronizes access to the interceptor
+	ft.Tags = append(ft.Tags, e.Tag)
+	defer func() {
+		ft.Tags = ft.Tags[:len(ft.Tags)-1]
+	}()
 
-	e.ParentLogger.interceptor.e = e // this way we pass it to the EventOnWire() hook
-	defer func() { e.ParentLogger.interceptor.e = nil }()
+	k := rc.ForwardtraceTagsKey
+	if len(k) != 0 {
+		e.ZerologEvent.Strs(k, ft.Tags)
+	}
+
+	k = rc.ForwardtraceETCKey
+	if len(k) != 0 {
+		ft.ETC.Inc()
+		e.ZerologEvent = e.ZerologEvent.Ints(k, ft.ETC)
+	}
 
 	if len(e.TheTitle) > 0 {
 		e.ZerologEvent.Str("title", e.TheTitle) // gonna be the last, and that's great for readability
 	}
+
+	if len(e.TheMessage) > 0 {
+		e.ZerologEvent.Str(e.ParentLogger.RootContext.MessageKey, e.TheMessage)
+	}
+
+	e.ParentLogger.interceptor.e = e // this way we pass it to the EventOnWire() hook
+	defer func() { e.ParentLogger.interceptor.e = nil }()
+
 	hook := rc.IfSendHook
 	doSend := true
 	if hook != nil {

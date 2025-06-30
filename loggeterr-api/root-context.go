@@ -10,6 +10,7 @@ type RootContext struct {
 	MainWriter          io.Writer
 	ForwardtraceTagsKey string
 	ForwardtraceETCKey  string // event tracing counters
+	MessageKey          string
 	IfSendHook          func(e IEventInHook) (doSend bool)
 	EventOnWireHook     func(e IEventInHook, p []byte)
 	ActivationHook      func(e IEventInHook) (inactivate bool) // If the ActicationHook is set, it is called, and it can reactivate the event.
@@ -28,6 +29,7 @@ func (rctx0 *RootContext) Clone() *RootContext {
 		MainWriter:          rctx0.MainWriter,
 		ForwardtraceTagsKey: rctx0.ForwardtraceTagsKey,
 		ForwardtraceETCKey:  rctx0.ForwardtraceETCKey,
+		MessageKey:          rctx0.MessageKey,
 		IfSendHook:          rctx0.IfSendHook,
 		EventOnWireHook:     rctx0.EventOnWireHook,
 		ActivationHook:      rctx0.ActivationHook,

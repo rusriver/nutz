@@ -39,7 +39,6 @@ func (ds *ADTOSync) SealWithTimeout(ctxUp context.Context, to time.Duration) {
 func (ds *ADTOSync) Wait() (err error) {
 	// wait for anyone unlocking it
 	ds.mu.Lock()
-	ds.mu.Unlock()
 	return ds.err
 }
 

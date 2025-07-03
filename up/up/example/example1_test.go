@@ -21,7 +21,7 @@ func Test_0001(t *testing.T) {
 
 func Test_DI_Container_Example1_01(t *testing.T) {
 
-	tracer := loggeterrzl.New(nil)
+	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
 
 	otdg1 := &up.OTDG{
 		Name:   "otdg1",
@@ -78,7 +78,7 @@ func Test_DI_Container_Example1_01(t *testing.T) {
 
 func Test_DI_Container_Example1_02(t *testing.T) {
 
-	tracer := loggeterrzl.New(nil)
+	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
 
 	otdg1 := &up.OTDG{
 		Name:   "otdg1",

@@ -377,7 +377,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	*/
 
 	// Create infra prerequisite components
-	tracer := loggeterrzl.New(nil)
+	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
 	ctx := context.Background()
 	wg1 := sync.WaitGroup{}
 	wg1.Add(1)

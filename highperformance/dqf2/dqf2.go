@@ -10,9 +10,10 @@ import (
 )
 
 type Message[T any] struct {
-	Tag  int // this is used, among other things, by the chopper to mark failed deliveries
-	wg   sync.WaitGroup
-	Func func(m *Message[T], s T)
+	Tag    int // this is used, among other things, by the chopper to mark failed deliveries
+	wg     sync.WaitGroup
+	chDown chan *Message[T]
+	Func   func(m *Message[T], s T)
 }
 
 const (
@@ -21,11 +22,12 @@ const (
 	Tag_Dropped = 177 // set by chopper only
 )
 
+// It's nice and simple, but you can't use it in select{}. See also ChDown.Transaction().
 func SyncTransaction[T any](chUp chan *Message[T], m *Message[T]) {
 	m.wg.Add(1)
 	f := m.Func
 	m.Func = func(m *Message[T], s T) {
-		defer m.wg.Done()
+		defer m.wg.Done() // must be defer, what if that panics
 		f(m, s)
 	}
 	chUp <- m

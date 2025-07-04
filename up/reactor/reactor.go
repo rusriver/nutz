@@ -23,6 +23,14 @@ type Reactor struct {
 	opts          *Options
 }
 
+func NewReactor(name string, ctx context.Context, tracer loggeterrapi.ITracer) *Reactor {
+	return &Reactor{
+		Name:    name,
+		Tracer:  tracer.NSTIC(name).ITracer(),
+		Context: ctx,
+	}
+}
+
 type Options struct {
 	ChUpSize int
 }

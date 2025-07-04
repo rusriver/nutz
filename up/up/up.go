@@ -16,6 +16,14 @@ type OTDG struct {
 	upStack []upcommon.IRemovable
 }
 
+func NewOTDG(name string, tracer loggeterrapi.ITracer, parent upcommon.IRecursiveWindUp) *OTDG {
+	return &OTDG{
+		Name:   name,
+		Tracer: tracer.NSTIC(name).ITracer(),
+		Parent: parent,
+	}
+}
+
 func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
 	tracer = tracer.NSTIC(otdg.Name).ITracer()
 	tracer.InfoEvent("21").SendMsg("windup-begin")

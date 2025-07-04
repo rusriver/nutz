@@ -16,6 +16,14 @@ type Fork struct {
 	mu     sync.Mutex
 }
 
+func NewFork(name string, tracer loggeterrapi.ITracer, parent upcommon.IRecursiveWindUp) *Fork {
+	return &Fork{
+		Name:   name,
+		Tracer: tracer.NSTIC(name).ITracer(),
+		Parent: parent,
+	}
+}
+
 var _ upcommon.IRecursiveWindUp = (*Fork)(nil)
 
 func (fork *Fork) RunFuncInParallel(f func()) {

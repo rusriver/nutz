@@ -23,11 +23,7 @@ func Test_DI_Container_Example1_01(t *testing.T) {
 
 	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
 
-	otdg1 := &up.OTDG{
-		Name:   "otdg1",
-		Tracer: tracer.NSTIC("otdg1").ITracer(),
-		Parent: nil,
-	}
+	otdg1 := up.NewOTDG("otdg1", tracer, nil)
 
 	err := controlflow.Try(func() (err any) {
 		// syntax example, variant 1
@@ -80,11 +76,7 @@ func Test_DI_Container_Example1_02(t *testing.T) {
 
 	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
 
-	otdg1 := &up.OTDG{
-		Name:   "otdg1",
-		Tracer: tracer.NSTIC("otdg1").ITracer(),
-		Parent: nil,
-	}
+	otdg1 := up.NewOTDG("otdg1", tracer, nil)
 
 	err := controlflow.Try(func() (err any) {
 		// syntax example, variant 1

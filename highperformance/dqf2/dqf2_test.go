@@ -35,13 +35,13 @@ func Test_DQF2_01(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			var x int
-			m := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
+			mup := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
 				s.State++
 				m.Tag = dqf2.Tag_OK
 				x = s.State
 			}}
-			dqf2.SyncTransaction(s.ChUp, m)
-			fmt.Println("++", x, m.Tag)
+			dqf2.SyncTransaction(s.ChUp, mup)
+			fmt.Println("++", x, mup.Tag)
 			wg.Done()
 		}()
 	}
@@ -67,14 +67,14 @@ func Test_DQF2_02(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			var x int
-			m := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
+			mup := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
 				s.State++
 				m.Tag = dqf2.Tag_OK
 				x = s.State
 				time.Sleep(time.Millisecond * 50)
 			}}
-			dqf2.SyncTransaction(s.ChUp, m)
-			fmt.Println("++", x, m.Tag)
+			dqf2.SyncTransaction(s.ChUp, mup)
+			fmt.Println("++", x, mup.Tag)
 			wg.Done()
 		}()
 	}
@@ -102,15 +102,15 @@ func Test_DQF2_03(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			var x int
-			m := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
+			mup := &dqf2.Message[*Service01]{Func: func(m *dqf2.Message[*Service01], s *Service01) {
 				s.State++
 				m.Tag = dqf2.Tag_OK
 				x = s.State
 				time.Sleep(time.Millisecond * 50)
 			}}
-			chdown.Transaction(s.ChUp, m)
+			chdown.Transaction(s.ChUp, mup)
 			<-chdown
-			fmt.Println("++", x, m.Tag)
+			fmt.Println("++", x, mup.Tag)
 			wg.Done()
 		}()
 	}

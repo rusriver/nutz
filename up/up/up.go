@@ -30,8 +30,8 @@ func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
 // In that case, better implement explicit forward action plan to wind up your system.
 func (otdg *OTDG) RecursiveWindUp(tracer loggeterrapi.ITracer) {
 	tracer = tracer.NSTIC(otdg.Name).ITracer()
-	tracer.InfoEvent("33").SendMsg("rec-windup-begin")
-	defer tracer.InfoEvent("34").SendMsg("rec-windup-end")
+	tracer.InfoEvent("RWB-33").SendMsg("rec-windup-begin")
+	defer tracer.InfoEvent("RWE-34").SendMsg("rec-windup-end")
 	for _, ir := range slices.Backward(otdg.upStack) {
 		ir.WindUp(tracer)
 	}

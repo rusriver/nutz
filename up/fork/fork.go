@@ -37,8 +37,8 @@ func (fork *Fork) RecursiveWindUp(tracer loggeterrapi.ITracer) {
 	fork.count--
 	if fork.count == 0 {
 		if fork.Parent != nil {
-			tracer.InfoEvent("f39").SendMsg("rec-windup-begin")
-			defer tracer.InfoEvent("f40").SendMsg("rec-windup-end")
+			tracer.InfoEvent("RWB-39").SendMsg("rec-windup-begin")
+			defer tracer.InfoEvent("RWE-40").SendMsg("rec-windup-end")
 			fork.Parent.RecursiveWindUp(tracer.NSTIC(fork.Name).ITracer())
 		}
 	}

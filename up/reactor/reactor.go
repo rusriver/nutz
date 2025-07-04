@@ -188,8 +188,8 @@ func (r *Reactor) CallTheInjectFunc(f func(r *Reactor)) {
 // In that case, better implement explicit forward action plan to wind up your system.
 func (r *Reactor) RecursiveWindUp(tracer loggeterrapi.ITracer) {
 	tracer = tracer.NSTIC(r.Name).ITracer()
-	tracer.InfoEvent("184").SendMsg("rec-windup-begin")
-	defer tracer.InfoEvent("185").SendMsg("rec-windup-end")
+	tracer.InfoEvent("RWB-184").SendMsg("rec-windup-begin")
+	defer tracer.InfoEvent("RWE-185").SendMsg("rec-windup-end")
 	var subs []*Subsystem
 	wg := sync.WaitGroup{}
 	wg.Add(1)

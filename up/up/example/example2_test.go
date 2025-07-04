@@ -430,6 +430,8 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 
 	// Create infra prerequisite components
 	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
+	tracer.InfoEvent("BEGIN").Send()
+
 	ctx := context.Background()
 	wg1 := sync.WaitGroup{}
 	wg1.Add(1)
@@ -649,7 +651,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	W03.Stop_Done()
 
 	time.Sleep(time.Second)
-	tracer.InfoEvent("287").SendMsg("IS UP")
+	tracer.InfoEvent("UP").Send()
 
 	// make sure everything is started
 	bb, _ := json.MarshalIndent(example.ControlRegistry, "", "    ")
@@ -676,6 +678,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	time.Sleep(5 * time.Second)
 
 	// we're going to stop then
+	tracer.InfoEvent("GO-DOWN").Send()
 
 	// S_rastan.WindUp(tracer.NSTIC("wind-up").ITracer())
 
@@ -694,6 +697,8 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 		"uphili":   0,
 	}))
 	fmt.Println("OK, all components are DOWN")
+
+	tracer.InfoEvent("END").Send()
 }
 
 // in real projects, this better be in separate file

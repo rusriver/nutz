@@ -28,120 +28,148 @@ func Test_DI_Container_Example2_00(t *testing.T) {
 
 	/*
 		TEST OUTPUT:
-		Running tool: /usr/bin/go test -timeout 30s -run ^Test_DI_Container_Example2_00$ github.com/rusriver/nutz/up/up/example -count=1
+			Running tool: /usr/bin/go test -timeout 30s -run ^Test_DI_Container_Example2_00$ github.com/rusriver/nutz/up/up/example -count=1
 
-		=== RUN   Test_DI_Container_Example2_00
-		{"level":"INFO","tags":["W01","e325ac80ec09"],"etc":[14,1],"msg":"the watcher W01 starting","ts":"20250703-163346"}
-		{"level":"INFO","tags":["W02","e325ac80ec09"],"etc":[15,1],"msg":"the watcher W02 starting","ts":"20250703-163346"}
-		{"level":"INFO","tags":["W03","e325ac80ec09"],"etc":[16,1],"msg":"the watcher W03 starting","ts":"20250703-163346"}
-		{"level":"INFO","tags":["S_rastan","288"],"etc":[1,1],"msg":"starting","ts":"20250703-163346"}
-		{"level":"INFO","tags":["S_rastan","389"],"etc":[1,2],"msg":"done","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_dodism","288"],"etc":[7,1],"msg":"starting","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_myinei","288"],"etc":[3,1],"msg":"starting","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_armati","288"],"etc":[4,1],"msg":"starting","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_xylane","288"],"etc":[5,1],"msg":"starting","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_obdulu","288"],"etc":[6,1],"msg":"starting","ts":"20250703-163348"}
-		{"level":"INFO","tags":["S_dodism","389"],"etc":[7,2],"msg":"done","ts":"20250703-163349"}
-		{"level":"INFO","tags":["S_myinei","389"],"etc":[3,2],"msg":"done","ts":"20250703-163349"}
-		{"level":"INFO","tags":["S_armati","389"],"etc":[4,2],"msg":"done","ts":"20250703-163349"}
-		{"level":"INFO","tags":["S_xylane","389"],"etc":[5,2],"msg":"done","ts":"20250703-163349"}
-		{"level":"INFO","tags":["S_obdulu","389"],"etc":[6,2],"msg":"done","ts":"20250703-163350"}
-		{"level":"INFO","tags":["S_nutari","288"],"etc":[9,1],"msg":"starting","ts":"20250703-163350"}
-		{"level":"INFO","tags":["S_uromer","288"],"etc":[11,1],"msg":"starting","ts":"20250703-163350"}
-		{"level":"INFO","tags":["S_nutari","389"],"etc":[9,2],"msg":"done","ts":"20250703-163350"}
-		{"level":"INFO","tags":["S_uromer","389"],"etc":[11,2],"msg":"done","ts":"20250703-163351"}
-		{"level":"INFO","tags":["A1","288"],"etc":[13,1],"msg":"starting","ts":"20250703-163351"}
-		{"level":"INFO","tags":["A1","389"],"etc":[13,2],"msg":"done","ts":"20250703-163353"}
-		{"level":"INFO","tags":["W01","5ad2754f035d"],"etc":[14,2],"msg":"the watcher W01 reached STOP/DONE state (OK)","ts":"20250703-163353"}
-		{"level":"INFO","tags":["W03","5ad2754f035d"],"etc":[16,2],"msg":"the watcher W03 reached STOP/DONE state (OK)","ts":"20250703-163353"}
-		{"level":"INFO","tags":["W02","5ad2754f035d"],"etc":[15,2],"msg":"the watcher W02 reached STOP/DONE state (OK)","ts":"20250703-163353"}
-		{"level":"INFO","tags":["287"],"etc":[17],"msg":"IS UP","ts":"20250703-163354"}
-		{
-			"Components": {
-				"System01": 12,
-				"System02": 7,
-				"System03": 5,
-				"aslast": 1,
-				"itchot": 1,
-				"ontras": 1,
-				"uphili": 1
+			=== RUN   Test_DI_Container_Example2_00
+			{"level":"INFO","tags":["W01","e325ac80ec09"],"etc":[14,1],"msg":"the watcher W01 starting","ts":"20250704-141809"}
+			{"level":"INFO","tags":["W02","e325ac80ec09"],"etc":[15,1],"msg":"the watcher W02 starting","ts":"20250704-141809"}
+			{"level":"INFO","tags":["W03","e325ac80ec09"],"etc":[16,1],"msg":"the watcher W03 starting","ts":"20250704-141809"}
+			{"level":"INFO","tags":["S_rastan","288"],"etc":[1,1],"msg":"starting","ts":"20250704-141809"}
+			{"level":"INFO","tags":["S_rastan","aslast","START"],"etc":[1,2,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_rastan","uphili","START"],"etc":[1,3,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_rastan","389"],"etc":[1,4],"msg":"done","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","288"],"etc":[7,1],"msg":"starting","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_armati","288"],"etc":[4,1],"msg":"starting","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_xylane","288"],"etc":[5,1],"msg":"starting","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_myinei","288"],"etc":[3,1],"msg":"starting","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_obdulu","288"],"etc":[6,1],"msg":"starting","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","fopicu","START"],"etc":[7,2,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","ejacti","START"],"etc":[7,3,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","hoorgo","START"],"etc":[7,4,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","volath","START"],"etc":[7,5,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","vexati","START"],"etc":[7,6,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","ontras","START"],"etc":[7,7,1],"ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_dodism","389"],"etc":[7,8],"msg":"done","ts":"20250704-141811"}
+			{"level":"INFO","tags":["S_myinei","sostie","START"],"etc":[3,2,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_myinei","razinn","START"],"etc":[3,3,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_myinei","seigul","START"],"etc":[3,4,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_myinei","kaffin","START"],"etc":[3,5,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_myinei","sparip","START"],"etc":[3,6,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_myinei","389"],"etc":[3,7],"msg":"done","ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_obdulu","unborr","START"],"etc":[6,2,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_obdulu","axseps","START"],"etc":[6,3,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_obdulu","asdeed","START"],"etc":[6,4,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_obdulu","itchot","START"],"etc":[6,5,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_obdulu","389"],"etc":[6,6],"msg":"done","ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_armati","fatoca","START"],"etc":[4,2,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_armati","paudat","START"],"etc":[4,3,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_armati","teashi","START"],"etc":[4,4,1],"ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_armati","389"],"etc":[4,5],"msg":"done","ts":"20250704-141812"}
+			{"level":"INFO","tags":["S_uromer","288"],"etc":[11,1],"msg":"starting","ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_xylane","requac","START"],"etc":[5,2,1],"ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_xylane","rebrei","START"],"etc":[5,3,1],"ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_xylane","389"],"etc":[5,4],"msg":"done","ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_nutari","288"],"etc":[9,1],"msg":"starting","ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_uromer","petorn","START"],"etc":[11,2,1],"ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_uromer","histil","START"],"etc":[11,3,1],"ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_uromer","389"],"etc":[11,4],"msg":"done","ts":"20250704-141813"}
+			{"level":"INFO","tags":["S_nutari","robles","START"],"etc":[9,2,1],"ts":"20250704-141814"}
+			{"level":"INFO","tags":["S_nutari","389"],"etc":[9,3],"msg":"done","ts":"20250704-141814"}
+			{"level":"INFO","tags":["A1","288"],"etc":[13,1],"msg":"starting","ts":"20250704-141815"}
+			{"level":"INFO","tags":["A1","a1_nguloo","START"],"etc":[13,2,1],"ts":"20250704-141815"}
+			{"level":"INFO","tags":["A1","a1_fakint","START"],"etc":[13,3,1],"ts":"20250704-141815"}
+			{"level":"INFO","tags":["A1","a1_mestic","START"],"etc":[13,4,1],"ts":"20250704-141815"}
+			{"level":"INFO","tags":["A1","389"],"etc":[13,5],"msg":"done","ts":"20250704-141815"}
+			{"level":"INFO","tags":["W01","5ad2754f035d"],"etc":[14,2],"msg":"the watcher W01 reached STOP/DONE state (OK)","ts":"20250704-141815"}
+			{"level":"INFO","tags":["W03","5ad2754f035d"],"etc":[16,2],"msg":"the watcher W03 reached STOP/DONE state (OK)","ts":"20250704-141815"}
+			{"level":"INFO","tags":["W02","5ad2754f035d"],"etc":[15,2],"msg":"the watcher W02 reached STOP/DONE state (OK)","ts":"20250704-141815"}
+			{"level":"INFO","tags":["287"],"etc":[17],"msg":"IS UP","ts":"20250704-141816"}
+			{
+				"Components": {
+					"System01": 12,
+					"System02": 7,
+					"System03": 5,
+					"aslast": 1,
+					"itchot": 1,
+					"ontras": 1,
+					"uphili": 1
+				}
 			}
-		}
-		OK, 28 components of 7 types are UP
-		{"level":"INFO","tags":["recursive-wind-up","A1","33"],"etc":[18,1,1],"msg":"rec-windup-begin","ts":"20250703-163359"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","a1_mestic","26"],"etc":[18,1,2,1],"msg":"removed","ts":"20250703-163359"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","a1_fakint","26"],"etc":[18,1,3,1],"msg":"removed","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","a1_nguloo","26"],"etc":[18,1,4,1],"msg":"removed","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","184"],"etc":[18,1,5,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","33"],"etc":[18,1,5,2,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","33"],"etc":[18,1,5,3,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","33"],"etc":[18,1,5,4,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","sparip","26"],"etc":[18,1,5,4,2,1],"msg":"removed","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","histil","26"],"etc":[18,1,5,3,2,1],"msg":"removed","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","robles","26"],"etc":[18,1,5,2,2,1],"msg":"removed","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","184"],"etc":[18,1,5,2,3,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","33"],"etc":[18,1,5,2,3,2,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","33"],"etc":[18,1,5,2,3,3,1],"msg":"rec-windup-begin","ts":"20250703-163400"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","teashi","26"],"etc":[18,1,5,2,3,3,2,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","kaffin","26"],"etc":[18,1,5,4,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","petorn","26"],"etc":[18,1,5,3,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","rebrei","26"],"etc":[18,1,5,2,3,2,2,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","184"],"etc":[18,1,5,3,4,1],"msg":"rec-windup-begin","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","33"],"etc":[18,1,5,3,4,3,1],"msg":"rec-windup-begin","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","33"],"etc":[18,1,5,3,4,2,1],"msg":"rec-windup-begin","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","seigul","26"],"etc":[18,1,5,4,4,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","requac","26"],"etc":[18,1,5,2,3,2,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","ontras","26"],"etc":[18,1,5,3,4,2,2,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","F1","f33"],"etc":[18,1,5,2,3,2,4,1],"msg":"rec-windup-call","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","paudat","26"],"etc":[18,1,5,2,3,3,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","34"],"etc":[18,1,5,2,3,2,5],"msg":"rec-windup-end","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","itchot","26"],"etc":[18,1,5,3,4,3,2,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","fatoca","26"],"etc":[18,1,5,2,3,3,4,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","F1","f33"],"etc":[18,1,5,2,3,3,5,1],"msg":"rec-windup-call","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","34"],"etc":[18,1,5,2,3,3,6],"msg":"rec-windup-end","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","185"],"etc":[18,1,5,2,3,4],"msg":"rec-windup-end","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","razinn","26"],"etc":[18,1,5,4,5,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","vexati","26"],"etc":[18,1,5,3,4,2,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","34"],"etc":[18,1,5,2,4],"msg":"rec-windup-end","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","asdeed","26"],"etc":[18,1,5,3,4,3,3,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","volath","26"],"etc":[18,1,5,3,4,2,4,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","sostie","26"],"etc":[18,1,5,4,6,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","axseps","26"],"etc":[18,1,5,3,4,3,4,1],"msg":"removed","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","F1","f33"],"etc":[18,1,5,4,7,1],"msg":"rec-windup-call","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","34"],"etc":[18,1,5,4,8],"msg":"rec-windup-end","ts":"20250703-163401"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","hoorgo","26"],"etc":[18,1,5,3,4,2,5,1],"msg":"removed","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","unborr","26"],"etc":[18,1,5,3,4,3,5,1],"msg":"removed","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","F1","f33"],"etc":[18,1,5,3,4,3,6,1],"msg":"rec-windup-call","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","34"],"etc":[18,1,5,3,4,3,7],"msg":"rec-windup-end","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","ejacti","26"],"etc":[18,1,5,3,4,2,6,1],"msg":"removed","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","fopicu","26"],"etc":[18,1,5,3,4,2,7,1],"msg":"removed","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f33"],"etc":[18,1,5,3,4,2,8,1],"msg":"rec-windup-call","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f39"],"etc":[18,1,5,3,4,2,8,2],"msg":"rec-windup-begin","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","33"],"etc":[18,1,5,3,4,2,8,3,1,1],"msg":"rec-windup-begin","ts":"20250703-163402"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","uphili","26"],"etc":[18,1,5,3,4,2,8,3,1,2,1],"msg":"removed","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","aslast","26"],"etc":[18,1,5,3,4,2,8,3,1,3,1],"msg":"removed","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","34"],"etc":[18,1,5,3,4,2,8,3,1,4],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f40"],"etc":[18,1,5,3,4,2,8,4],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","34"],"etc":[18,1,5,3,4,2,9],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","185"],"etc":[18,1,5,3,4,4],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","34"],"etc":[18,1,5,3,5],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","R1","185"],"etc":[18,1,5,5],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{"level":"INFO","tags":["recursive-wind-up","A1","34"],"etc":[18,1,6],"msg":"rec-windup-end","ts":"20250703-163403"}
-		{
-			"Components": {
-				"System01": 0,
-				"System02": 0,
-				"System03": 0,
-				"aslast": 0,
-				"itchot": 0,
-				"ontras": 0,
-				"uphili": 0
+			OK, 28 components of 7 types are UP
+			{"level":"INFO","tags":["recursive-wind-up","A1","33"],"etc":[18,1,1],"msg":"rec-windup-begin","ts":"20250704-141821"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","a1_mestic","26"],"etc":[18,1,2,1],"msg":"removed","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","a1_fakint","26"],"etc":[18,1,3,1],"msg":"removed","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","a1_nguloo","26"],"etc":[18,1,4,1],"msg":"removed","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","184"],"etc":[18,1,5,1],"msg":"rec-windup-begin","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","33"],"etc":[18,1,5,2,1],"msg":"rec-windup-begin","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","33"],"etc":[18,1,5,3,1],"msg":"rec-windup-begin","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","33"],"etc":[18,1,5,4,1],"msg":"rec-windup-begin","ts":"20250704-141822"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","robles","26"],"etc":[18,1,5,4,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","sparip","26"],"etc":[18,1,5,3,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","184"],"etc":[18,1,5,4,3,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","histil","26"],"etc":[18,1,5,2,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","33"],"etc":[18,1,5,4,3,2,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","33"],"etc":[18,1,5,4,3,3,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","petorn","26"],"etc":[18,1,5,2,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","184"],"etc":[18,1,5,2,4,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","rebrei","26"],"etc":[18,1,5,4,3,3,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","teashi","26"],"etc":[18,1,5,4,3,2,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","kaffin","26"],"etc":[18,1,5,3,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","33"],"etc":[18,1,5,2,4,2,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","33"],"etc":[18,1,5,2,4,3,1],"msg":"rec-windup-begin","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","ontras","26"],"etc":[18,1,5,2,4,2,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","itchot","26"],"etc":[18,1,5,2,4,3,2,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","seigul","26"],"etc":[18,1,5,3,4,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","paudat","26"],"etc":[18,1,5,4,3,2,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","requac","26"],"etc":[18,1,5,4,3,3,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","F1","f33"],"etc":[18,1,5,4,3,3,4,1],"msg":"rec-windup-call","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_xylane","34"],"etc":[18,1,5,4,3,3,5],"msg":"rec-windup-end","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","razinn","26"],"etc":[18,1,5,3,5,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","asdeed","26"],"etc":[18,1,5,2,4,3,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","fatoca","26"],"etc":[18,1,5,4,3,2,4,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","vexati","26"],"etc":[18,1,5,2,4,2,3,1],"msg":"removed","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","F1","f33"],"etc":[18,1,5,4,3,2,5,1],"msg":"rec-windup-call","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","S_armati","34"],"etc":[18,1,5,4,3,2,6],"msg":"rec-windup-end","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","R3","185"],"etc":[18,1,5,4,3,4],"msg":"rec-windup-end","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_nutari","34"],"etc":[18,1,5,4,4],"msg":"rec-windup-end","ts":"20250704-141823"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","sostie","26"],"etc":[18,1,5,3,6,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","axseps","26"],"etc":[18,1,5,2,4,3,4,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","F1","f33"],"etc":[18,1,5,3,7,1],"msg":"rec-windup-call","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_myinei","34"],"etc":[18,1,5,3,8],"msg":"rec-windup-end","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","volath","26"],"etc":[18,1,5,2,4,2,4,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","unborr","26"],"etc":[18,1,5,2,4,3,5,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","F1","f33"],"etc":[18,1,5,2,4,3,6,1],"msg":"rec-windup-call","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_obdulu","34"],"etc":[18,1,5,2,4,3,7],"msg":"rec-windup-end","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","hoorgo","26"],"etc":[18,1,5,2,4,2,5,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","ejacti","26"],"etc":[18,1,5,2,4,2,6,1],"msg":"removed","ts":"20250704-141824"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","fopicu","26"],"etc":[18,1,5,2,4,2,7,1],"msg":"removed","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f33"],"etc":[18,1,5,2,4,2,8,1],"msg":"rec-windup-call","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f39"],"etc":[18,1,5,2,4,2,8,2],"msg":"rec-windup-begin","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","33"],"etc":[18,1,5,2,4,2,8,3,1,1],"msg":"rec-windup-begin","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","uphili","26"],"etc":[18,1,5,2,4,2,8,3,1,2,1],"msg":"removed","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","aslast","26"],"etc":[18,1,5,2,4,2,8,3,1,3,1],"msg":"removed","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","34"],"etc":[18,1,5,2,4,2,8,3,1,4],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","F1","f40"],"etc":[18,1,5,2,4,2,8,4],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","S_dodism","34"],"etc":[18,1,5,2,4,2,9],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","R2","185"],"etc":[18,1,5,2,4,4],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","S_uromer","34"],"etc":[18,1,5,2,5],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","R1","185"],"etc":[18,1,5,5],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{"level":"INFO","tags":["recursive-wind-up","A1","34"],"etc":[18,1,6],"msg":"rec-windup-end","ts":"20250704-141825"}
+			{
+				"Components": {
+					"System01": 0,
+					"System02": 0,
+					"System03": 0,
+					"aslast": 0,
+					"itchot": 0,
+					"ontras": 0,
+					"uphili": 0
+				}
 			}
-		}
-		OK, all components are DOWN
-		--- PASS: Test_DI_Container_Example2_00 (16.82s)
-		PASS
-		ok      github.com/rusriver/nutz/up/up/example  16.820s
+			OK, all components are DOWN
+			--- PASS: Test_DI_Container_Example2_00 (16.34s)
+			PASS
+			ok      github.com/rusriver/nutz/up/up/example  16.349s
 	*/
 }
 
@@ -150,89 +178,113 @@ func Test_DI_Container_Example2_01(t *testing.T) {
 
 	/*
 		TEST OUTPUT:
-
 			Running tool: /usr/bin/go test -timeout 30s -run ^Test_DI_Container_Example2_01$ github.com/rusriver/nutz/up/up/example -count=1
 
 			=== RUN   Test_DI_Container_Example2_01
-			{"level":"INFO","tags":["W01","e325ac80ec09"],"etc":[14,1],"msg":"the watcher W01 starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["W02","e325ac80ec09"],"etc":[15,1],"msg":"the watcher W02 starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["W03","e325ac80ec09"],"etc":[16,1],"msg":"the watcher W03 starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_rastan","288"],"etc":[1,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_rastan","389"],"etc":[1,2],"msg":"done","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_dodism","288"],"etc":[7,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_xylane","288"],"etc":[5,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_armati","288"],"etc":[4,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_myinei","288"],"etc":[3,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_obdulu","288"],"etc":[6,1],"msg":"starting","ts":"20250703-163528"}
-			{"level":"INFO","tags":["S_xylane","389"],"etc":[5,2],"msg":"done","ts":"20250703-163529"}
-			{"level":"INFO","tags":["S_myinei","389"],"etc":[3,2],"msg":"done","ts":"20250703-163529"}
-			{"level":"INFO","tags":["S_dodism","389"],"etc":[7,2],"msg":"done","ts":"20250703-163529"}
-			{"level":"INFO","tags":["S_obdulu","389"],"etc":[6,2],"msg":"done","ts":"20250703-163529"}
-			{"level":"INFO","tags":["S_uromer","288"],"etc":[11,1],"msg":"starting","ts":"20250703-163529"}
-			{"level":"INFO","tags":["S_armati","389"],"etc":[4,2],"msg":"done","ts":"20250703-163530"}
-			{"level":"INFO","tags":["S_uromer","389"],"etc":[11,2],"msg":"done","ts":"20250703-163530"}
-			{"level":"INFO","tags":["S_nutari","288"],"etc":[9,1],"msg":"starting","ts":"20250703-163530"}
-			{"level":"INFO","tags":["S_nutari","389"],"etc":[9,2],"msg":"done","ts":"20250703-163531"}
-			{"level":"INFO","tags":["W02","b7d60e67e04c"],"etc":[15,2],"msg":"the watcher W02 timed out","ts":"20250703-163543"}
-			{"level":"INFO","tags":["W01","b7d60e67e04c"],"etc":[14,2],"msg":"the watcher W01 timed out","ts":"20250703-163543"}
-			{"level":"INFO","tags":["W03","b7d60e67e04c"],"etc":[16,2],"msg":"the watcher W03 timed out","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","33"],"etc":[17,1,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","184"],"etc":[17,1,2,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","33"],"etc":[17,1,2,2,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","33"],"etc":[17,1,2,3,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","33"],"etc":[17,1,2,4,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","robles","26"],"etc":[17,1,2,4,2,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","184"],"etc":[17,1,2,4,3,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","sparip","26"],"etc":[17,1,2,3,2,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","histil","26"],"etc":[17,1,2,2,2,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","33"],"etc":[17,1,2,4,3,2,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","33"],"etc":[17,1,2,4,3,3,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","petorn","26"],"etc":[17,1,2,2,3,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","teashi","26"],"etc":[17,1,2,4,3,3,2,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","rebrei","26"],"etc":[17,1,2,4,3,2,2,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","184"],"etc":[17,1,2,2,4,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","kaffin","26"],"etc":[17,1,2,3,3,1],"msg":"removed","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","33"],"etc":[17,1,2,2,4,2,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","33"],"etc":[17,1,2,2,4,3,1],"msg":"rec-windup-begin","ts":"20250703-163548"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","itchot","26"],"etc":[17,1,2,2,4,3,2,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","ontras","26"],"etc":[17,1,2,2,4,2,2,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","seigul","26"],"etc":[17,1,2,3,4,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","requac","26"],"etc":[17,1,2,4,3,2,3,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","paudat","26"],"etc":[17,1,2,4,3,3,3,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","F1","f33"],"etc":[17,1,2,4,3,2,4,1],"msg":"rec-windup-call","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","34"],"etc":[17,1,2,4,3,2,5],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","fatoca","26"],"etc":[17,1,2,4,3,3,4,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","razinn","26"],"etc":[17,1,2,3,5,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","vexati","26"],"etc":[17,1,2,2,4,2,3,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","F1","f33"],"etc":[17,1,2,4,3,3,5,1],"msg":"rec-windup-call","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","34"],"etc":[17,1,2,4,3,3,6],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","asdeed","26"],"etc":[17,1,2,2,4,3,3,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","185"],"etc":[17,1,2,4,3,4],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","34"],"etc":[17,1,2,4,4],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","axseps","26"],"etc":[17,1,2,2,4,3,4,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","sostie","26"],"etc":[17,1,2,3,6,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","F1","f33"],"etc":[17,1,2,3,7,1],"msg":"rec-windup-call","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","34"],"etc":[17,1,2,3,8],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","volath","26"],"etc":[17,1,2,2,4,2,4,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","hoorgo","26"],"etc":[17,1,2,2,4,2,5,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","unborr","26"],"etc":[17,1,2,2,4,3,5,1],"msg":"removed","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","F1","f33"],"etc":[17,1,2,2,4,3,6,1],"msg":"rec-windup-call","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","34"],"etc":[17,1,2,2,4,3,7],"msg":"rec-windup-end","ts":"20250703-163549"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","ejacti","26"],"etc":[17,1,2,2,4,2,6,1],"msg":"removed","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","fopicu","26"],"etc":[17,1,2,2,4,2,7,1],"msg":"removed","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f33"],"etc":[17,1,2,2,4,2,8,1],"msg":"rec-windup-call","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f39"],"etc":[17,1,2,2,4,2,8,2],"msg":"rec-windup-begin","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","33"],"etc":[17,1,2,2,4,2,8,3,1,1],"msg":"rec-windup-begin","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","uphili","26"],"etc":[17,1,2,2,4,2,8,3,1,2,1],"msg":"removed","ts":"20250703-163550"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","aslast","26"],"etc":[17,1,2,2,4,2,8,3,1,3,1],"msg":"removed","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","34"],"etc":[17,1,2,2,4,2,8,3,1,4],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f40"],"etc":[17,1,2,2,4,2,8,4],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","34"],"etc":[17,1,2,2,4,2,9],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","185"],"etc":[17,1,2,2,4,4],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","34"],"etc":[17,1,2,2,5],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","185"],"etc":[17,1,2,5],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["recursive-wind-up--failure","A1","34"],"etc":[17,1,3],"msg":"rec-windup-end","ts":"20250703-163551"}
-			{"level":"INFO","tags":["344"],"etc":[18],"msg":"FINISHED BY WATCHERS, TIMED OUT","ts":"20250703-163551"}
+			{"level":"INFO","tags":["W01","e325ac80ec09"],"etc":[14,1],"msg":"the watcher W01 starting","ts":"20250704-141906"}
+			{"level":"INFO","tags":["W02","e325ac80ec09"],"etc":[15,1],"msg":"the watcher W02 starting","ts":"20250704-141906"}
+			{"level":"INFO","tags":["W03","e325ac80ec09"],"etc":[16,1],"msg":"the watcher W03 starting","ts":"20250704-141906"}
+			{"level":"INFO","tags":["S_rastan","288"],"etc":[1,1],"msg":"starting","ts":"20250704-141906"}
+			{"level":"INFO","tags":["S_rastan","aslast","START"],"etc":[1,2,1],"ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_rastan","uphili","START"],"etc":[1,3,1],"ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_rastan","389"],"etc":[1,4],"msg":"done","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_armati","288"],"etc":[4,1],"msg":"starting","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_dodism","288"],"etc":[7,1],"msg":"starting","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_myinei","288"],"etc":[3,1],"msg":"starting","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_xylane","288"],"etc":[5,1],"msg":"starting","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_obdulu","288"],"etc":[6,1],"msg":"starting","ts":"20250704-141907"}
+			{"level":"INFO","tags":["S_xylane","requac","START"],"etc":[5,2,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_xylane","rebrei","START"],"etc":[5,3,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_xylane","389"],"etc":[5,4],"msg":"done","ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","sostie","START"],"etc":[3,2,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","razinn","START"],"etc":[3,3,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","seigul","START"],"etc":[3,4,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","kaffin","START"],"etc":[3,5,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","sparip","START"],"etc":[3,6,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_myinei","389"],"etc":[3,7],"msg":"done","ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_obdulu","unborr","START"],"etc":[6,2,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_obdulu","axseps","START"],"etc":[6,3,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_obdulu","asdeed","START"],"etc":[6,4,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_obdulu","itchot","START"],"etc":[6,5,1],"ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_obdulu","389"],"etc":[6,6],"msg":"done","ts":"20250704-141908"}
+			{"level":"INFO","tags":["S_dodism","fopicu","START"],"etc":[7,2,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","ejacti","START"],"etc":[7,3,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","hoorgo","START"],"etc":[7,4,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","volath","START"],"etc":[7,5,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","vexati","START"],"etc":[7,6,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","ontras","START"],"etc":[7,7,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_dodism","389"],"etc":[7,8],"msg":"done","ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_armati","fatoca","START"],"etc":[4,2,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_armati","paudat","START"],"etc":[4,3,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_armati","teashi","START"],"etc":[4,4,1],"ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_armati","389"],"etc":[4,5],"msg":"done","ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_uromer","288"],"etc":[11,1],"msg":"starting","ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_nutari","288"],"etc":[9,1],"msg":"starting","ts":"20250704-141909"}
+			{"level":"INFO","tags":["S_uromer","petorn","START"],"etc":[11,2,1],"ts":"20250704-141910"}
+			{"level":"INFO","tags":["S_uromer","histil","START"],"etc":[11,3,1],"ts":"20250704-141910"}
+			{"level":"INFO","tags":["S_uromer","389"],"etc":[11,4],"msg":"done","ts":"20250704-141910"}
+			{"level":"INFO","tags":["S_nutari","robles","START"],"etc":[9,2,1],"ts":"20250704-141910"}
+			{"level":"INFO","tags":["S_nutari","389"],"etc":[9,3],"msg":"done","ts":"20250704-141910"}
+			{"level":"INFO","tags":["W02","b7d60e67e04c"],"etc":[15,2],"msg":"the watcher W02 timed out","ts":"20250704-141921"}
+			{"level":"INFO","tags":["W01","b7d60e67e04c"],"etc":[14,2],"msg":"the watcher W01 timed out","ts":"20250704-141921"}
+			{"level":"INFO","tags":["W03","b7d60e67e04c"],"etc":[16,2],"msg":"the watcher W03 timed out","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","33"],"etc":[17,1,1],"msg":"rec-windup-begin","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","184"],"etc":[17,1,2,1],"msg":"rec-windup-begin","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","33"],"etc":[17,1,2,2,1],"msg":"rec-windup-begin","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","33"],"etc":[17,1,2,3,1],"msg":"rec-windup-begin","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","33"],"etc":[17,1,2,4,1],"msg":"rec-windup-begin","ts":"20250704-141926"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","histil","26"],"etc":[17,1,2,2,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","sparip","26"],"etc":[17,1,2,3,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","robles","26"],"etc":[17,1,2,4,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","184"],"etc":[17,1,2,4,3,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","33"],"etc":[17,1,2,4,3,2,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","33"],"etc":[17,1,2,4,3,3,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","teashi","26"],"etc":[17,1,2,4,3,3,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","kaffin","26"],"etc":[17,1,2,3,3,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","petorn","26"],"etc":[17,1,2,2,3,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","184"],"etc":[17,1,2,2,4,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","rebrei","26"],"etc":[17,1,2,4,3,2,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","33"],"etc":[17,1,2,2,4,2,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","33"],"etc":[17,1,2,2,4,3,1],"msg":"rec-windup-begin","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","ontras","26"],"etc":[17,1,2,2,4,2,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","paudat","26"],"etc":[17,1,2,4,3,3,3,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","seigul","26"],"etc":[17,1,2,3,4,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","requac","26"],"etc":[17,1,2,4,3,2,3,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","F1","f33"],"etc":[17,1,2,4,3,2,4,1],"msg":"rec-windup-call","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_xylane","34"],"etc":[17,1,2,4,3,2,5],"msg":"rec-windup-end","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","itchot","26"],"etc":[17,1,2,2,4,3,2,1],"msg":"removed","ts":"20250704-141927"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","fatoca","26"],"etc":[17,1,2,4,3,3,4,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","F1","f33"],"etc":[17,1,2,4,3,3,5,1],"msg":"rec-windup-call","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","S_armati","34"],"etc":[17,1,2,4,3,3,6],"msg":"rec-windup-end","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","asdeed","26"],"etc":[17,1,2,2,4,3,3,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","R3","185"],"etc":[17,1,2,4,3,4],"msg":"rec-windup-end","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_nutari","34"],"etc":[17,1,2,4,4],"msg":"rec-windup-end","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","vexati","26"],"etc":[17,1,2,2,4,2,3,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","razinn","26"],"etc":[17,1,2,3,5,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","axseps","26"],"etc":[17,1,2,2,4,3,4,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","volath","26"],"etc":[17,1,2,2,4,2,4,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","sostie","26"],"etc":[17,1,2,3,6,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","F1","f33"],"etc":[17,1,2,3,7,1],"msg":"rec-windup-call","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_myinei","34"],"etc":[17,1,2,3,8],"msg":"rec-windup-end","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","unborr","26"],"etc":[17,1,2,2,4,3,5,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","F1","f33"],"etc":[17,1,2,2,4,3,6,1],"msg":"rec-windup-call","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_obdulu","34"],"etc":[17,1,2,2,4,3,7],"msg":"rec-windup-end","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","hoorgo","26"],"etc":[17,1,2,2,4,2,5,1],"msg":"removed","ts":"20250704-141928"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","ejacti","26"],"etc":[17,1,2,2,4,2,6,1],"msg":"removed","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","fopicu","26"],"etc":[17,1,2,2,4,2,7,1],"msg":"removed","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f33"],"etc":[17,1,2,2,4,2,8,1],"msg":"rec-windup-call","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f39"],"etc":[17,1,2,2,4,2,8,2],"msg":"rec-windup-begin","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","33"],"etc":[17,1,2,2,4,2,8,3,1,1],"msg":"rec-windup-begin","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","uphili","26"],"etc":[17,1,2,2,4,2,8,3,1,2,1],"msg":"removed","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","aslast","26"],"etc":[17,1,2,2,4,2,8,3,1,3,1],"msg":"removed","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","F1","S_rastan","34"],"etc":[17,1,2,2,4,2,8,3,1,4],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","F1","f40"],"etc":[17,1,2,2,4,2,8,4],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","S_dodism","34"],"etc":[17,1,2,2,4,2,9],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","R2","185"],"etc":[17,1,2,2,4,4],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","S_uromer","34"],"etc":[17,1,2,2,5],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","R1","185"],"etc":[17,1,2,5],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["recursive-wind-up--failure","A1","34"],"etc":[17,1,3],"msg":"rec-windup-end","ts":"20250704-141929"}
+			{"level":"INFO","tags":["344"],"etc":[18],"msg":"FINISHED BY WATCHERS, TIMED OUT","ts":"20250704-141929"}
 			{
 				"Components": {
 					"System01": 0,
@@ -247,7 +299,7 @@ func Test_DI_Container_Example2_01(t *testing.T) {
 			OK, all components are DOWN
 			--- PASS: Test_DI_Container_Example2_01 (23.01s)
 			PASS
-			ok      github.com/rusriver/nutz/up/up/example  23.016s
+			ok      github.com/rusriver/nutz/up/up/example  23.015s
 	*/
 }
 
@@ -659,13 +711,13 @@ func Make_S_rastan(
 
 		// syntax example, variant 1
 		aslast = up.Up(otdg, "aslast", func(name string) (*example.Aslast, upcommon.IRemovable) {
-			s := example.NewAslast(name)
+			s := example.NewAslast(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		// syntax example, variant 2
 		uphili = otdg.Up("uphili", func(name string) (any, upcommon.IRemovable) {
-			s := example.NewUphili(name)
+			s := example.NewUphili(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		}).(*example.Uphili)
 
@@ -695,28 +747,28 @@ func Make_S_myinei(
 		RandomSleep()
 
 		sostie := up.Up(otdg, "sostie", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		razinn := up.Up(otdg, "razinn", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, sostie)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer(), sostie)
 			return s, s
 		})
 		_ = razinn
 
 		seigul = up.Up(otdg, "seigul", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name, sostie)
+			s := example.NewSystem03(name, otdg.Tracer.NSTIC(name).ITracer(), sostie)
 			return s, s
 		})
 
 		kaffin := up.Up(otdg, "kaffin", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name, sostie, seigul)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer(), sostie, seigul)
 			return s, s
 		})
 
 		sparip = up.Up(otdg, "sparip", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, sostie, kaffin)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer(), sostie, kaffin)
 			return s, s
 		})
 
@@ -745,17 +797,17 @@ func Make_S_armati(
 		RandomSleep()
 
 		fatoca := up.Up(otdg, "fatoca", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		paudat := up.Up(otdg, "paudat", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		teashi := up.Up(otdg, "teashi", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name, aslast, uphili, fatoca, paudat)
+			s := example.NewSystem03(name, otdg.Tracer.NSTIC(name).ITracer(), aslast, uphili, fatoca, paudat)
 			return s, s
 		})
 		_ = teashi
@@ -784,12 +836,12 @@ func Make_S_xylane(
 		RandomSleep()
 
 		requac := up.Up(otdg, "requac", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		rebrei := up.Up(otdg, "rebrei", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, requac, aslast, uphili)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer(), requac, aslast, uphili)
 			return s, s
 		})
 		_ = rebrei
@@ -820,23 +872,23 @@ func Make_S_obdulu(
 		RandomSleep()
 
 		unborr := up.Up(otdg, "unborr", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name, aslast, uphili)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer(), aslast, uphili)
 			return s, s
 		})
 
 		axseps := up.Up(otdg, "axseps", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, unborr)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer(), unborr)
 			return s, s
 		})
 
 		asdeed := up.Up(otdg, "asdeed", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name, axseps, unborr)
+			s := example.NewSystem03(name, otdg.Tracer.NSTIC(name).ITracer(), axseps, unborr)
 			return s, s
 		})
 		_ = asdeed
 
 		itchot = up.Up(otdg, "itchot", func(name string) (*example.Itchot, upcommon.IRemovable) {
-			s := example.NewItchot(name, unborr, axseps)
+			s := example.NewItchot(name, otdg.Tracer.NSTIC(name).ITracer(), unborr, axseps)
 			return s, s
 		})
 
@@ -865,32 +917,32 @@ func Make_S_dodism(
 		RandomSleep()
 
 		_ = up.Up(otdg, "fopicu", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		_ = up.Up(otdg, "ejacti", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		_ = up.Up(otdg, "hoorgo", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		_ = up.Up(otdg, "volath", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		_ = up.Up(otdg, "vexati", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		ontras = up.Up(otdg, "ontras", func(name string) (*example.Ontras, upcommon.IRemovable) {
-			s := example.NewOntras(name)
+			s := example.NewOntras(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
@@ -919,7 +971,7 @@ func Make_S_nutari(
 		RandomSleep()
 
 		robles = up.Up(otdg, "robles", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
@@ -951,12 +1003,12 @@ func Make_S_uromer(
 		RandomSleep()
 
 		petorn = up.Up(otdg, "petorn", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name)
+			s := example.NewSystem03(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		histil = up.Up(otdg, "histil", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, petorn, itchot, ontras)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer(), petorn, itchot, ontras)
 			return s, s
 		})
 
@@ -989,18 +1041,18 @@ func Make_A1(
 
 		// syntax example, variant 1
 		a1_nguloo := up.Up(otdg, "a1_nguloo", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		// syntax example, variant 2
 		a1_fakint := otdg.Up("a1_fakint", func(name string) (any, upcommon.IRemovable) {
-			s := example.NewSystem02(name)
+			s := example.NewSystem02(name, otdg.Tracer.NSTIC(name).ITracer())
 			return s, s
 		}).(*example.System02)
 
 		up.Up(otdg, "a1_mestic", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name, a1_nguloo, a1_fakint, seigul, sparip, robles, petorn, histil)
+			s := example.NewSystem03(name, otdg.Tracer.NSTIC(name).ITracer(), a1_nguloo, a1_fakint, seigul, sparip, robles, petorn, histil)
 			return s, s
 		})
 

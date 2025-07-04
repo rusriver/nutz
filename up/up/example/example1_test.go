@@ -89,25 +89,25 @@ func Test_DI_Container_Example1_02(t *testing.T) {
 	err := controlflow.Try(func() (err any) {
 		// syntax example, variant 1
 		q := up.Up(otdg1, "Q", func(name string) (*example.System01, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg1.Tracer.NSTIC(name).ITracer())
 			return s, s
 		})
 
 		// syntax example, variant 2
 		w := otdg1.Up("W", func(name string) (any, upcommon.IRemovable) {
-			s := example.NewSystem01(name)
+			s := example.NewSystem01(name, otdg1.Tracer.NSTIC(name).ITracer())
 			return s, s
 		}).(*example.System01)
 
 		e := up.Up(otdg1, "E", func(name string) (*example.System02, upcommon.IRemovable) {
-			s := example.NewSystem02(name, q, w)
+			s := example.NewSystem02(name, otdg1.Tracer.NSTIC(name).ITracer(), q, w)
 			if true {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"504333e6ef10", "E failed"})
 			}
 			return s, s
 		})
 		r := up.Up(otdg1, "R", func(name string) (*example.System03, upcommon.IRemovable) {
-			s := example.NewSystem03(name, q, w, e)
+			s := example.NewSystem03(name, otdg1.Tracer.NSTIC(name).ITracer(), q, w, e)
 			return s, s
 		})
 

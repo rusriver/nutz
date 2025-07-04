@@ -10,13 +10,15 @@ import (
 // ============================
 
 type System01 struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*System01)(nil)
 
-func NewSystem01(name string, deps ...any) *System01 {
+func NewSystem01(name string, tracer loggeterrapi.ITracer, deps ...any) *System01 {
 	ControlRegistry.Components["System01"]++
+	tracer.InfoEvent("START").Send()
 	return &System01{
 		Name: name,
 	}
@@ -32,13 +34,15 @@ func (s *System01) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type System02 struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*System02)(nil)
 
-func NewSystem02(name string, deps ...any) *System02 {
+func NewSystem02(name string, tracer loggeterrapi.ITracer, deps ...any) *System02 {
 	ControlRegistry.Components["System02"]++
+	tracer.InfoEvent("START").Send()
 	return &System02{
 		Name: name,
 	}
@@ -54,13 +58,15 @@ func (s *System02) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type System03 struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*System03)(nil)
 
-func NewSystem03(name string, deps ...any) *System03 {
+func NewSystem03(name string, tracer loggeterrapi.ITracer, deps ...any) *System03 {
 	ControlRegistry.Components["System03"]++
+	tracer.InfoEvent("START").Send()
 	return &System03{
 		Name: name,
 	}
@@ -76,13 +82,15 @@ func (s *System03) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type Aslast struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*Aslast)(nil)
 
-func NewAslast(name string) *Aslast {
+func NewAslast(name string, tracer loggeterrapi.ITracer) *Aslast {
 	ControlRegistry.Components["aslast"]++
+	tracer.InfoEvent("START").Send()
 	return &Aslast{
 		Name: name,
 	}
@@ -98,13 +106,15 @@ func (s *Aslast) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type Uphili struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*Uphili)(nil)
 
-func NewUphili(name string) *Uphili {
+func NewUphili(name string, tracer loggeterrapi.ITracer) *Uphili {
 	ControlRegistry.Components["uphili"]++
+	tracer.InfoEvent("START").Send()
 	return &Uphili{
 		Name: name,
 	}
@@ -120,13 +130,15 @@ func (s *Uphili) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type Itchot struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*Itchot)(nil)
 
-func NewItchot(name string, s1 *System01, s2 *System02) *Itchot {
+func NewItchot(name string, tracer loggeterrapi.ITracer, s1 *System01, s2 *System02) *Itchot {
 	ControlRegistry.Components["itchot"]++
+	tracer.InfoEvent("START").Send()
 	return &Itchot{
 		Name: name,
 	}
@@ -142,13 +154,15 @@ func (s *Itchot) WindUp(tracer loggeterrapi.ITracer) {
 // ============================
 
 type Ontras struct {
-	Name string
+	Name   string
+	Tracer loggeterrapi.ITracer
 }
 
 var _ upcommon.IRemovable = (*Ontras)(nil)
 
-func NewOntras(name string) *Ontras {
+func NewOntras(name string, tracer loggeterrapi.ITracer) *Ontras {
 	ControlRegistry.Components["ontras"]++
+	tracer.InfoEvent("START").Send()
 	return &Ontras{
 		Name: name,
 	}

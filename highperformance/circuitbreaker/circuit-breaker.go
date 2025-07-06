@@ -268,3 +268,32 @@ func (cb *CircuitBreaker) WantToDo(f func() (success bool)) (result bool, execut
 		return false, false
 	}
 }
+
+type ExecutionResult struct {
+	Result   bool // ok or not
+	Executed bool
+}
+
+func (cb *CircuitBreaker) Try(f func() (success bool)) *ExecutionResult {
+	er := &ExecutionResult{}
+	if cb.IsOn() {
+		er.Result = f()
+		er.Executed = true
+		cb.Report(er.Result)
+	}
+	return er
+}
+
+func (er *ExecutionResult) ElseIfNotExecuted(f func(er *ExecutionResult)) *ExecutionResult {
+	if !er.Executed {
+		f(er)
+	}
+	return er
+}
+
+func (er *ExecutionResult) ElseIfNotOk(f func(er *ExecutionResult)) *ExecutionResult {
+	if !er.Result {
+		f(er)
+	}
+	return er
+}

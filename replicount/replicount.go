@@ -53,20 +53,22 @@ const (
 )
 
 func New(of ...func(r *Replicount)) (r *Replicount) {
-	r = &Replicount{
-		SlowPollPeriodPerReplica: time.Second * 30,
-		TTLMultiple:              6,
-		FastModeSpeedMultiple:    20,
-		Context:                  context.Background(),
-		DQF_Len:                  24,
-		state:                    mode_Slow,
-		mainTimer:                timmer.New(),
-		fastModeLengthTimer:      timmer.New(),
-		currentResult:            &ChangeableObject{NumberOfReplicas: 0},
-	}
+	r = &Replicount{}
+	r.state = mode_Slow
+	r.mainTimer = timmer.New()
+	r.fastModeLengthTimer = timmer.New()
+	r.currentResult = &ChangeableObject{NumberOfReplicas: 0}
+
+	// the defaults
+	r.SlowPollPeriodPerReplica = time.Second * 30
+	r.TTLMultiple = 6
+	r.FastModeSpeedMultiple = 20
+	r.Context = context.Background()
+	r.DQF_Len = 24
 	for _, f := range of {
 		f(r)
 	}
+
 	r.DQF = make(chan func(r *Replicount), r.DQF_Len)
 
 	r.slowTTL = r.SlowPollPeriodPerReplica * time.Duration(r.TTLMultiple)

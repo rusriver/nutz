@@ -78,7 +78,7 @@ EntrySwitch:
 			map1struct0 = false
 
 		default:
-			return fmt.Errorf("MapHierToStruct()-674, incompatible type %v at path %v", rv1.Kind, strings.Join(env.path, "."))
+			return fmt.Errorf("MapHierToStruct()-674, incompatible type %v at path %v", rv1.Kind(), strings.Join(env.path, "."))
 		}
 
 		// if we are here, then there's for sure either a map or struct
@@ -162,7 +162,7 @@ EntrySwitch:
 			array1slice0 = false
 
 		default:
-			return fmt.Errorf("MapHierToStruct()-d9a, incompatible type %v at path %v", rv1.Kind, strings.Join(env.path, "."))
+			return fmt.Errorf("MapHierToStruct()-d9a, incompatible type %v at path %v", rv1.Kind(), strings.Join(env.path, "."))
 		}
 
 		for i, v := range hi1v {

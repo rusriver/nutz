@@ -19,27 +19,26 @@ type Creds struct {
 	MaxExecTime time.Duration
 }
 
-func Exec(ctx context.Context, optsF func(c *Creds), prg *Program) (e *controlflow.Event) {
-	opts := &Creds{
-		// defaults here
-		MaxExecTime: time.Minute,
-	}
-	if optsF != nil {
-		optsF(opts)
+func Exec(ctx context.Context, creds_func []func(c *Creds), prg *Program) (e *controlflow.Event) {
+	c := &Creds{}
+	// defaults here
+	c.MaxExecTime = time.Minute
+	for _, f := range creds_func {
+		f(c)
 	}
 
 	prgText := string(*prg)
 	fmt.Println(prgText)
 
 	dbOpts := &clickhouse.Options{
-		Addr: opts.Urls,
+		Addr: c.Urls,
 		Auth: clickhouse.Auth{
-			Database: opts.Database,
-			Username: opts.User,
-			Password: opts.Password,
+			Database: c.Database,
+			Username: c.User,
+			Password: c.Password,
 		},
 		Settings: clickhouse.Settings{
-			"max_execution_time": int(opts.MaxExecTime.Seconds()),
+			"max_execution_time": int(c.MaxExecTime.Seconds()),
 		},
 		Compression: &clickhouse.Compression{
 			Method: clickhouse.CompressionLZ4,

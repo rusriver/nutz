@@ -2,6 +2,7 @@ package loggeterrzl
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -135,11 +136,11 @@ func (e *LogEvent) SendMsgf(s string, vv ...any) {
 	e.Send()
 }
 
-func (e *LogEvent) SendMsg(s string) {
+func (e *LogEvent) SendMsg(x ...any) {
 	if e.IsInactive {
 		return // bypass
 	}
-	e.TheMessage = s
+	e.TheMessage = strings.TrimSpace(fmt.Sprintln(x...))
 	e.Send()
 }
 
@@ -214,6 +215,8 @@ func (e *LogEvent) Send() {
 	if len(e.TheMessage) > 0 {
 		e.ZerologEvent.Str(e.ParentLogger.RootContext.MessageKey, e.TheMessage)
 	}
+
+	e.ZerologEvent.Str("tsz", time.Since(e.ParentLogger.RootContext.ZeroTime).String())
 
 	e.ParentLogger.interceptor.e = e // this way we pass it to the EventOnWire() hook
 	defer func() { e.ParentLogger.interceptor.e = nil }()

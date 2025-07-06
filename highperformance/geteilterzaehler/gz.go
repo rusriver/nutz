@@ -52,7 +52,6 @@ func (gz *Int) Reduce(f func(s *Scherbe)) {
 		f(s)
 		s.mu.Unlock()
 	}
-	return
 }
 
 // A backgroud goroutine for constant-rate reduction process

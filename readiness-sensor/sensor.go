@@ -23,12 +23,12 @@ type Sensor struct {
 	DQF_Len int
 }
 
-func New(of ...func(c *Sensor)) (s *Sensor, err error) {
-	s = &Sensor{
-		TTL:     time.Duration(0),
-		Context: context.Background(),
-		DQF_Len: 124,
-	}
+func New(of ...func(s *Sensor)) (s *Sensor, err error) {
+	s = &Sensor{}
+	// the defaults
+	s.TTL = time.Duration(0)
+	s.Context = context.Background()
+	s.DQF_Len = 124
 	for _, of := range of {
 		of(s)
 	}

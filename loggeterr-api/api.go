@@ -117,6 +117,6 @@ type ILogEvent interface {
 	AddControlflowEvent(key string, event *controlflow.Event) ILogEvent
 
 	SendMsgf(string, ...any)
-	SendMsg(string)
+	SendMsg(...any)
 	Send()
 }

@@ -2,38 +2,38 @@ package circuitbreaker
 
 import (
 	"context"
-	"errors"
-	"log"
-	"math/rand"
 	"time"
+
+	"github.com/rusriver/nutz/controlflow"
+	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
+	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
 
 const (
-	// don't use 0, because 0 is reserved as indication of missing data in metrics
-	CbState_OpenDenied    = 1
-	CbState_ClosedAllowed = 2
+	// don't use 0, because 0 is reserved as an indication of missing data in metrics
+	CbState_OFF_DENIED = 1
+	CbState_ON_ALLOWED = 2
 	//
-	// don't use 0, because 0 is reserved as indication of missing data in metrics
-	GState_DenyRestart = 1_00
-	GState_Allow       = 2_00
-	GState_DenyWait    = 3_00
-	//
-	debugPrefix = "CIRCUIT-BREAKER: "
+	// don't use 0, because 0 is reserved as an indication of missing data in metrics
+	GState_DENY_RESTART = 1_00
+	GState_ALLOW        = 2_00
+	GState_DENY_WAIT    = 3_00
 )
 
 type CircuitBreaker struct {
-	ChanReportSize      int
-	ChanReigniteSize    int
-	ReignitePeriod      time.Duration
-	CloseAllowWhenAbove int
-	OpenDenyWhenBelow   int
-	DenyWaitTime        time.Duration
-	Context             context.Context
-	DQF_Size            int
-	DebugMode           bool
-	StateHookFunc       StateHookFunc // dep injection // this can be used to inject code that does metrics et al
+	ChanReportSize           int                  // reporting buffer size; note, it doesn't affect the algorithm
+	ChanReigniteSize         int                  // N of reignition tokens written every ReignitePeriod; typically is <= SwitchOnWhenAbove
+	ReignitePeriod           time.Duration        // period to refill the chReignite, when in DENY_RESTART mode
+	SwitchOnWhenAbove        float32              //
+	SwitchOffWhenBelow       float32              // typically should be >= ChanReigniteSize
+	PositiveAutoPullUpPerSec float32              // amount of auto-pull-up per second, when in ALLOW mode, from negative zone
+	OffWaitTime              time.Duration        // wait time in DENY_WAIT mode
+	Context                  context.Context      // can be used to stop it
+	DQF_Size                 int                  //
+	DebugTracer              loggeterrapi.ITracer // normally nil, set it to enable debug mode
+	StateHookFunc            StateHookFunc        // dep injection // this can be used to inject code that does metrics et al
 	//
-	state      int
+	cbState    int
 	chReport   chan bool
 	chReignite chan struct{}
 	chDQF      chan func()
@@ -43,16 +43,16 @@ type StateHookFunc func(cbState, gState int)
 
 func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 	cb = &CircuitBreaker{}
-	// defaults here, intentionally in assignment form for easier copy-paste
+	// the defaults, intentionally in assignment form for easier copy-paste
 	cb.ChanReportSize = 32
 	cb.ChanReigniteSize = 3
 	cb.ReignitePeriod = time.Second * 5
-	cb.CloseAllowWhenAbove = 3
-	cb.OpenDenyWhenBelow = -3
-	cb.DenyWaitTime = time.Minute * 1
+	cb.SwitchOnWhenAbove = 3
+	cb.SwitchOffWhenBelow = -3
+	cb.PositiveAutoPullUpPerSec = 0.1
+	cb.OffWaitTime = time.Minute * 1
 	cb.Context = context.Background()
 	cb.DQF_Size = 32
-	cb.DebugMode = false
 
 	for _, f := range fOpts {
 		f(cb)
@@ -69,67 +69,78 @@ func New(fOpts ...func(cb *CircuitBreaker)) (cb *CircuitBreaker) {
 
 func (cb *CircuitBreaker) g() {
 	var (
-		counter  int
+		counter  float32
 		lastTime time.Time
-		state    int
+		gState   int
 	)
-	if cb.DebugMode {
-		log.Printf(debugPrefix + "g started\n")
+	if cb.DebugTracer != nil {
+		cb.DebugTracer.DiagnosticEvent("45").SendMsg("g started")
 	}
+
+	// go func() {
+	// 	for {
+	// 		time.Sleep(500 * time.Millisecond)
+	// 		cb.DebugTracer.DiagnosticEvent("82").SendMsg("-- counter", counter)
+	// 	}
+	// }()
 
 	var setState func(int)
 	setState = func(newState int) {
 		switch newState {
-		case GState_DenyRestart:
-			cb.state = CbState_OpenDenied
+
+		case GState_DENY_RESTART:
+			gState = GState_DENY_RESTART
+			cb.cbState = CbState_OFF_DENIED
 			counter = 0
 			lastTime = time.Now()
-			state = GState_DenyRestart
-			if cb.DebugMode {
-				log.Printf(debugPrefix + "DENY-RESTART\n")
+			if cb.DebugTracer != nil {
+				cb.DebugTracer.DiagnosticEvent("96").SendMsg("DENY-RESTART")
 			}
 
-		case GState_Allow:
-			cb.state = CbState_ClosedAllowed
+		case GState_ALLOW:
+			gState = GState_ALLOW
+			cb.cbState = CbState_ON_ALLOWED
 			counter = 0
 			lastTime = time.Now()
-			state = GState_Allow
-			if cb.DebugMode {
-				log.Printf(debugPrefix + "ALLOW\n")
+			if cb.DebugTracer != nil {
+				cb.DebugTracer.DiagnosticEvent("105").SendMsg("ALLOW")
 			}
 
-		case GState_DenyWait:
-			cb.state = CbState_OpenDenied
+		case GState_DENY_WAIT:
+			gState = GState_DENY_WAIT
+			cb.cbState = CbState_OFF_DENIED
 			counter = 0
 			lastTime = time.Now()
-			state = GState_DenyWait
 			go func() {
-				time.Sleep(cb.DenyWaitTime)
 				select {
-				case cb.chDQF <- func() {
-					setState(GState_DenyRestart)
-				}:
-				default:
-					panic(errors.New("d64bc28d72f7 DQF overflow"))
+				case <-cb.Context.Done():
+					return
+				case <-time.After(cb.OffWaitTime):
+					select {
+					case cb.chDQF <- func() {
+						setState(GState_DENY_RESTART)
+					}:
+					default:
+						controlflow.RaiseCause(nil, &trace.BacktracePoint{"d64bc28d72f7", "DQF overflow"})
+					}
 				}
 			}()
-			if cb.DebugMode {
-				log.Printf(debugPrefix + "DENY-WAIT\n")
+			if cb.DebugTracer != nil {
+				cb.DebugTracer.DiagnosticEvent("130").SendMsg("DENY-WAIT")
 			}
 		}
+
 		if cb.StateHookFunc != nil {
-			cb.StateHookFunc(cb.state, state)
+			cb.StateHookFunc(cb.cbState, gState)
 		}
 	}
 
-	setState(GState_DenyRestart)
+	setState(GState_DENY_RESTART)
 
 	// initial ignition, once
-	if cb.DebugMode {
-		log.Printf(debugPrefix + "ignition\n")
+	if cb.DebugTracer != nil {
+		cb.DebugTracer.DiagnosticEvent("143").SendMsg("ignition")
 	}
-	rand.Seed(time.Now().UnixNano())
-	time.Sleep(time.Duration(rand.Intn(int(cb.ReignitePeriod.Milliseconds()))) * time.Millisecond)
 	for i := 0; i < cb.ChanReigniteSize; i++ {
 		select {
 		case cb.chReignite <- struct{}{}:
@@ -137,11 +148,11 @@ func (cb *CircuitBreaker) g() {
 		}
 	}
 
-	pullUpPositiveRPS := func() {
+	autoPullUpPositive := func() {
 		tNow := time.Now()
 		if counter < 0 {
 			seconds := tNow.Sub(lastTime).Seconds()
-			counter += int(seconds)
+			counter += float32(seconds) * cb.PositiveAutoPullUpPerSec
 			if counter > 0 {
 				counter = 0
 			}
@@ -149,7 +160,9 @@ func (cb *CircuitBreaker) g() {
 		lastTime = tNow
 	}
 
-	reigniteTicker := time.NewTicker(cb.ReignitePeriod) // keep it so, don't move to DQF -- it's useful, see docs why
+	reigniteTicker := time.NewTicker(cb.ReignitePeriod)
+
+	// main loop here
 	for {
 		select {
 		case <-cb.Context.Done():
@@ -163,53 +176,52 @@ func (cb *CircuitBreaker) g() {
 			}
 
 		case r := <-cb.chReport:
+			switch gState {
 
-			switch state {
-			case GState_DenyRestart:
-				pullUpPositiveRPS() // here for symmetricity
+			case GState_DENY_RESTART:
+				autoPullUpPositive() // here for symmetricity
 				switch r {
 				case true:
 					counter++
-					if counter > cb.CloseAllowWhenAbove {
-						setState(GState_Allow)
+					if counter >= cb.SwitchOnWhenAbove {
+						setState(GState_ALLOW)
 					}
 				case false:
 					counter--
-					if counter < cb.OpenDenyWhenBelow {
-						setState(GState_DenyWait)
+					if counter <= cb.SwitchOffWhenBelow {
+						setState(GState_DENY_WAIT)
 					}
 				}
 
-			case GState_Allow:
-				pullUpPositiveRPS()
+			case GState_ALLOW:
+				autoPullUpPositive()
 				switch r {
 				case true:
-					counter++ // this will not happen, usually
+					counter++ // this will not happen, usually, because un-reported
 					if counter > 0 {
 						counter = 0
 					}
 				case false:
 					counter--
-					if counter < cb.OpenDenyWhenBelow {
-						setState(GState_DenyWait)
+					if counter < cb.SwitchOffWhenBelow {
+						setState(GState_DENY_WAIT)
 					}
 				}
 
-			case GState_DenyWait:
+			case GState_DENY_WAIT:
 				// ignore any reports, just wait
-
 			}
 
-		case <-reigniteTicker.C: // not DQF, intentionally randomized
-			if state == GState_DenyRestart {
+		case <-reigniteTicker.C: // not DQF, intentionally randomized, relative to the request time
+			if gState == GState_DENY_RESTART {
 				for i := 0; i < cb.ChanReigniteSize; i++ {
 					select {
 					case cb.chReignite <- struct{}{}:
 					default:
 					}
 				}
-				if cb.DebugMode {
-					log.Printf(debugPrefix + "reignition\n")
+				if cb.DebugTracer != nil {
+					cb.DebugTracer.DiagnosticEvent("225").SendMsg("reignition")
 				}
 			}
 
@@ -218,13 +230,13 @@ func (cb *CircuitBreaker) g() {
 }
 
 func (cb *CircuitBreaker) Report(r bool) {
-	switch cb.state {
-	case CbState_OpenDenied:
+	switch cb.cbState {
+	case CbState_OFF_DENIED:
 		select {
 		case cb.chReport <- r:
 		default:
 		}
-	case CbState_ClosedAllowed:
+	case CbState_ON_ALLOWED:
 		if !r {
 			select {
 			case cb.chReport <- r:
@@ -234,8 +246,8 @@ func (cb *CircuitBreaker) Report(r bool) {
 	}
 }
 
-func (cb *CircuitBreaker) IsClosedAllowed() (ok bool) {
-	if cb.state == CbState_ClosedAllowed {
+func (cb *CircuitBreaker) IsOn() (ok bool) {
+	if cb.cbState == CbState_ON_ALLOWED {
 		return true
 	} else {
 		select {
@@ -247,12 +259,12 @@ func (cb *CircuitBreaker) IsClosedAllowed() (ok bool) {
 	return false
 }
 
-func (cb *CircuitBreaker) WantToDo(f func() (success bool)) (r bool) {
-	if cb.IsClosedAllowed() {
-		r = f()
-		cb.Report(r)
-		return r
+func (cb *CircuitBreaker) WantToDo(f func() (success bool)) (result bool, executed bool) {
+	if cb.IsOn() {
+		result = f()
+		cb.Report(result)
+		return result, true
 	} else {
-		return false
+		return false, false
 	}
 }

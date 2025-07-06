@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rusriver/configdb/v3"
@@ -34,11 +35,12 @@ var _ loggeterrapi.ITracer = (*Tracer)(nil)
 var _ accumapi.ILogsAccumulator = (*Tracer)(nil)
 
 func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (tracer loggeterrapi.ITracer) {
-	rctx := &loggeterrapi.RootContext{
-		ForwardtraceTagsKey: "tags",
-		ForwardtraceETCKey:  "etc",
-		MessageKey:          "msg",
-	}
+	rctx := &loggeterrapi.RootContext{}
+	// defaults
+	rctx.ForwardtraceTagsKey = "tags"
+	rctx.ForwardtraceETCKey = "etc"
+	rctx.MessageKey = "msg"
+	rctx.ZeroTime = time.Now()
 	for _, f := range optFuncs {
 		f(rctx)
 	}
@@ -46,7 +48,7 @@ func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (
 		rctx.MainWriter = os.Stderr
 	}
 	{
-		zerolog.TimestampFieldName = "ts"
+		zerolog.TimestampFieldName = "tsa"
 		zerolog.TimeFieldFormat = "20060102-150405"
 		zerolog.LevelTraceValue = "TRACE"
 		zerolog.LevelDebugValue = "DIAGN"

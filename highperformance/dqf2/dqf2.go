@@ -23,6 +23,8 @@ const (
 )
 
 // It's nice and simple, but you can't use it in select{}. See also ChDown.Transaction().
+// Note: please don't over-use this as a low-level primitive, it's best for high levels
+// of abstraction code. For low-level, consider using the DQF pattern directly.
 func SyncTransaction[T any](chUp chan *Message[T], m *Message[T]) {
 	m.wg.Add(1)
 	f := m.Func
@@ -54,9 +56,8 @@ func Chopper_Start[T any](
 	chUp chan *Message[T],
 	of ...func(*Chopper_Options),
 ) {
-	opts := &Chopper_Options{
-		// the defaults
-	}
+	opts := &Chopper_Options{}
+	// the defaults
 	for _, f := range of {
 		f(opts)
 	}

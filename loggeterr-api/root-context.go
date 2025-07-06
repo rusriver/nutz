@@ -2,6 +2,7 @@ package loggeterrapi
 
 import (
 	"io"
+	"time"
 
 	"github.com/rusriver/nutz/loggeterr-api/trace"
 )
@@ -17,6 +18,7 @@ type RootContext struct {
 	NewSubLoggerHook    func(ft *trace.Forwardtrace)
 	SpanBeginHook       func(ft *trace.Forwardtrace)
 	SpanEndHook         func(ft *trace.Forwardtrace)
+	ZeroTime            time.Time
 }
 
 type IEventInHook interface {

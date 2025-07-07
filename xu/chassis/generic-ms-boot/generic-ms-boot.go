@@ -14,16 +14,17 @@ import (
 )
 
 type Boot struct {
-	Tracer          loggeterrapi.ITracer
+	RootTracer      loggeterrapi.ITracer
 	DiagnosticFlags map[string]bool
 	ConfDB          *configdb.Root
 	//
-	CallerSkipFrames             int    // used in FILE:LINE diagnostic mode
-	L1ConfigFileNameOverride     string // overrides the arg-1 value
-	EnvsPrefix                   string // can be used to distinguish envs specific to this service
-	PathToTheTracerConfigSection string // in the config file
-	L1ConfigFileRequired         bool   //
-	LocalMapOverride             map[string]any
+	CallerSkipFrames             int            // used in FILE:LINE diagnostic mode
+	L1ConfigFileNameOverride     string         // overrides the arg-1 value
+	EnvsPrefix                   string         // can be used to distinguish envs specific to this service
+	PathToTheTracerConfigSection string         // in the config file
+	L1ConfigFileRequired         bool           //
+	LocalMapOverride             map[string]any //
+	L1ConfigTextLiteral          string         // can be used e.g. in tests
 }
 
 func NewBoot(of []func(b *Boot)) *Boot {
@@ -35,17 +36,18 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	// the defaults
 	b.CallerSkipFrames = -1
 	b.L1ConfigFileNameOverride = ""
-	b.EnvsPrefix = ""
+	b.EnvsPrefix = "71f2-0197e6694528dc94ddc5"
 	b.PathToTheTracerConfigSection = "tracer"
 	b.L1ConfigFileRequired = false
 	b.LocalMapOverride = nil
+	b.L1ConfigTextLiteral = ""
 	//
 	for _, f := range of {
 		f(b)
 	}
 
 	// init the primary tracer
-	b.Tracer = loggeterrzl.New(nil)
+	b.RootTracer = loggeterrzl.New(nil)
 
 	// load the L1 config
 	controlflow.Try(func() (err any) {
@@ -56,21 +58,32 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		if len(b.L1ConfigFileNameOverride) > 0 {
 			L1_name = b.L1ConfigFileNameOverride
 		}
-		if len(L1_name) == 0 {
+		switch {
+
+		case len(L1_name) == 0 && len(b.L1ConfigTextLiteral) == 0:
 			if b.L1ConfigFileRequired {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"aa9741598829", "L1 config file name is not specified"})
 			} else {
-				b.Tracer.InfoEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
-				ic := (&configdb.InitContext{}).WithTracer(b.Tracer)
+				b.RootTracer.InfoEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
+				ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
 				b.ConfDB = &configdb.Root{
 					InitContext: ic,
 				}
 				b.ConfDB = b.ConfDB.DontPanic()
-				return nil
 			}
+
+		case len(b.L1ConfigTextLiteral) > 0:
+			// this takes priority over the CLI args
+			ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+			b.ConfDB = ic.FromBytes([]byte(
+				strings.ReplaceAll(b.L1ConfigTextLiteral, "\t", "    "),
+			)).Load().DontPanic()
+
+		default:
+			ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+			b.ConfDB = ic.FromFile(L1_name).LoadWithParenting().DontPanic()
+
 		}
-		ic := (&configdb.InitContext{}).WithTracer(b.Tracer)
-		b.ConfDB = ic.FromFile(L1_name).LoadWithParenting().DontPanic()
 		return nil
 	}).Catch(func(e *controlflow.Event) {
 		e.Reraise(nil)
@@ -78,6 +91,9 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 	// load the L2 config
 	controlflow.Try(func() (err any) {
+		if len(b.L1ConfigTextLiteral) > 0 {
+			return nil
+		}
 		var L2_name string
 		if len(os.Args) >= 3 {
 			L2_name = os.Args[2]
@@ -85,7 +101,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		if len(L2_name) == 0 || L2_name == "." {
 			return nil
 		}
-		ic := (&configdb.InitContext{}).WithTracer(b.Tracer)
+		ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
 		L2_conf := ic.FromFile(L2_name).LoadWithParenting().DontPanic()
 		b.ConfDB.ExtendBy_v2(L2_conf)
 		return nil
@@ -131,7 +147,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 					controlflow.RaiseCause(nil, &trace.BacktracePoint{"821ba70f19e3", err})
 				}
 				// some implementation-specific magic - to set the legacy level
-				loggeterrzl_tracer := b.Tracer.(*loggeterrzl.Tracer)
+				loggeterrzl_tracer := b.RootTracer.(*loggeterrzl.Tracer)
 				zero_logger := loggeterrzl_tracer.ZeroLogger
 				new_zero_logger := zero_logger.Level(legacy_log_level)
 				loggeterrzl_tracer.ZeroLogger = &new_zero_logger
@@ -146,7 +162,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		}
 
 		{
-			nstic := b.Tracer.NSTIC("mwt") // mwt - main working tracer
+			nstic := b.RootTracer.NSTIC("mwt") // mwt - main working tracer
 
 			// optionally enable the FILE:LINE info
 			if b.DiagnosticFlags["FILE:LINE"] {
@@ -172,7 +188,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 				}
 			}
 
-			b.Tracer = nstic.ITracer()
+			b.RootTracer = nstic.ITracer()
 		}
 	} // init new main working tracer
 

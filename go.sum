@@ -76,6 +76,8 @@ github.com/rusriver/configdb/v3 v3.14.0 h1:FwZgD4w4HqR6xLT2kY+9fmspbPtgGyQWfzZfh
 github.com/rusriver/configdb/v3 v3.14.0/go.mod h1:0FT1z9BGzXnFrYUTnFEsAZKK6rncLKTIbISTgCGFhFs=
 github.com/rusriver/configdb/v3 v3.21.0 h1:8T2ppuwfpIEXqBDnjloYneQzLDOsAm+8YGQ4ZkBIYrs=
 github.com/rusriver/configdb/v3 v3.21.0/go.mod h1:6qpLbdOJec46M95yuE6pY8vCIpfMWTpPp+jh8cKReQM=
+github.com/rusriver/configdb/v3 v3.22.0 h1:GmRQmuB2dOvRkq3ZuknIu0dZfKjSEQrtK7u+88QP6pE=
+github.com/rusriver/configdb/v3 v3.22.0/go.mod h1:WvCi/0BXbzSsJQNib2E8vO0jgc5XI1cjePq7RZ5tTEI=
 github.com/rusriver/dateparse v1.1.0 h1:6EdJksWFik79GsRXUtP4bGewIR5TUOOL/o+OCjc804g=
 github.com/rusriver/dateparse v1.1.0/go.mod h1:kr4axqSoVipSTBu6PRd4j7GZ/dsWykOoSwe2coFD3YI=
 github.com/rusriver/ttlcache/v3 v3.0.12 h1:+MJCLlfaWSE9zsjG4ZItWBjqflvO/QKjs6c2SXqgimM=

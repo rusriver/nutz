@@ -15,6 +15,8 @@ What does it do:
 
             - Extends the result with envs
 
+            - Extends the result with local map of values, if present
+
             - Executes the $isa processing
 
             - Executes the DDash DSL processor

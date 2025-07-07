@@ -23,6 +23,7 @@ type Boot struct {
 	EnvsPrefix                   string // can be used to distinguish envs specific to this service
 	PathToTheTracerConfigSection string // in the config file
 	L1ConfigFileRequired         bool   //
+	LocalMapOverride             map[string]any
 }
 
 func NewBoot(of []func(b *Boot)) *Boot {
@@ -37,6 +38,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	b.EnvsPrefix = ""
 	b.PathToTheTracerConfigSection = "tracer"
 	b.L1ConfigFileRequired = false
+	b.LocalMapOverride = nil
 	//
 	for _, f := range of {
 		f(b)
@@ -97,6 +99,10 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		return configdb.TranslateEnvs_KeySuffix(s)
 	})
 
+	if b.LocalMapOverride != nil {
+		b.ConfDB.ExtendByLocalMap(b.LocalMapOverride)
+	}
+
 	b.ConfDB = b.ConfDB.DoPanic()
 	{
 		b.ConfDB.TheIsa()
@@ -140,7 +146,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		}
 
 		{
-			nstic := b.Tracer.NSTIC("MWT") // MWT - main working tracer
+			nstic := b.Tracer.NSTIC("mwt") // mwt - main working tracer
 
 			// optionally enable the FILE:LINE info
 			if b.DiagnosticFlags["FILE:LINE"] {

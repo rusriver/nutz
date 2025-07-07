@@ -57,6 +57,7 @@ func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (
 		zerolog.LevelErrorValue = "ERROR"
 		zerolog.LevelFatalValue = "FATAL"
 		zerolog.LevelPanicValue = "PANIC"
+		zerolog.CallerFieldName = "CALLER"
 	}
 	interceptor := &Interceptor{rctx: rctx}
 	if zl == nil {

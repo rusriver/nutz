@@ -55,6 +55,8 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	// init the primary tracer
 	b.RootTracer = loggeterrzl.New(nil)
 
+	b.RootTracer.SpanBegin("CONFIGDB-INIT")
+
 	// load the L1 config
 	controlflow.Try(func() (err any) {
 		if len(os.Args) >= 2 {
@@ -139,6 +141,8 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			b.DiagnosticFlags[flag] = true
 		}
 	}
+
+	b.RootTracer.SpanEnd()
 
 	// init/fix the new main working tracer
 	{

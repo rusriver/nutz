@@ -1,8 +1,10 @@
 package genericmsboot
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -14,9 +16,11 @@ import (
 )
 
 type Boot struct {
-	RootTracer      loggeterrapi.ITracer
-	DiagnosticFlags map[string]bool
-	ConfDB          *configdb.Root
+	RootTracer        loggeterrapi.ITracer
+	DiagnosticFlags   map[string]bool
+	ConfDB            *configdb.Root
+	RootContext       context.Context
+	RootContextCancel context.CancelFunc
 	//
 	CallerSkipFrames             int            // used in FILE:LINE diagnostic mode
 	L1ConfigFileNameOverride     string         // overrides the arg-1 value
@@ -33,7 +37,8 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	b := &Boot{
 		DiagnosticFlags: make(map[string]bool, 0xF),
 	}
-	// the defaults
+	// the defaults below
+	b.RootContext, b.RootContextCancel = context.WithCancel(context.Background())
 	b.CallerSkipFrames = -1
 	b.L1ConfigFileNameOverride = ""
 	b.EnvsPrefix = "71f2-0197e6694528dc94ddc5"
@@ -216,4 +221,19 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	}
 
 	return b
+}
+
+func (b *Boot) BlockAndWait() {
+	b.RootTracer.InfoEvent("BAW-227").SendMsg("block and wait")
+
+	chSignal := make(chan os.Signal, 1)
+	signal.Notify(chSignal, os.Interrupt)
+
+	// main blocking point
+	select {
+	case <-chSignal:
+		b.RootTracer.InfoEvent("BAW-235").SendMsg("got system interrupt signal")
+	case <-b.RootContext.Done():
+		b.RootTracer.InfoEvent("BAW-237").SendMsg("root context cancelled")
+	}
 }

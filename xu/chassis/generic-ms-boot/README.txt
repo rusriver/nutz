@@ -25,4 +25,12 @@ What does it do:
 
     - Loads the diagnostic flags from the rest of the CLI arguments
 
+Usage of the service, which uses it:
+
+    $ ./<xu-name> <L1-config> <L2-config> <diagnostic-flag> ...
+
+    $ ./<xu-name> <L1-config> . <diagnostic-flag> ...
+
+    $ ./<xu-name> <L1-config>
+
 ===

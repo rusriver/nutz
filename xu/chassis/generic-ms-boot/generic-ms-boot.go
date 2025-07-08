@@ -16,11 +16,12 @@ import (
 )
 
 type Boot struct {
-	RootTracer        loggeterrapi.ITracer
-	DiagnosticFlags   map[string]bool
-	ConfDB            *configdb.Root
-	RootContext       context.Context
-	RootContextCancel context.CancelFunc
+	RootTracer            loggeterrapi.ITracer
+	DiagnosticFlags       map[string]bool
+	ConfDB                *configdb.Root
+	RootContext           context.Context
+	RootContextCancel     context.CancelFunc
+	L1ConfigEffectiveName string
 	//
 	CallerSkipFrames             int            // used in FILE:LINE diagnostic mode
 	L1ConfigFileNameOverride     string         // overrides the arg-1 value
@@ -56,16 +57,15 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 	// load the L1 config
 	controlflow.Try(func() (err any) {
-		var L1_name string
 		if len(os.Args) >= 2 {
-			L1_name = os.Args[1]
+			b.L1ConfigEffectiveName = os.Args[1]
 		}
 		if len(b.L1ConfigFileNameOverride) > 0 {
-			L1_name = b.L1ConfigFileNameOverride
+			b.L1ConfigEffectiveName = b.L1ConfigFileNameOverride
 		}
 		switch {
 
-		case len(L1_name) == 0 && len(b.L1ConfigTextLiteral) == 0:
+		case len(b.L1ConfigEffectiveName) == 0 && len(b.L1ConfigTextLiteral) == 0:
 			if b.L1ConfigFileRequired {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"aa9741598829", "L1 config file name is not specified"})
 			} else {
@@ -86,7 +86,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 		default:
 			ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
-			b.ConfDB = ic.FromFile(L1_name).LoadWithParenting().DontPanic()
+			b.ConfDB = ic.FromFile(b.L1ConfigEffectiveName).LoadWithParenting().DontPanic()
 
 		}
 		return nil
@@ -190,6 +190,9 @@ func NewBoot(of []func(b *Boot)) *Boot {
 				xu_fp := tracerConf.P("executable-unit-fingerprint").String() // or git commit hash
 				if len(xu_fp) > 0 {
 					nstic = nstic.Str("xu-fingerprint", xu_fp)
+				}
+				if len(b.L1ConfigEffectiveName) > 0 {
+					nstic = nstic.Str("L1-conf-eff-name", b.L1ConfigEffectiveName)
 				}
 			}
 

@@ -30,6 +30,10 @@ type Boot struct {
 	L1ConfigFileRequired         bool           //
 	LocalMapOverride             map[string]any //
 	L1ConfigTextLiteral          string         // can be used e.g. in tests
+	TracerDisableOpt01_1         bool           // disable logging of xu
+	TracerDisableOpt02_1         bool           // disable logging of xu-ver
+	TracerDisableOpt03_1         bool           // disable logging of xu-fingerprint
+	TracerDisableOpt04_1         bool           // disable logging of L1-conf-eff-name
 }
 
 func NewBoot(of []func(b *Boot)) *Boot {
@@ -47,6 +51,10 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	b.L1ConfigFileRequired = false
 	b.LocalMapOverride = nil
 	b.L1ConfigTextLiteral = ""
+	b.TracerDisableOpt01_1 = false
+	b.TracerDisableOpt02_1 = false
+	b.TracerDisableOpt03_1 = false
+	b.TracerDisableOpt04_1 = false
 	//
 	for _, f := range of {
 		f(b)

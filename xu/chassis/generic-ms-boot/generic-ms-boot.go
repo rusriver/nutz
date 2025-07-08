@@ -189,7 +189,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			// set service attributes from the config
 			ok = true
 			tracerConf := b.ConfDB.WithOk(&ok).P(b.PathToTheTracerConfigSection)
-			if ok {
+			if ok && !b.DiagnosticFlags["SHORT-192"] {
 
 				xu := tracerConf.P("executable-unit-name").String()
 				if len(xu) > 0 && !b.TracerDisableOpt01_1 {

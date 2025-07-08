@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+
+  build:
+    dir: ./
+    cmds:
+      - go build -o x1.xu
+
+  x1-full-logs:
+    deps: [build]
+    cmds:
+      - ./x1.xu ./config-01.yaml . {{.CLI_ARGS}}
+
+  x1:
+    deps: [build]
+    cmds:
+      - ./x1.xu ./config-01.yaml . SHORT-192 96bd92c9c7d2 {{.CLI_ARGS}}

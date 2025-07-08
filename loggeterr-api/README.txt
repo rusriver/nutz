@@ -22,5 +22,8 @@ Some notes:
         calling side, a user may forget to make a sub at the root, but otherwise the risks of bad tagging
         are minimized.
 
+        The exception is constructors with explicitly specified object name - in that case it looks okay
+        if it makes a sub tracer on its own.
+
 
 ===

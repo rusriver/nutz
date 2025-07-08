@@ -1,0 +1,15 @@
+tracer:
+  executable-unit-name: idiomatic-simple-example
+
+core:
+  param-1: core--b154c4ee-9049-4ec7-aeb7-484ffaa4b7a4
+
+sys-1:
+  param-1: sys1--dea14a4f-a99a-40e7-bac9-3b15d1283fa6
+
+sys-2:
+  param-1: sys2--ec1b0a6f-81f2-4901-bdea-39913b2dd6ce
+
+service:
+  param-1: 0987654321
+

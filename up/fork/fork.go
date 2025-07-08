@@ -26,6 +26,10 @@ func NewFork(name string, tracer loggeterrapi.ITracer, parent upcommon.IRecursiv
 
 var _ upcommon.IRecursiveWindUp = (*Fork)(nil)
 
+func (f *Fork) GetName() string {
+	return f.Name
+}
+
 func (fork *Fork) RunFuncInParallel(f func()) {
 	if len(fork.Name) == 0 {
 		fork.Tracer.RaiseCause(&trace.BacktracePoint{"0197ada91fcb0d42ba7b", "fork name is empty"})
@@ -37,8 +41,7 @@ func (fork *Fork) RunFuncInParallel(f func()) {
 }
 
 func (fork *Fork) RecursiveWindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(fork.Name).ITracer()
-	tracer.InfoEvent("f33").SendMsg("rec-windup-call")
+	tracer.InfoEvent("RWC-f33").SendMsg("rec-windup-call")
 
 	fork.mu.Lock()
 	defer fork.mu.Unlock()
@@ -47,7 +50,7 @@ func (fork *Fork) RecursiveWindUp(tracer loggeterrapi.ITracer) {
 		if fork.Parent != nil {
 			tracer.InfoEvent("RWB-39").SendMsg("rec-windup-begin")
 			defer tracer.InfoEvent("RWE-40").SendMsg("rec-windup-end")
-			fork.Parent.RecursiveWindUp(tracer.NSTIC(fork.Name).ITracer())
+			fork.Parent.RecursiveWindUp(tracer.NSTIC(fork.Parent.GetName()).ITracer())
 		}
 	}
 }

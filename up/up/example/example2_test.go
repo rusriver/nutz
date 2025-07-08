@@ -642,7 +642,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 
 	// S_rastan.WindUp(tracer.NSTIC("wind-up").ITracer())
 
-	A1.RecursiveWindUp(tracer.NSTIC("recursive-wind-up").ITracer())
+	A1.RecursiveWindUp(tracer.NSTIC("A1-recursive-wind-up").ITracer())
 
 	// make sure everything is wind-up
 	bb, _ = json.MarshalIndent(example.ControlRegistry, "", "    ")

@@ -24,12 +24,17 @@ func NewOTDG(name string, tracer loggeterrapi.ITracer, parent upcommon.IRecursiv
 	}
 }
 
+var _ upcommon.IRecursiveWindUp = (*OTDG)(nil)
+
+func (f *OTDG) GetName() string {
+	return f.Name
+}
+
 func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(otdg.Name).ITracer()
-	tracer.InfoEvent("21").SendMsg("windup-begin")
-	defer tracer.InfoEvent("22e").SendMsg("windup-end")
+	tracer.InfoEvent("W-21").SendMsg("windup-begin")
+	defer tracer.InfoEvent("W-22e").SendMsg("windup-end")
 	for _, ir := range slices.Backward(otdg.upStack) {
-		ir.WindUp(tracer)
+		ir.WindUp(tracer.NSTIC(ir.GetName()).ITracer())
 	}
 	otdg.upStack = nil
 }
@@ -37,15 +42,14 @@ func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
 // Be careful if your reactor dependency graph has diamond topology (is not a DAG);
 // In that case, better implement explicit forward action plan to wind up your system.
 func (otdg *OTDG) RecursiveWindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(otdg.Name).ITracer()
 	tracer.InfoEvent("RWB-33").SendMsg("rec-windup-begin")
 	defer tracer.InfoEvent("RWE-34").SendMsg("rec-windup-end")
 	for _, ir := range slices.Backward(otdg.upStack) {
-		ir.WindUp(tracer)
+		ir.WindUp(tracer.NSTIC(ir.GetName()).ITracer())
 	}
 	otdg.upStack = nil
 	if otdg.Parent != nil {
-		otdg.Parent.RecursiveWindUp(tracer)
+		otdg.Parent.RecursiveWindUp(tracer.NSTIC(otdg.Parent.GetName()).ITracer())
 	}
 }
 

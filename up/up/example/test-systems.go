@@ -23,9 +23,10 @@ func NewSystem01(name string, tracer loggeterrapi.ITracer, deps ...any) *System0
 		Name: name,
 	}
 }
-
+func (s *System01) GetName() string {
+	return s.Name
+}
 func (s *System01) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System01"]--
@@ -47,9 +48,10 @@ func NewSystem02(name string, tracer loggeterrapi.ITracer, deps ...any) *System0
 		Name: name,
 	}
 }
-
+func (s *System02) GetName() string {
+	return s.Name
+}
 func (s *System02) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System02"]--
@@ -71,9 +73,10 @@ func NewSystem03(name string, tracer loggeterrapi.ITracer, deps ...any) *System0
 		Name: name,
 	}
 }
-
+func (s *System03) GetName() string {
+	return s.Name
+}
 func (s *System03) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System03"]--
@@ -95,9 +98,10 @@ func NewAslast(name string, tracer loggeterrapi.ITracer) *Aslast {
 		Name: name,
 	}
 }
-
+func (s *Aslast) GetName() string {
+	return s.Name
+}
 func (s *Aslast) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["aslast"]--
@@ -119,9 +123,10 @@ func NewUphili(name string, tracer loggeterrapi.ITracer) *Uphili {
 		Name: name,
 	}
 }
-
+func (s *Uphili) GetName() string {
+	return s.Name
+}
 func (s *Uphili) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["uphili"]--
@@ -143,9 +148,10 @@ func NewItchot(name string, tracer loggeterrapi.ITracer, s1 *System01, s2 *Syste
 		Name: name,
 	}
 }
-
+func (s *Itchot) GetName() string {
+	return s.Name
+}
 func (s *Itchot) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["itchot"]--
@@ -167,9 +173,10 @@ func NewOntras(name string, tracer loggeterrapi.ITracer) *Ontras {
 		Name: name,
 	}
 }
-
+func (s *Ontras) GetName() string {
+	return s.Name
+}
 func (s *Ontras) WindUp(tracer loggeterrapi.ITracer) {
-	tracer = tracer.NSTIC(s.Name).ITracer()
 	SmallSleep()
 	tracer.InfoEvent("26").SendMsg("removed")
 	ControlRegistry.Components["ontras"]--

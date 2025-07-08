@@ -192,18 +192,18 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			if ok {
 
 				xu := tracerConf.P("executable-unit-name").String()
-				if len(xu) > 0 {
+				if len(xu) > 0 && !b.TracerDisableOpt01_1 {
 					nstic = nstic.Str("xu", xu)
 				}
 				xu_ver := tracerConf.P("executable-unit-version").String()
-				if len(xu_ver) > 0 {
+				if len(xu_ver) > 0 && !b.TracerDisableOpt02_1 {
 					nstic = nstic.Str("xu-ver", xu_ver)
 				}
 				xu_fp := tracerConf.P("executable-unit-fingerprint").String() // or git commit hash
-				if len(xu_fp) > 0 {
+				if len(xu_fp) > 0 && !b.TracerDisableOpt03_1 {
 					nstic = nstic.Str("xu-fingerprint", xu_fp)
 				}
-				if len(b.L1ConfigEffectiveName) > 0 {
+				if len(b.L1ConfigEffectiveName) > 0 && !b.TracerDisableOpt04_1 {
 					nstic = nstic.Str("L1-conf-eff-name", b.L1ConfigEffectiveName)
 				}
 			}

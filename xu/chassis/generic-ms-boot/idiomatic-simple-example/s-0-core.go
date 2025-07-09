@@ -11,6 +11,7 @@ import (
 type S_Core struct {
 	Name       string
 	Tracer     loggeterrapi.ITracer
+	Glove      *genericmsboot.Glove
 	CancelFunc context.CancelFunc
 	//
 	SomeUserParam01 string
@@ -29,6 +30,7 @@ func NewCore(
 	s := &S_Core{
 		Name:   name,
 		Tracer: tracer,
+		Glove:  glove,
 	}
 	// defaults are here
 	s.SomeUserParam01 = "hello"

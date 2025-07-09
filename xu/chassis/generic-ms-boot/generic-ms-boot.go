@@ -17,7 +17,7 @@ import (
 
 type Boot struct {
 	RootTracer            loggeterrapi.ITracer
-	DiagnosticFlags       map[string]bool
+	DiagnosticFlags       *map[string]bool // to allow RCU/APR
 	ConfDB                *configdb.Root
 	RootContext           context.Context
 	RootContextCancel     context.CancelFunc
@@ -41,8 +41,9 @@ type Boot struct {
 func NewBoot(of []func(b *Boot)) *Boot {
 	var ok bool
 
+	diagnostic_map := make(map[string]bool, 0xF)
 	b := &Boot{
-		DiagnosticFlags: make(map[string]bool, 0xF),
+		DiagnosticFlags: &diagnostic_map,
 	}
 	// the defaults below
 	b.ProductName = ""
@@ -159,7 +160,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	if len(os.Args) >= 4 {
 		diagnosticFlags := os.Args[3:]
 		for _, flag := range diagnosticFlags {
-			b.DiagnosticFlags[flag] = true
+			(*b.DiagnosticFlags)[flag] = true
 		}
 	}
 
@@ -195,14 +196,14 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			nstic := b.RootTracer.NSTIC("mwt") // mwt - main working tracer
 
 			// optionally enable the FILE:LINE info
-			if b.DiagnosticFlags["FILE:LINE"] {
+			if (*b.DiagnosticFlags)["FILE:LINE"] {
 				nstic = nstic.Caller(b.CallerSkipFrames)
 			}
 
 			// set service attributes from the config
 			ok = true
 			tracerConf := b.ConfDB.WithOk(&ok).P(b.PathToTheTracerConfigSection)
-			if ok && !b.DiagnosticFlags["SHORT-192"] {
+			if ok && !(*b.DiagnosticFlags)["SHORT-192"] {
 
 				xu := tracerConf.P("executable-unit-name").String()
 				if len(xu) > 0 && !b.TracerDisableOpt01_1 {
@@ -227,7 +228,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 	var MustExit bool
 
-	if b.DiagnosticFlags["envs-printout-and-exit"] {
+	if (*b.DiagnosticFlags)["envs-printout-and-exit"] {
 		fmt.Println("envs-printout-and-exit:")
 		for _, pair := range os.Environ() {
 			fmt.Println("    ", pair)
@@ -236,7 +237,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		MustExit = true // yes, we must. It's mandatory here
 	}
 
-	if b.DiagnosticFlags["full-configdb-printout-and-exit"] {
+	if (*b.DiagnosticFlags)["full-configdb-printout-and-exit"] {
 		fmt.Println("full-configdb-printout-and-exit:")
 		bb := configdb.MustRenderYaml(b.ConfDB)
 		fmt.Println(string(bb))

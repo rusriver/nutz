@@ -11,6 +11,7 @@ import (
 type Service struct {
 	Name       string
 	Tracer     loggeterrapi.ITracer
+	Glove      *genericmsboot.Glove
 	cancelFunc context.CancelFunc
 	//
 	SomeUserParam01 string
@@ -29,6 +30,7 @@ func NewService(
 	s := &Service{
 		Name:   name,
 		Tracer: tracer,
+		Glove:  glove,
 	}
 	// defaults are here
 	s.SomeUserParam01 = "hello"
@@ -48,7 +50,7 @@ func NewService(
 		s.SomeUserParam03,
 	)
 
-	if glove.DiagnosticFlags["96bd92c9c7d2"] {
+	if (*glove.DiagnosticFlags)["96bd92c9c7d2"] {
 		tracer.InfoEvent("52").SendMsg("DiagnosticFlag 96bd92c9c7d2 activated")
 	}
 

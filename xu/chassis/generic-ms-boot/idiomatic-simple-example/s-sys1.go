@@ -11,6 +11,7 @@ import (
 type S_Sys1 struct {
 	Name       string
 	Tracer     loggeterrapi.ITracer
+	Glove      *genericmsboot.Glove
 	core       *S_Core
 	cancelFunc context.CancelFunc
 	//
@@ -31,6 +32,7 @@ func NewSys1(
 	s := &S_Sys1{
 		Name:   name,
 		Tracer: tracer,
+		Glove:  glove,
 		core:   core,
 	}
 	// defaults are here

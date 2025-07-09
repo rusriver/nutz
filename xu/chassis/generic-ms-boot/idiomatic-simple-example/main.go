@@ -20,13 +20,15 @@ func main() {
 	// this is special thing, never wound-up, so outside of otdg
 	boot := genericmsboot.NewBoot([]func(b *genericmsboot.Boot){
 		func(b *genericmsboot.Boot) {
+			b.ProductName = "Idiomatic Simple Example by Someone"
+			b.Copyright = "(c) Someone, 2025"
 			b.PathToTheTracerConfigSection = "tracer"
 			b.L1ConfigFileRequired = true
 			b.LocalMapOverride = local_start_values
 		},
 	})
 	tracer := boot.RootTracer
-	boot.RootTracer.InfoEvent("BEGIN").Str("copyright", "(c) Dag Manaskent, 2025").Send()
+	boot.RootTracer.InfoEvent("BEGIN").Send()
 
 	otdg_main := up.NewOTDG("otdg-main", tracer, nil)
 

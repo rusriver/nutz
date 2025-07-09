@@ -23,6 +23,8 @@ type Boot struct {
 	RootContextCancel     context.CancelFunc
 	L1ConfigEffectiveName string
 	//
+	ProductName                  string
+	Copyright                    string
 	CallerSkipFrames             int            // used in FILE:LINE diagnostic mode
 	L1ConfigFileNameOverride     string         // overrides the arg-1 value
 	EnvsPrefix                   string         // can be used to distinguish envs specific to this service
@@ -43,6 +45,8 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		DiagnosticFlags: make(map[string]bool, 0xF),
 	}
 	// the defaults below
+	b.ProductName = ""
+	b.Copyright = ""
 	b.RootContext, b.RootContextCancel = context.WithCancel(context.Background())
 	b.CallerSkipFrames = -1
 	b.L1ConfigFileNameOverride = ""
@@ -62,6 +66,15 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 	// init the primary tracer
 	b.RootTracer = loggeterrzl.New(nil)
+
+	ev := b.RootTracer.InfoEvent("BOOT-STARTED")
+	if len(b.ProductName) > 0 {
+		ev = ev.Str("PRODUCT", b.ProductName)
+	}
+	if len(b.Copyright) > 0 {
+		ev = ev.Str("COPYRIGHT", b.Copyright)
+	}
+	ev.Send()
 
 	b.RootTracer.SpanBegin("CONFIGDB-INIT")
 

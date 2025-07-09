@@ -77,7 +77,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	}
 	ev.Send()
 
-	b.RootTracer.SpanBegin("CONFIGDB-INIT")
+	configdb_tracer := b.RootTracer.NSTIC("BOOT-CONFIG-DB").ITracer()
 
 	// load the L1 config
 	controlflow.Try(func() (err any) {
@@ -93,8 +93,8 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			if b.L1ConfigFileRequired {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"aa9741598829", "L1 config file name is not specified"})
 			} else {
-				b.RootTracer.InfoEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
-				ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+				configdb_tracer.InfoEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
+				ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
 				b.ConfDB = &configdb.Root{
 					InitContext: ic,
 				}
@@ -103,13 +103,13 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 		case len(b.L1ConfigTextLiteral) > 0:
 			// this takes priority over the CLI args
-			ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+			ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
 			b.ConfDB = ic.FromBytes([]byte(
 				strings.ReplaceAll(b.L1ConfigTextLiteral, "\t", "    "),
 			)).Load().DontPanic()
 
 		default:
-			ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+			ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
 			b.ConfDB = ic.FromFile(b.L1ConfigEffectiveName).LoadWithParenting().DontPanic()
 
 		}
@@ -130,7 +130,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		if len(L2_name) == 0 || L2_name == "." {
 			return nil
 		}
-		ic := (&configdb.InitContext{}).WithTracer(b.RootTracer)
+		ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
 		L2_conf := ic.FromFile(L2_name).LoadWithParenting().DontPanic()
 		b.ConfDB.ExtendBy_v2(L2_conf)
 		return nil
@@ -164,8 +164,6 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		}
 	}
 
-	b.RootTracer.SpanEnd()
-
 	// init/fix the new main working tracer
 	{
 		// set the legacy log-level if any
@@ -179,9 +177,9 @@ func NewBoot(of []func(b *Boot)) *Boot {
 				}
 				// some implementation-specific magic - to set the legacy level
 				loggeterrzl_tracer := b.RootTracer.(*loggeterrzl.Tracer)
-				zero_logger := loggeterrzl_tracer.ZeroLogger
-				new_zero_logger := zero_logger.Level(legacy_log_level)
-				loggeterrzl_tracer.ZeroLogger = &new_zero_logger
+				zero_logger_ptr := loggeterrzl_tracer.ZeroLoggerPtr
+				new_zero_logger := zero_logger_ptr.Level(legacy_log_level)
+				loggeterrzl_tracer.ZeroLoggerPtr = &new_zero_logger
 
 			default:
 				controlflow.RaiseCause(nil, trace.BacktracePointf(

@@ -131,10 +131,10 @@ func (stic *subTracerInitChain) WithClonedRootContext(optFuncs ...func(rctx *log
 func (stic *subTracerInitChain) ITracer() loggeterrapi.ITracer {
 	zeroLogger := stic.zerologContext.Logger()
 	tracer := &Tracer{
-		RootContext: stic.rctx,
-		IsInactive:  stic.isInactive, // inherit from the init chain
-		UserObject:  stic.uo,
-		ZeroLogger:  &zeroLogger,
+		RootContext:   stic.rctx,
+		IsInactive:    stic.isInactive, // inherit from the init chain
+		UserObject:    stic.uo,
+		ZeroLoggerPtr: &zeroLogger,
 		Forwardtrace: &trace.Forwardtrace{
 			ETC:  stic.forwardtrace.ETC,
 			Tags: stic.forwardtrace.Tags,

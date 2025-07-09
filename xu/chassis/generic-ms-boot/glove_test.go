@@ -36,15 +36,15 @@ func Test_Glove_001(t *testing.T) {
 	fmt.Println(string(bb))
 
 	controlflow.Try(func() (err any) {
-		g := b.GetGloveAt("aaa.sss")
+		g := b.GetGloveAt(nil, "aaa.sss")
 		val := g.ConfDB.PP("ddd").String()
 		require.Equal(t, "123", val)
 
-		g2 := b.GetGloveAt("aaa.xxx")
+		g2 := b.GetGloveAt(nil, "aaa.xxx")
 		_ = g2
 
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		require.Equal(t, `{: FORWARDTRACE {: ETC [5], }, BACKTRACE { [e6269413b51b "nonexistent map key 'aaa.xxx'"] [7e7e8964 "generic error handler"]}}`, e.String())
+		require.Equal(t, `{: FORWARDTRACE {: ETC [2 4], TAGS [BOOT-CONFIG-DB]}, BACKTRACE { [e6269413b51b "nonexistent map key 'aaa.xxx'"] [7e7e8964 "generic error handler"]}}`, e.String())
 	})
 }

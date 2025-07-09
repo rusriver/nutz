@@ -12,7 +12,7 @@ func Test_e3_01(t *testing.T) {
 	itracer := loggeterrzl.New(nil).NSTIC(shortuuid.New()[:8]).ITracer()
 
 	// get a zerolog logger
-	zl := itracer.(*loggeterrzl.Tracer).ZeroLogger
+	zl := itracer.(*loggeterrzl.Tracer).ZeroLoggerPtr
 
 	// now log something
 	zl.Info().Msg("Here's the zerologger output")

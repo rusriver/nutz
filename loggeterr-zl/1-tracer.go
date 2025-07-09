@@ -24,7 +24,7 @@ type Tracer struct {
 	UserObject   any
 	Forwardtrace *trace.Forwardtrace
 
-	ZeroLogger *zerolog.Logger
+	ZeroLoggerPtr *zerolog.Logger
 
 	mu          sync.Mutex // only some functions use it
 	accumulator *Accumulator
@@ -34,7 +34,7 @@ type Tracer struct {
 var _ loggeterrapi.ITracer = (*Tracer)(nil)
 var _ accumapi.ILogsAccumulator = (*Tracer)(nil)
 
-func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (tracer loggeterrapi.ITracer) {
+func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (tracer loggeterrapi.ITracer) {
 	rctx := &loggeterrapi.RootContext{}
 	// defaults
 	rctx.ForwardtraceTagsKey = "tags"
@@ -60,13 +60,13 @@ func New(zl *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (
 		zerolog.CallerFieldName = "CALLER"
 	}
 	interceptor := &Interceptor{rctx: rctx}
-	if zl == nil {
+	if zlPtr == nil {
 		zlv := zerolog.New(interceptor).With().Timestamp().Logger()
-		zl = &zlv
+		zlPtr = &zlv
 	}
 	tracer = &Tracer{
-		RootContext: rctx,
-		ZeroLogger:  zl,
+		RootContext:   rctx,
+		ZeroLoggerPtr: zlPtr,
 		Forwardtrace: &trace.Forwardtrace{
 			ETC: trace.EventTracingCounters{0},
 		},
@@ -81,7 +81,7 @@ func (t *Tracer) TraceEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:     zerolog.TraceLevel.String(),
 		ParentLogger: t,
 		Tag:          msgtag,
-		ZerologEvent: t.ZeroLogger.Trace(),
+		ZerologEvent: t.ZeroLoggerPtr.Trace(),
 	}
 	activationHook(e)
 	return e
@@ -93,7 +93,7 @@ func (t *Tracer) DiagnosticEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:     zerolog.DebugLevel.String(),
 		ParentLogger: t,
 		Tag:          msgtag,
-		ZerologEvent: t.ZeroLogger.Debug(),
+		ZerologEvent: t.ZeroLoggerPtr.Debug(),
 	}
 	activationHook(e)
 	return e
@@ -105,7 +105,7 @@ func (t *Tracer) InfoEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: t,
 		Tag:          msgtag,
-		ZerologEvent: t.ZeroLogger.Info(),
+		ZerologEvent: t.ZeroLoggerPtr.Info(),
 	}
 	activationHook(e)
 	return e
@@ -117,7 +117,7 @@ func (t *Tracer) WarnEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:          zerolog.WarnLevel.String(),
 		ParentLogger:      t,
 		Tag:               msgtag,
-		ZerologEvent:      t.ZeroLogger.Warn(),
+		ZerologEvent:      t.ZeroLoggerPtr.Warn(),
 		TheTitle:          "WARNING", // the default title
 		theTitleIsDefault: true,
 	}
@@ -131,7 +131,7 @@ func (t *Tracer) ErrorEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      t,
 		Tag:               msgtag,
-		ZerologEvent:      t.ZeroLogger.Error(),
+		ZerologEvent:      t.ZeroLoggerPtr.Error(),
 		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
 	}
@@ -153,16 +153,16 @@ func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 	}
 	switch ev := err.(type) {
 	case *controlflow.Event:
-		e.ZerologEvent = t.ZeroLogger.Error()
+		e.ZerologEvent = t.ZeroLoggerPtr.Error()
 		bb, _ := json.Marshal(ev)
-		e.ZerologEvent = t.ZeroLogger.Error().RawJSON("error-controlflow-event", bb)
+		e.ZerologEvent = t.ZeroLoggerPtr.Error().RawJSON("error-controlflow-event", bb)
 	case *trace.BacktracePoint:
 		bb, _ := json.Marshal(ev)
-		e.ZerologEvent = t.ZeroLogger.Error().RawJSON("error-backtracepoint", bb)
+		e.ZerologEvent = t.ZeroLoggerPtr.Error().RawJSON("error-backtracepoint", bb)
 	case error:
-		e.ZerologEvent = t.ZeroLogger.Err(ev)
+		e.ZerologEvent = t.ZeroLoggerPtr.Err(ev)
 	default:
-		e.ZerologEvent = t.ZeroLogger.Error().Str("error-unknown", fmt.Sprintf("%+v", ev))
+		e.ZerologEvent = t.ZeroLoggerPtr.Error().Str("error-unknown", fmt.Sprintf("%+v", ev))
 	}
 	activationHook(e)
 	return e
@@ -174,7 +174,7 @@ func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
 		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: t,
 		Tag:          msgtag,
-		ZerologEvent: t.ZeroLogger.Info(),
+		ZerologEvent: t.ZeroLoggerPtr.Info(),
 	}
 	activationHook(e)
 	return e
@@ -195,7 +195,7 @@ func (t *Tracer) NewSubTracerInitChain(msgtag string) loggeterrapi.ISubTracerIni
 
 	t.Forwardtrace.ETC.Inc()
 
-	zerologContext := t.ZeroLogger.With()
+	zerologContext := t.ZeroLoggerPtr.With()
 	slich := &subTracerInitChain{
 		zerologContext: &zerologContext,
 		forwardtrace: &trace.Forwardtrace{
@@ -234,8 +234,8 @@ func (t *Tracer) SwitchOnTheOfflineAccumulation() loggeterrapi.ITracer {
 
 	t.interceptor = &Interceptor{rctx: rctx}
 
-	zlv := t.ZeroLogger.Output(t.interceptor)
-	t.ZeroLogger = &zlv
+	zlv := t.ZeroLoggerPtr.Output(t.interceptor)
+	t.ZeroLoggerPtr = &zlv
 
 	return t
 }

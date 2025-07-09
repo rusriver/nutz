@@ -472,7 +472,7 @@ func Test_e2_04(t *testing.T) {
 	}
 
 	// you can even use the Zerologger directly, and its output will be accumulated too:
-	zerologger := OfflineTracer.(*loggeterrzl.Tracer).ZeroLogger
+	zerologger := OfflineTracer.(*loggeterrzl.Tracer).ZeroLoggerPtr
 	zerologger.Info().Msgf("Hello from Zerologger!")
 
 	LogsAccumulated = OfflineTracer.FinishAccumulationAndFetch()
@@ -616,7 +616,7 @@ func Test_e2_05(t *testing.T) {
 	}
 
 	// you can even use the Zerologger directly, and its output will be accumulated too:
-	zerologger := OfflineTracer.(*loggeterrzl.Tracer).ZeroLogger
+	zerologger := OfflineTracer.(*loggeterrzl.Tracer).ZeroLoggerPtr
 	zerologger.Info().Msgf("Hello from Zerologger!")
 
 	LogsAccumulated = OfflineTracer.FinishAccumulationAndFetch()

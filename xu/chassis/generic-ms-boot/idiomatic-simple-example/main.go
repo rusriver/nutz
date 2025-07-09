@@ -38,7 +38,7 @@ func main() {
 			s := NewCore(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt(name),
+				boot.GetGloveAt(otdg_main.Tracer, name),
 				func(s *S_Core) {
 					s.SomeUserParam01 = "overridden core--084433f7-4260-4ef8-9cee-fd36f5f1de56"
 				},
@@ -50,7 +50,7 @@ func main() {
 			s := NewSys1(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt(name),
+				boot.GetGloveAt(otdg_main.Tracer, name),
 				[]func(s *S_Sys1){
 					func(s *S_Sys1) {
 						s.SomeUserParam01 = "overridden sys1--acdf81f5-1942-4358-a677-60d0b8bd688f"
@@ -65,7 +65,7 @@ func main() {
 			s := NewSys2(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt(name),
+				boot.GetGloveAt(otdg_main.Tracer, name),
 				[]func(s *S_Sys2){
 					func(s *S_Sys2) {
 						s.SomeUserParam01 = "overridden sys2--07fd2176-247f-4b6d-9039-f8a121cd363d"
@@ -80,7 +80,7 @@ func main() {
 			s := NewService(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt(name),
+				boot.GetGloveAt(otdg_main.Tracer, name),
 			)
 			return s, s
 		})

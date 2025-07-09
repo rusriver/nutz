@@ -23,6 +23,9 @@ import (
 // Here we will create a topology with reactors, and will try to use the RecursiveWindUp().
 // Consider this a more of a real-life example.
 
+// See also the xu/chassis/generic-ms-boot/idiomatic-simple-example, for a more extended
+// form of initialization of sub-systems, though with a rather simple single OTDG.
+
 func Test_DI_Container_Example2_00(t *testing.T) {
 	DI_Container_Example2_Main(t, 0)
 

@@ -38,7 +38,7 @@ func main() {
 			s := NewCore(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt("core"),
+				boot.GetGloveAt(name),
 				func(s *S_Core) {
 					s.SomeUserParam01 = "overridden core--084433f7-4260-4ef8-9cee-fd36f5f1de56"
 				},
@@ -46,11 +46,11 @@ func main() {
 			return s, s
 		})
 
-		up.Up(otdg_main, "Sys1", func(name string) (*S_Sys1, upcommon.IRemovable) {
+		up.Up(otdg_main, "sys-1", func(name string) (*S_Sys1, upcommon.IRemovable) {
 			s := NewSys1(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt("sys-1"),
+				boot.GetGloveAt(name),
 				[]func(s *S_Sys1){
 					func(s *S_Sys1) {
 						s.SomeUserParam01 = "overridden sys1--acdf81f5-1942-4358-a677-60d0b8bd688f"
@@ -61,11 +61,11 @@ func main() {
 			return s, s
 		})
 
-		up.Up(otdg_main, "Sys2", func(name string) (*S_Sys2, upcommon.IRemovable) {
+		up.Up(otdg_main, "sys-2", func(name string) (*S_Sys2, upcommon.IRemovable) {
 			s := NewSys2(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt("sys-2"),
+				boot.GetGloveAt(name),
 				[]func(s *S_Sys2){
 					func(s *S_Sys2) {
 						s.SomeUserParam01 = "overridden sys2--07fd2176-247f-4b6d-9039-f8a121cd363d"
@@ -76,11 +76,11 @@ func main() {
 			return s, s
 		})
 
-		up.Up(otdg_main, "Service", func(name string) (*Service, upcommon.IRemovable) {
+		up.Up(otdg_main, "service", func(name string) (*Service, upcommon.IRemovable) {
 			s := NewService(
 				name,
 				otdg_main.Tracer.NSTIC(name).ITracer(),
-				boot.GetGloveAt("service"),
+				boot.GetGloveAt(name),
 			)
 			return s, s
 		})

@@ -13,7 +13,6 @@ type Glove struct {
 func (b *Boot) GetGloveAt(tracer loggeterrapi.ITracer, point_path string) *Glove {
 	g := &Glove{
 		DiagnosticFlags: b.DiagnosticFlags,
-		ConfDB:          b.ConfDB.WithErr(nil).WithOk(nil).DoPanic().PP(point_path),
 	}
 	n := b.ConfDB.WithErr(nil).WithOk(nil).DoPanic()
 	if tracer != nil {

@@ -87,7 +87,7 @@ func main() {
 
 		return
 	}).Catch(func(e *controlflow.Event) {
-		tracer.SmartErrEvent(e, "7b31a5794fbe3d1ca078").Send()
+		otdg_main.Tracer.SmartErrEvent(e, "7b31a5794fbe3d1ca078").Send()
 		boot.RootContextCancel()
 	})
 

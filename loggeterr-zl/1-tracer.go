@@ -36,9 +36,9 @@ var _ accumapi.ILogsAccumulator = (*Tracer)(nil)
 func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)) (tracer loggeterrapi.ITracer) {
 	rctx := &loggeterrapi.RootContext{}
 	// defaults
-	rctx.ForwardtraceTagsKey = "tags"
-	rctx.ForwardtraceETCKey = "etc"
-	rctx.MessageKey = "msg"
+	rctx.ForwardtraceTagsKey = "FORWARDTRACE-TAGS"
+	rctx.ForwardtraceETCKey = "ETC"
+	rctx.MessageKey = "MESSAGE"
 	rctx.ZeroTime = time.Now()
 	for _, f := range optFuncs {
 		f(rctx)

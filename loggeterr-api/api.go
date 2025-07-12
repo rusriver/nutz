@@ -12,13 +12,21 @@ type ITracer interface {
 	GetForwardtrace() *trace.Forwardtrace // also increments ETC
 	GetUserObject() (uo any)
 
-	TraceEvent(msgtag string) ILogEvent
-	DiagnosticEvent(msgtag string) ILogEvent
-	InfoEvent(msgtag string) ILogEvent
-	WarnEvent(msgtag string) ILogEvent
-	ErrorEvent(msgtag string) ILogEvent
-	SmartErrEvent(err any, msgtag string) ILogEvent // can accept error, *controlflow.Event, *trace.BacktracePoint
-	LogEvent(msgtag string) ILogEvent               // without legacy level, pure event; may default to INFO
+	/*
+		Levels:
+			trace, diagnostic, informational, warning - deprecated.
+			error - discouraged to use, and found to be ambiguous in most real-life non-trivial apps
+			fatal - outlawed long ago
+
+		See also https://dave.cheney.net/2015/11/05/lets-talk-about-logging
+
+		Long story short, what if you really want semantic levels? JUST USE FORWARD TRACE TAGS.
+		Consider this point of view: what if these levels historically were just a forerunners
+		for forward traces.
+	*/
+
+	EventEvent(msgtag string, e any) ILogEvent // can accept error, *controlflow.Event, *trace.BacktracePoint
+	LogEvent(msgtag string) ILogEvent          // pure log event, without legacy semantic level
 
 	// Creates new sub-logger, suitable for another thread.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
@@ -85,7 +93,7 @@ type ILogEvent interface {
 	// This is useful to do some work only if the event is activated, e.g. do some data prep
 	// or JSON marshalling, and waste no time otherwise.
 	//
-	//	     logger.InfoEvent("1212").Inactive().IfActive(func(ev loggerapi.IEvent) {
+	//	     logger.LogEvent("1212").Inactive().IfActive(func(ev loggerapi.IEvent) {
 	//				// do some heavy work, then
 	//				ev.RawJSON(b)
 	//			}).Title("my event").Send()

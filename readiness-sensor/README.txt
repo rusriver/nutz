@@ -59,11 +59,11 @@ Usage idiom 1:
 					"C",
 				})
 				if ok {
-					logger.InfoEvent().Title("readiness sensor - ALL SYSTEMS READY").
+					logger.LogEvent().Title("readiness sensor - ALL SYSTEMS READY").
                         Strs("match", match).Send()
 					state = 1
 				} else {
-					logger.InfoEvent().Title("readiness sensor - NOT READY, WAITING").
+					logger.LogEvent().Title("readiness sensor - NOT READY, WAITING").
                         Strs("match", match).Strs("missing", missing).Send()
 				}
 			case 1:
@@ -101,11 +101,11 @@ Usage idiom 2:
 					"C",
 				})
 				if ok {
-					logger.InfoEvent().Title("readiness sensor - ALL SYSTEMS READY").
+					logger.LogEvent().Title("readiness sensor - ALL SYSTEMS READY").
                         Strs("match", match).Send()
 					state = 1
 				} else {
-					logger.InfoEvent().Title("readiness sensor - NOT READY, WAITING").
+					logger.LogEvent().Title("readiness sensor - NOT READY, WAITING").
                         Strs("match", match).Strs("missing", missing).Send()
 				}
 			case 1:
@@ -150,13 +150,13 @@ Another usage idiom:
 		c.Logger = logger.New(shortuuid.New()[:8], nil)
 		c.F = func(s *readinesssensor.Sensor) {
 			status := s.StatusInternal()
-			s.Logger.InfoEvent("23").
+			s.Logger.LogEvent("23").
 				Strs("fresh", status.Fresh).
 				Strs("ready", status.Ready).
 				Strs("ceded", status.Ceded).
 				SendMsg("signalled")
 			if status.AllDone {
-				s.Logger.InfoEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
+				s.Logger.LogEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
 				wg1.Done()
 			}
 		}

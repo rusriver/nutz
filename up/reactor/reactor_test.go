@@ -34,12 +34,12 @@ func Test_Reactor_01(t *testing.T) {
 	r.Func = func(r *reactor.Reactor, m *reactor.Msg) {
 		switch m.Signal {
 		case reactor.Signal_End:
-			r.Tracer.InfoEvent("22").SendMsg("end")
+			r.Tracer.LogEvent("22").SendMsg("end")
 
 		case reactor.Signal_IsUp, reactor.Signal_Cede:
-			r.Tracer.InfoEvent("24").SendMsg("up signal")
+			r.Tracer.LogEvent("24").SendMsg("up signal")
 			status := r.GetStatus_InsideReactorFuncOnly()
-			r.Tracer.InfoEvent("29").
+			r.Tracer.LogEvent("29").
 				Strs("fresh", status.Fresh).
 				Strs("ready", status.Up).
 				Strs("ceded", status.Ceded).
@@ -47,12 +47,12 @@ func Test_Reactor_01(t *testing.T) {
 
 			// this is common idiom
 			if status.CanReact {
-				r.Tracer.InfoEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
+				r.Tracer.LogEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
 				r.Done = true
 				success = true
 				// do something
 			} else if status.NoFreshLeft { // optional
-				r.Tracer.InfoEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
+				r.Tracer.LogEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
 				r.Done = true
 				// do something
 			}
@@ -96,9 +96,9 @@ func Test_Reactor_02(t *testing.T) {
 		switch m.Signal {
 		case reactor.Signal_IsUp:
 
-			r.Tracer.InfoEvent("24").SendMsg("ready signal")
+			r.Tracer.LogEvent("24").SendMsg("ready signal")
 			status := r.GetStatus_InsideReactorFuncOnly()
-			r.Tracer.InfoEvent("29").
+			r.Tracer.LogEvent("29").
 				Strs("fresh", status.Fresh).
 				Strs("ready", status.Up).
 				Strs("ceded", status.Ceded).
@@ -106,12 +106,12 @@ func Test_Reactor_02(t *testing.T) {
 
 			// this is common idiom
 			if status.CanReact {
-				r.Tracer.InfoEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
+				r.Tracer.LogEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
 				r.Done = true
 				success = true
 				// do something
 			} else if status.NoFreshLeft {
-				r.Tracer.InfoEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
+				r.Tracer.LogEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
 				r.Done = true
 				// do something
 			}
@@ -150,12 +150,12 @@ func Test_Reactor_03(t *testing.T) {
 		r.Func = func(r *reactor.Reactor, m *reactor.Msg) {
 			switch m.Signal {
 			case reactor.Signal_End:
-				r.Tracer.InfoEvent("22").SendMsg("end")
+				r.Tracer.LogEvent("22").SendMsg("end")
 
 			case reactor.Signal_IsUp, reactor.Signal_Cede:
-				r.Tracer.InfoEvent("24").SendMsg("ready signal")
+				r.Tracer.LogEvent("24").SendMsg("ready signal")
 				status := r.GetStatus_InsideReactorFuncOnly()
-				r.Tracer.InfoEvent("29").
+				r.Tracer.LogEvent("29").
 					Strs("fresh", status.Fresh).
 					Strs("ready", status.Up).
 					Strs("ceded", status.Ceded).
@@ -163,11 +163,11 @@ func Test_Reactor_03(t *testing.T) {
 
 				// this is common idiom
 				if status.CanReact {
-					r.Tracer.InfoEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
+					r.Tracer.LogEvent("45").SendMsg("READINESS ACHIEVED - DO THE NEXT STEP")
 					r.Done = true
 					// do something
 				} else if status.NoFreshLeft {
-					r.Tracer.InfoEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
+					r.Tracer.LogEvent("47").SendMsg("NO FRESH LEFT - DO THE NEXT STEP")
 					r.Done = true
 					// do something
 				}

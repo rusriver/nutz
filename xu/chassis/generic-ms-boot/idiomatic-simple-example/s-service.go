@@ -39,11 +39,11 @@ func NewService(
 	for _, f := range of {
 		f(s)
 	}
-	s.Tracer.InfoEvent("START").Send()
+	s.Tracer.LogEvent("START").Send()
 
 	param1 := glove.ConfDB.P("param-1").String()
 
-	s.Tracer.InfoEvent("0198437cd198").SendMsg(
+	s.Tracer.LogEvent("0198437cd198").SendMsg(
 		param1,
 		s.SomeUserParam01,
 		s.SomeUserParam02,
@@ -51,7 +51,7 @@ func NewService(
 	)
 
 	if (*glove.DiagnosticFlags)["96bd92c9c7d2"] {
-		tracer.InfoEvent("52").SendMsg("DiagnosticFlag 96bd92c9c7d2 activated")
+		tracer.LogEvent("52").SendMsg("DiagnosticFlag 96bd92c9c7d2 activated")
 	}
 
 	var ctx context.Context
@@ -65,7 +65,7 @@ func (s *Service) GetName() string {
 	return s.Name
 }
 func (s *Service) WindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("STOP").Send()
+	tracer.LogEvent("STOP").Send()
 	if s.cancelFunc != nil {
 		s.cancelFunc()
 	}

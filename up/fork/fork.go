@@ -41,15 +41,15 @@ func (fork *Fork) RunFuncInParallel(f func()) {
 }
 
 func (fork *Fork) RecursiveWindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("RWC-f33").SendMsg("rec-windup-call")
+	tracer.LogEvent("RWC-f33").SendMsg("rec-windup-call")
 
 	fork.mu.Lock()
 	defer fork.mu.Unlock()
 	fork.count--
 	if fork.count == 0 {
 		if fork.Parent != nil {
-			tracer.InfoEvent("RWB-39").SendMsg("rec-windup-begin")
-			defer tracer.InfoEvent("RWE-40").SendMsg("rec-windup-end")
+			tracer.LogEvent("RWB-39").SendMsg("rec-windup-begin")
+			defer tracer.LogEvent("RWE-40").SendMsg("rec-windup-end")
 			fork.Parent.RecursiveWindUp(tracer.NSTIC(fork.Parent.GetName()).ITracer())
 		}
 	}

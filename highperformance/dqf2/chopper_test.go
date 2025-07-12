@@ -82,13 +82,13 @@ func Test_Chopper_01(t *testing.T) {
 	dqf2.Chopper_Start(ctx, s.ChUp, func(au *dqf2.Chopper_Options) {
 		au.Modes = au_modes
 		au.IfChoppedFunc = func(n_chopped int) {
-			auTracer.InfoEvent("55").Int("n-chopped", n_chopped).Send()
+			auTracer.LogEvent("55").Int("n-chopped", n_chopped).Send()
 		}
 		au.UpgradeFunc = func(from_mode, to_mode int) {
-			auTracer.InfoEvent("88+").SendMsgf("upgrade %v -> %v", from_mode, to_mode)
+			auTracer.LogEvent("88+").SendMsgf("upgrade %v -> %v", from_mode, to_mode)
 		}
 		au.DowngradeFunc = func(from_mode, to_mode int) {
-			auTracer.InfoEvent("88-").SendMsgf("downgrade %v -> %v", from_mode, to_mode)
+			auTracer.LogEvent("88-").SendMsgf("downgrade %v -> %v", from_mode, to_mode)
 		}
 	})
 

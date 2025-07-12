@@ -89,8 +89,8 @@ Goals of making such a wrapper around the zerolog logger:
         To make sure inactivated LPs incur minimum CPU overhead on useless attachment of data,
         please use this chain idiom:
 
-            logger.InfoEvent().Title().Msgtag(msgtag).AllOtherData()...                   -- (1)
-            logger.InfoEvent().Title().Inactive().Msgtag(msgtag).AllOtherData()...        -- (2)
+            logger.LogEvent().Title().Msgtag(msgtag).AllOtherData()...                   -- (1)
+            logger.LogEvent().Title().Inactive().Msgtag(msgtag).AllOtherData()...        -- (2)
         
         That's because the ActivationHook is called in Msgtag() specifically.
 
@@ -143,7 +143,7 @@ Common idioms:
 
     	ilogger := logger.New(nil).NSLIC("app-name").ILogger()
 
-        ilogger.InfoEvent("1234").SendMsg("hello")
+        ilogger.LogEvent("1234").SendMsg("hello")
 
 
     More example:
@@ -255,8 +255,8 @@ Common idioms:
 
     Send a logline:
 
-            logger.InfoEvent().Title("informational test event").Msgtag(nil, "123", "456").Send()
-            logger.InfoEvent().Title("informational test event").Inactive().Msgtag(nil, "123", "456").Send()
+            logger.LogEvent().Title("informational test event").Msgtag(nil, "123", "456").Send()
+            logger.LogEvent().Title("informational test event").Inactive().Msgtag(nil, "123", "456").Send()
 
     Intercept the serialized events with a io.Writer tee:
 

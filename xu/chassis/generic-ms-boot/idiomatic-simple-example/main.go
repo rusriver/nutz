@@ -28,7 +28,7 @@ func main() {
 		},
 	})
 	tracer := boot.RootTracer
-	boot.RootTracer.InfoEvent("BEGIN").Send()
+	boot.RootTracer.LogEvent("BEGIN").Send()
 
 	otdg_main := up.NewOTDG("otdg-main", tracer, nil)
 
@@ -87,13 +87,13 @@ func main() {
 
 		return
 	}).Catch(func(e *controlflow.Event) {
-		otdg_main.Tracer.SmartErrEvent(e, "7b31a5794fbe3d1ca078").Send()
+		otdg_main.Tracer.EventEvent("7b31a5794fbe3d1ca078", e).Send()
 		boot.RootContextCancel()
 	})
 
-	tracer.InfoEvent("UP").Send()
+	tracer.LogEvent("UP").Send()
 	boot.BlockAndWait()
-	tracer.InfoEvent("GO-DOWN").Send()
+	tracer.LogEvent("GO-DOWN").Send()
 	otdg_main.RecursiveWindUp(tracer.NSTIC("otdg-main-wind-up").ITracer())
-	tracer.InfoEvent("END").Send()
+	tracer.LogEvent("END").Send()
 }

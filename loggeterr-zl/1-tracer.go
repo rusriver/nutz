@@ -50,13 +50,13 @@ func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)
 	{
 		zerolog.TimestampFieldName = "tsa"
 		zerolog.TimeFieldFormat = "20060102-150405"
-		zerolog.LevelTraceValue = "TRACE"
-		zerolog.LevelDebugValue = "DIAGN"
-		zerolog.LevelInfoValue = "INFO"
-		zerolog.LevelWarnValue = "WARN"
-		zerolog.LevelErrorValue = "ERROR"
-		zerolog.LevelFatalValue = "FATAL"
-		zerolog.LevelPanicValue = "PANIC"
+		zerolog.LevelTraceValue = "PURE-EVENT"
+		zerolog.LevelDebugValue = "PURE-EVENT"
+		zerolog.LevelInfoValue = "PURE-EVENT"
+		zerolog.LevelWarnValue = "PURE-EVENT"
+		zerolog.LevelErrorValue = "PURE-EVENT"
+		zerolog.LevelFatalValue = "PURE-EVENT"
+		zerolog.LevelPanicValue = "PURE-EVENT"
 		zerolog.CallerFieldName = "CALLER"
 	}
 	interceptor := &Interceptor{rctx: rctx}
@@ -75,94 +75,32 @@ func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)
 	return tracer
 }
 
-func (t *Tracer) TraceEvent(msgtag string) loggeterrapi.ILogEvent {
-	e := &LogEvent{
-		IsInactive:   t.IsInactive,
-		TheLevel:     zerolog.TraceLevel.String(),
-		ParentLogger: t,
-		Tag:          msgtag,
-		ZerologEvent: t.ZeroLoggerPtr.Trace(),
-	}
-	activationHook(e)
-	return e
-}
-
-func (t *Tracer) DiagnosticEvent(msgtag string) loggeterrapi.ILogEvent {
-	e := &LogEvent{
-		IsInactive:   t.IsInactive,
-		TheLevel:     zerolog.DebugLevel.String(),
-		ParentLogger: t,
-		Tag:          msgtag,
-		ZerologEvent: t.ZeroLoggerPtr.Debug(),
-	}
-	activationHook(e)
-	return e
-}
-
-func (t *Tracer) InfoEvent(msgtag string) loggeterrapi.ILogEvent {
-	e := &LogEvent{
-		IsInactive:   t.IsInactive,
-		TheLevel:     zerolog.InfoLevel.String(),
-		ParentLogger: t,
-		Tag:          msgtag,
-		ZerologEvent: t.ZeroLoggerPtr.Info(),
-	}
-	activationHook(e)
-	return e
-}
-
-func (t *Tracer) WarnEvent(msgtag string) loggeterrapi.ILogEvent {
-	e := &LogEvent{
-		IsInactive:        t.IsInactive,
-		TheLevel:          zerolog.WarnLevel.String(),
-		ParentLogger:      t,
-		Tag:               msgtag,
-		ZerologEvent:      t.ZeroLoggerPtr.Warn(),
-		TheTitle:          "WARNING", // the default title
-		theTitleIsDefault: true,
-	}
-	activationHook(e)
-	return e
-}
-
-func (t *Tracer) ErrorEvent(msgtag string) loggeterrapi.ILogEvent {
-	e := &LogEvent{
-		IsInactive:        t.IsInactive,
-		TheLevel:          zerolog.ErrorLevel.String(),
-		ParentLogger:      t,
-		Tag:               msgtag,
-		ZerologEvent:      t.ZeroLoggerPtr.Error(),
-		TheTitle:          "ERROR", // the default title
-		theTitleIsDefault: true,
-	}
-	activationHook(e)
-	return e
-}
-
-func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
-	if err == nil {
-		err = errors.New("<nil>")
+func (t *Tracer) EventEvent(msgtag string, reported_e any) loggeterrapi.ILogEvent {
+	if reported_e == nil {
+		reported_e = errors.New("<nil>")
 	}
 	e := &LogEvent{
 		IsInactive:        t.IsInactive,
-		TheLevel:          zerolog.ErrorLevel.String(),
 		ParentLogger:      t,
 		Tag:               msgtag,
-		TheTitle:          "ERROR", // the default title
 		theTitleIsDefault: true,
+		ZerologEvent:      t.ZeroLoggerPtr.Info(),
 	}
-	switch ev := err.(type) {
+	switch ev := reported_e.(type) {
 	case *controlflow.Event:
-		e.ZerologEvent = t.ZeroLoggerPtr.Error()
 		bb, _ := json.Marshal(ev)
-		e.ZerologEvent = t.ZeroLoggerPtr.Error().RawJSON("error-controlflow-event", bb)
+		e.ZerologEvent.RawJSON("controlflow-event", bb)
+		e.TheTitle = "CONTROLFLOW-EVENT"
 	case *trace.BacktracePoint:
 		bb, _ := json.Marshal(ev)
-		e.ZerologEvent = t.ZeroLoggerPtr.Error().RawJSON("error-backtracepoint", bb)
+		e.ZerologEvent.RawJSON("backtracepoint", bb)
+		e.TheTitle = "BACKTRACEPOINT"
 	case error:
-		e.ZerologEvent = t.ZeroLoggerPtr.Err(ev)
+		e.ZerologEvent.Err(ev)
+		e.TheTitle = "GO-ERROR"
 	default:
-		e.ZerologEvent = t.ZeroLoggerPtr.Error().Str("error-unknown", fmt.Sprintf("%+v", ev))
+		e.ZerologEvent.Str("unknown-event", fmt.Sprintf("%+v", ev))
+		e.TheTitle = "UNK"
 	}
 	activationHook(e)
 	return e
@@ -171,7 +109,6 @@ func (t *Tracer) SmartErrEvent(err any, msgtag string) loggeterrapi.ILogEvent {
 func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
 	e := &LogEvent{
 		IsInactive:   t.IsInactive,
-		TheLevel:     zerolog.InfoLevel.String(),
 		ParentLogger: t,
 		Tag:          msgtag,
 		ZerologEvent: t.ZeroLoggerPtr.Info(),

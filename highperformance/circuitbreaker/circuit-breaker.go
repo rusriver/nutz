@@ -74,13 +74,13 @@ func (cb *CircuitBreaker) g() {
 		gState   int
 	)
 	if cb.DebugTracer != nil {
-		cb.DebugTracer.DiagnosticEvent("45").SendMsg("g started")
+		cb.DebugTracer.LogEvent("45").SendMsg("g started")
 	}
 
 	// go func() {
 	// 	for {
 	// 		time.Sleep(500 * time.Millisecond)
-	// 		cb.DebugTracer.DiagnosticEvent("82").SendMsg("-- counter", counter)
+	// 		cb.DebugTracer.LogEvent("82").SendMsg("-- counter", counter)
 	// 	}
 	// }()
 
@@ -94,7 +94,7 @@ func (cb *CircuitBreaker) g() {
 			counter = 0
 			lastTime = time.Now()
 			if cb.DebugTracer != nil {
-				cb.DebugTracer.DiagnosticEvent("96").SendMsg("DENY-RESTART")
+				cb.DebugTracer.LogEvent("96").SendMsg("DENY-RESTART")
 			}
 
 		case GState_ALLOW:
@@ -103,7 +103,7 @@ func (cb *CircuitBreaker) g() {
 			counter = 0
 			lastTime = time.Now()
 			if cb.DebugTracer != nil {
-				cb.DebugTracer.DiagnosticEvent("105").SendMsg("ALLOW")
+				cb.DebugTracer.LogEvent("105").SendMsg("ALLOW")
 			}
 
 		case GState_DENY_WAIT:
@@ -126,7 +126,7 @@ func (cb *CircuitBreaker) g() {
 				}
 			}()
 			if cb.DebugTracer != nil {
-				cb.DebugTracer.DiagnosticEvent("130").SendMsg("DENY-WAIT")
+				cb.DebugTracer.LogEvent("130").SendMsg("DENY-WAIT")
 			}
 		}
 
@@ -139,7 +139,7 @@ func (cb *CircuitBreaker) g() {
 
 	// initial ignition, once
 	if cb.DebugTracer != nil {
-		cb.DebugTracer.DiagnosticEvent("143").SendMsg("ignition")
+		cb.DebugTracer.LogEvent("143").SendMsg("ignition")
 	}
 	for i := 0; i < cb.ChanReigniteSize; i++ {
 		select {
@@ -221,7 +221,7 @@ func (cb *CircuitBreaker) g() {
 					}
 				}
 				if cb.DebugTracer != nil {
-					cb.DebugTracer.DiagnosticEvent("225").SendMsg("reignition")
+					cb.DebugTracer.LogEvent("225").SendMsg("reignition")
 				}
 			}
 

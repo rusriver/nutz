@@ -59,12 +59,12 @@ func Test_001(t *testing.T) {
 
 			case <-tkr01.C:
 				_, execd := cb.WantToDo(func() (success bool) {
-					tracer.InfoEvent("45").SendMsg("tick G1", G1_Results)
+					tracer.LogEvent("45").SendMsg("tick G1", G1_Results)
 					stats_executed++
 					return G1_Results
 				})
 				if !execd {
-					tracer.InfoEvent("50").SendMsg("tick void")
+					tracer.LogEvent("50").SendMsg("tick void")
 					stats_missed++
 				}
 
@@ -74,36 +74,36 @@ func Test_001(t *testing.T) {
 
 	time.Sleep(time.Second * 10)
 
-	tracer.InfoEvent("59").SendMsg("+++ 10 sec")
+	tracer.LogEvent("59").SendMsg("+++ 10 sec")
 
 	time.Sleep(time.Second * 5)
 
-	tracer.InfoEvent("63").SendMsg("+++ 5 sec")
+	tracer.LogEvent("63").SendMsg("+++ 5 sec")
 
 	chDQF <- func() {
 		G1_Results = false
-		tracer.InfoEvent("67").SendMsg("+++ G1_Results", G1_Results)
+		tracer.LogEvent("67").SendMsg("+++ G1_Results", G1_Results)
 	}
 
 	time.Sleep(time.Second * 30)
 
 	chDQF <- func() {
 		G1_Results = true
-		tracer.InfoEvent("74").SendMsg("+++ G1_Results", G1_Results)
+		tracer.LogEvent("74").SendMsg("+++ G1_Results", G1_Results)
 	}
 
 	time.Sleep(time.Second * 30)
 
 	chDQF <- func() {
 		G1_Results = false
-		tracer.InfoEvent("81").SendMsg("+++ G1_Results", G1_Results)
+		tracer.LogEvent("81").SendMsg("+++ G1_Results", G1_Results)
 	}
 
 	time.Sleep(time.Second * 30)
 
 	chDQF <- func() {
 		G1_Results = true
-		tracer.InfoEvent("88").SendMsg("+++ G1_Results", G1_Results)
+		tracer.LogEvent("88").SendMsg("+++ G1_Results", G1_Results)
 	}
 
 	time.Sleep(time.Second * 90)

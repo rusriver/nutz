@@ -27,7 +27,7 @@ func (w *Watcher) Start() {
 		// already started
 		return
 	}
-	w.Tracer.InfoEvent("e325ac80ec09").SendMsgf("the watcher %v starting", w.Name)
+	w.Tracer.LogEvent("e325ac80ec09").SendMsgf("the watcher %v starting", w.Name)
 	w.chUp = make(chan *cmd, 0xF)
 	go func() {
 		var ticker *time.Ticker
@@ -46,16 +46,16 @@ func (w *Watcher) Start() {
 			case c := <-w.chUp:
 				switch c.Command {
 				case "stop_done":
-					w.Tracer.InfoEvent("5ad2754f035d").SendMsgf("the watcher %v reached STOP/DONE state (OK)", w.Name)
+					w.Tracer.LogEvent("5ad2754f035d").SendMsgf("the watcher %v reached STOP/DONE state (OK)", w.Name)
 					return
 				}
 			case <-ticker.C:
-				w.Tracer.InfoEvent("c401d1be793c").SendMsgf("the watcher %v still waiting...", w.Name)
+				w.Tracer.LogEvent("c401d1be793c").SendMsgf("the watcher %v still waiting...", w.Name)
 				if w.PeriodicFunc != nil {
 					w.PeriodicFunc(w)
 				}
 			case <-after_timeout:
-				w.Tracer.InfoEvent("b7d60e67e04c").SendMsgf("the watcher %v timed out", w.Name)
+				w.Tracer.LogEvent("b7d60e67e04c").SendMsgf("the watcher %v timed out", w.Name)
 				w.TimeoutFunc(w)
 			}
 		}

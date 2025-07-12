@@ -201,8 +201,8 @@ func (r *Reactor) CallTheInjectFunc(f func(r *Reactor)) {
 // Be careful if your reactor dependency graph has diamond topology (is not a DAG);
 // In that case, better implement explicit forward action plan to wind up your system.
 func (r *Reactor) RecursiveWindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("RWB-184").SendMsg("rec-windup-begin")
-	defer tracer.InfoEvent("RWE-185").SendMsg("rec-windup-end")
+	tracer.LogEvent("RWB-184").SendMsg("rec-windup-begin")
+	defer tracer.LogEvent("RWE-185").SendMsg("rec-windup-end")
 	var subs []*Subsystem
 	wg := sync.WaitGroup{}
 	wg.Add(1)

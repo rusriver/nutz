@@ -31,8 +31,8 @@ func (f *OTDG) GetName() string {
 }
 
 func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("W-21").SendMsg("windup-begin")
-	defer tracer.InfoEvent("W-22e").SendMsg("windup-end")
+	tracer.LogEvent("W-21").SendMsg("windup-begin")
+	defer tracer.LogEvent("W-22e").SendMsg("windup-end")
 	for _, ir := range slices.Backward(otdg.upStack) {
 		ir.WindUp(tracer.NSTIC(ir.GetName()).ITracer())
 	}
@@ -42,8 +42,8 @@ func (otdg *OTDG) WindUp(tracer loggeterrapi.ITracer) {
 // Be careful if your reactor dependency graph has diamond topology (is not a DAG);
 // In that case, better implement explicit forward action plan to wind up your system.
 func (otdg *OTDG) RecursiveWindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("RWB-33").SendMsg("rec-windup-begin")
-	defer tracer.InfoEvent("RWE-34").SendMsg("rec-windup-end")
+	tracer.LogEvent("RWB-33").SendMsg("rec-windup-begin")
+	defer tracer.LogEvent("RWE-34").SendMsg("rec-windup-end")
 	for _, ir := range slices.Backward(otdg.upStack) {
 		ir.WindUp(tracer.NSTIC(ir.GetName()).ITracer())
 	}

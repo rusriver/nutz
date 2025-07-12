@@ -42,11 +42,11 @@ func NewSys2(
 	for _, f := range of {
 		f(s)
 	}
-	s.Tracer.InfoEvent("START").Send()
+	s.Tracer.LogEvent("START").Send()
 
 	param1 := glove.ConfDB.P("param-1").String()
 
-	s.Tracer.InfoEvent("9b971a886a1a").SendMsg(
+	s.Tracer.LogEvent("9b971a886a1a").SendMsg(
 		param1,
 		s.SomeUserParam01,
 		s.SomeUserParam02,
@@ -73,7 +73,7 @@ func (s *S_Sys2) GetName() string {
 	return s.Name
 }
 func (s *S_Sys2) WindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("STOP").Send()
+	tracer.LogEvent("STOP").Send()
 	if s.cancelFunc != nil {
 		s.cancelFunc()
 	}

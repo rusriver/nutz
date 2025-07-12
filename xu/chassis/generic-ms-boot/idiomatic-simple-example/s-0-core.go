@@ -40,11 +40,11 @@ func NewCore(
 		f(s)
 	}
 
-	s.Tracer.InfoEvent("START").Send()
+	s.Tracer.LogEvent("START").Send()
 
 	param1 := glove.ConfDB.P("param-1").String()
 
-	s.Tracer.InfoEvent("0198437cd198").SendMsg(
+	s.Tracer.LogEvent("0198437cd198").SendMsg(
 		param1,
 		s.SomeUserParam01,
 		s.SomeUserParam02,
@@ -72,7 +72,7 @@ func (s *S_Core) GetName() string {
 	return s.Name
 }
 func (s *S_Core) WindUp(tracer loggeterrapi.ITracer) {
-	tracer.InfoEvent("STOP").Send()
+	tracer.LogEvent("STOP").Send()
 	if s.CancelFunc != nil {
 		s.CancelFunc()
 	}

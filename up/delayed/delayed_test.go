@@ -20,10 +20,10 @@ func Test_Delayed_01(t *testing.T) {
 		Duration: time.Second * 1,
 		Tracer:   itracer.SpanBegin("d1"),
 		Func: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("38").SendMsg("fired")
+			d.Tracer.LogEvent("38").SendMsg("fired")
 		},
 		Func_canceled: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.LogEvent("41").SendMsg("canceled")
 		},
 	}
 	delayed.Start(d)
@@ -46,10 +46,10 @@ func Test_Delayed_02(t *testing.T) {
 		Duration: time.Second * 5,
 		Tracer:   itracer.SpanBegin("d1"),
 		Func: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("38").SendMsg("fired")
+			d.Tracer.LogEvent("38").SendMsg("fired")
 		},
 		Func_canceled: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.LogEvent("41").SendMsg("canceled")
 		},
 	}
 	delayed.Start(d)
@@ -70,10 +70,10 @@ func Test_Delayed_03(t *testing.T) {
 		Duration: time.Second * 5,
 		Tracer:   itracer.SpanBegin("d1"),
 		Func: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("38").SendMsg("fired")
+			d.Tracer.LogEvent("38").SendMsg("fired")
 		},
 		Func_canceled: func(d *delayed.Delayed) {
-			d.Tracer.InfoEvent("41").SendMsg("canceled")
+			d.Tracer.LogEvent("41").SendMsg("canceled")
 		},
 	}
 	delayed.Start(d)

@@ -15,7 +15,6 @@ type LogEvent struct {
 	ParentLogger      *Tracer
 	Tag               string
 	IsInactive        bool
-	TheLevel          string
 	TheTitle          string
 	TheMessage        string
 	theTitleIsDefault bool

@@ -437,7 +437,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 
 	// Create infra prerequisite components
 	tracer := loggeterrzl.New(nil) // this is special thing, never wound-up, so outside of otdg
-	tracer.InfoEvent("BEGIN").Send()
+	tracer.LogEvent("BEGIN").Send()
 
 	ctx := context.Background()
 	wg1 := sync.WaitGroup{}
@@ -593,7 +593,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 		require.Equal(t, true, finished_by_watchers)
 	}
 	if finished_by_watchers {
-		tracer.InfoEvent("344").SendMsg("FINISHED BY WATCHERS, TIMED OUT")
+		tracer.LogEvent("344").SendMsg("FINISHED BY WATCHERS, TIMED OUT")
 		bb, _ := json.MarshalIndent(example.ControlRegistry, "", "    ")
 		fmt.Println(string(bb))
 		require.Equal(t, true, example.ControlRegistry.MatchThePattern(map[string]int{
@@ -614,7 +614,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	W03.Stop_Done()
 
 	time.Sleep(time.Second)
-	tracer.InfoEvent("UP").Send()
+	tracer.LogEvent("UP").Send()
 
 	// make sure everything is started
 	bb, _ := json.MarshalIndent(example.ControlRegistry, "", "    ")
@@ -641,7 +641,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	time.Sleep(5 * time.Second)
 
 	// we're going to stop then
-	tracer.InfoEvent("GO-DOWN").Send()
+	tracer.LogEvent("GO-DOWN").Send()
 
 	// S_rastan.WindUp(tracer.NSTIC("wind-up").ITracer())
 
@@ -661,7 +661,7 @@ func DI_Container_Example2_Main(t *testing.T, mode int) {
 	}))
 	fmt.Println("OK, all components are DOWN")
 
-	tracer.InfoEvent("END").Send()
+	tracer.LogEvent("END").Send()
 }
 
 // in real projects, this better be in separate file
@@ -673,7 +673,7 @@ func Make_S_rastan(
 	aslast *example.Aslast,
 	uphili *example.Uphili,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -689,14 +689,14 @@ func Make_S_rastan(
 			return s, s
 		}).(*example.Uphili)
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E320").Send()
+		otdg.Tracer.EventEvent("E320", e).Send()
 	})
 	return
 }
@@ -710,7 +710,7 @@ func Make_S_myinei(
 	seigul *example.System03,
 	sparip *example.System02,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -740,14 +740,14 @@ func Make_S_myinei(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E375").Send()
+		otdg.Tracer.EventEvent("E375", e).Send()
 	})
 	return
 }
@@ -760,7 +760,7 @@ func Make_S_armati(
 	uphili *example.Uphili,
 	final_func func(otdg *up.OTDG),
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -780,14 +780,14 @@ func Make_S_armati(
 		})
 		_ = teashi
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E399").Send()
+		otdg.Tracer.EventEvent("E399", e).Send()
 	})
 }
 
@@ -799,7 +799,7 @@ func Make_S_xylane(
 	uphili *example.Uphili,
 	final_func func(otdg *up.OTDG),
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -814,14 +814,14 @@ func Make_S_xylane(
 		})
 		_ = rebrei
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E422").Send()
+		otdg.Tracer.EventEvent("E422", e).Send()
 	})
 }
 
@@ -835,7 +835,7 @@ func Make_S_obdulu(
 ) (
 	itchot *example.Itchot,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -860,14 +860,14 @@ func Make_S_obdulu(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E447").Send()
+		otdg.Tracer.EventEvent("E447", e).Send()
 	})
 	return
 }
@@ -880,7 +880,7 @@ func Make_S_dodism(
 ) (
 	ontras *example.Ontras,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -914,14 +914,14 @@ func Make_S_dodism(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E471").Send()
+		otdg.Tracer.EventEvent("E471", e).Send()
 	})
 	return
 }
@@ -934,7 +934,7 @@ func Make_S_nutari(
 ) (
 	robles *example.System01,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -943,14 +943,14 @@ func Make_S_nutari(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E495").Send()
+		otdg.Tracer.EventEvent("E495", e).Send()
 	})
 	return
 }
@@ -966,7 +966,7 @@ func Make_S_uromer(
 	petorn *example.System03,
 	histil *example.System02,
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -980,14 +980,14 @@ func Make_S_uromer(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E522").Send()
+		otdg.Tracer.EventEvent("E522", e).Send()
 	})
 	return
 }
@@ -1003,7 +1003,7 @@ func Make_A1(
 	histil *example.System02,
 	final_func func(otdg *up.OTDG),
 ) {
-	otdg.Tracer.InfoEvent("288").SendMsg("starting")
+	otdg.Tracer.LogEvent("288").SendMsg("starting")
 	controlflow.Try(func() (err any) {
 		RandomSleep()
 
@@ -1024,14 +1024,14 @@ func Make_A1(
 			return s, s
 		})
 
-		otdg.Tracer.InfoEvent("389").SendMsg("done")
+		otdg.Tracer.LogEvent("389").SendMsg("done")
 		SmallSleep()
 		if final_func != nil {
 			final_func(otdg)
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.SmartErrEvent(e, "E566").Send()
+		otdg.Tracer.EventEvent("E566", e).Send()
 	})
 }
 

@@ -93,39 +93,39 @@ func Test_e2_01(t *testing.T) {
 
 	Tracer = itracer
 
-	Tracer.InfoEvent("d3740cd9").Title("some title 1").Send()
-	Tracer.InfoEvent("05c1e865").Title("some title 1").Send()
+	Tracer.LogEvent("d3740cd9").Title("some title 1").Send()
+	Tracer.LogEvent("05c1e865").Title("some title 1").Send()
 
 	Tracer = itracer.NewSubTracerInitChain("a24487").
 		Str("xu-ver", "1.2.3").
 		ITracer()
 
-	Tracer.InfoEvent("111b7de0").Title("some title 1").Send()
-	Tracer.InfoEvent("e3466c79").Title("some title 1").Send()
+	Tracer.LogEvent("111b7de0").Title("some title 1").Send()
+	Tracer.LogEvent("e3466c79").Title("some title 1").Send()
 
 	Tracer = Tracer.NewSubTracerInitChain("59fc7").ITracer() // just make a sublogger
 
-	Tracer.InfoEvent("b57e3641").Title("some title 1").Send()
+	Tracer.LogEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
 		Logger := Tracer.NewSubTracerInitChain("73853896").ITracer()
 		for i := 0; i < 20; i++ {
-			Logger.InfoEvent("41").Title("g1").Send()
+			Logger.LogEvent("41").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := Tracer.NewSubTracerInitChain("5687595c").ITracer()
 		for i := 0; i < 20; i++ {
-			Logger.InfoEvent("48").Title("g2").Send()
+			Logger.LogEvent("48").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	wg2.Wait()
-	Tracer.InfoEvent("d0ed6944").Title("complete").Send()
-	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+	Tracer.LogEvent("d0ed6944").Title("complete").Send()
+	Tracer.LogEvent("e83ab525").Title("complete").SendMsg("complete")
 
 	close(ChLogsAcc)
 	wg1.Wait()
@@ -171,39 +171,39 @@ func Test_e2_02(t *testing.T) {
 
 	Tracer = itracer
 
-	Tracer.InfoEvent("d3740cd9").Title("some title 1").Send()
-	Tracer.InfoEvent("05c1e865").Title("some title 1").Send()
+	Tracer.LogEvent("d3740cd9").Title("some title 1").Send()
+	Tracer.LogEvent("05c1e865").Title("some title 1").Send()
 
 	Tracer = itracer.NewSubTracerInitChain("a24487").
 		Str("xu-ver", "1.2.3").
 		ITracer()
 
-	Tracer.InfoEvent("111b7de0").Title("some title 1").Send()
-	Tracer.InfoEvent("e3466c79").Title("some title 1").Send()
+	Tracer.LogEvent("111b7de0").Title("some title 1").Send()
+	Tracer.LogEvent("e3466c79").Title("some title 1").Send()
 
 	Tracer = Tracer.NewSubTracerInitChain("59fc7").ITracer() // just make a sublogger
 
-	Tracer.InfoEvent("b57e3641").Title("some title 1").Send()
+	Tracer.LogEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(2)
 	go func() {
 		Logger := Tracer.NewSubTracerInitChain("73853896").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("41").Title("g1").Send()
+			Logger.LogEvent("41").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := Tracer.NewSubTracerInitChain("5687595c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("48").Title("g2").Send()
+			Logger.LogEvent("48").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	wg2.Wait()
-	Tracer.InfoEvent("d0ed6944").Title("complete").Send()
-	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+	Tracer.LogEvent("d0ed6944").Title("complete").Send()
+	Tracer.LogEvent("e83ab525").Title("complete").SendMsg("complete")
 
 	close(ChLogsAcc)
 	wg1.Wait()
@@ -245,8 +245,8 @@ func Test_e2_03(t *testing.T) {
 
 	Tracer = itracer
 
-	Tracer.InfoEvent("d3740cd9").Title("some title 1").Send()
-	Tracer.InfoEvent("05c1e865").Title("some title 1").Send()
+	Tracer.LogEvent("d3740cd9").Title("some title 1").Send()
+	Tracer.LogEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Tracer
 
 	Tracer = Tracer.NewSubTracerInitChain("_TLK").
@@ -277,46 +277,46 @@ func Test_e2_03(t *testing.T) {
 		rctx.MainWriter = io.Discard
 	}).ITracer()
 
-	Tracer.InfoEvent("111b7de0").Title("some title 1").Send()
-	Tracer.InfoEvent("e3466c79").Title("some title 1").Send()
+	Tracer.LogEvent("111b7de0").Title("some title 1").Send()
+	Tracer.LogEvent("e3466c79").Title("some title 1").Send()
 
 	Tracer = Tracer.NewSubTracerInitChain("59fc7").ITracer() // just make a sublogger
 
-	Tracer.InfoEvent("b57e3641").Title("some title 1").Send()
+	Tracer.LogEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("73853896").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("290").Title("g1").Send()
+			Logger.LogEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5687595c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("297").Title("g2").Send()
+			Logger.LogEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5141c5c5").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("304").Title("g3").Send()
+			Logger.LogEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("a5042f9c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("311").Title("g4").Send()
+			Logger.LogEvent("311").Title("g4").Send()
 		}
 		wg2.Done()
 	}()
 	wg2.Wait()
-	OfflineTracer.InfoEvent("d0ed6944").Title("complete").Send()
-	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+	OfflineTracer.LogEvent("d0ed6944").Title("complete").Send()
+	Tracer.LogEvent("e83ab525").Title("complete").SendMsg("complete")
 
 	close(ChLogsAcc)
 	wg1.Wait()
@@ -354,7 +354,7 @@ func Test_e2_03(t *testing.T) {
 	require.Equal(t, howManyIterations, controlCriteria["1,3,1,4"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
-	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
+	RootLogger.LogEvent("cd9ef761").Title("complete").SendMsg("complete")
 
 }
 
@@ -367,8 +367,8 @@ func Test_e2_04(t *testing.T) {
 
 	Tracer = itracer
 
-	Tracer.InfoEvent("d3740cd9").Title("some title 1").Send()
-	Tracer.InfoEvent("05c1e865").Title("some title 1").Send()
+	Tracer.LogEvent("d3740cd9").Title("some title 1").Send()
+	Tracer.LogEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Tracer
 
 	Tracer = Tracer.NewSubTracerInitChain("_TLK").
@@ -383,46 +383,46 @@ func Test_e2_04(t *testing.T) {
 	var OfflineTracer accumapi.ILogsAccumulator = it1.(*loggeterrzl.Tracer) // because of stupid cycle import ban in Go
 	OfflineTracer.SwitchOnTheOfflineAccumulation()
 
-	Tracer.InfoEvent("111b7de0").Title("some title 1").Send()
-	Tracer.InfoEvent("e3466c79").Title("some title 1").Send()
+	Tracer.LogEvent("111b7de0").Title("some title 1").Send()
+	Tracer.LogEvent("e3466c79").Title("some title 1").Send()
 
 	Tracer = Tracer.NewSubTracerInitChain("59fc7").ITracer() // just make a sublogger
 
-	Tracer.InfoEvent("b57e3641").Title("some title 1").Send()
+	Tracer.LogEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("73853896").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("290").Title("g1").Send()
+			Logger.LogEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5687595c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("297").Title("g2").Send()
+			Logger.LogEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5141c5c5").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("304").Title("g3").Send()
+			Logger.LogEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("a5042f9c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("311").Title("g4").Send()
+			Logger.LogEvent("311").Title("g4").Send()
 		}
 		wg2.Done()
 	}()
 	wg2.Wait()
-	OfflineTracer.InfoEvent("d0ed6944").Title("complete").Send()
-	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+	OfflineTracer.LogEvent("d0ed6944").Title("complete").Send()
+	Tracer.LogEvent("e83ab525").Title("complete").SendMsg("complete")
 
 	LogsAccumulated := OfflineTracer.FinishAccumulationAndFetch()
 
@@ -459,7 +459,7 @@ func Test_e2_04(t *testing.T) {
 	require.Equal(t, howManyIterations, controlCriteria["1,3,1,4"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
-	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
+	RootLogger.LogEvent("cd9ef761").Title("complete").SendMsg("complete")
 
 	fmt.Println("===========================================")
 
@@ -468,7 +468,7 @@ func Test_e2_04(t *testing.T) {
 	OfflineTracer.RestartTheAccumulation()
 
 	for i := 0; i < 5; i++ {
-		OfflineTracer.InfoEvent("c67f9c71").Send()
+		OfflineTracer.LogEvent("c67f9c71").Send()
 	}
 
 	// you can even use the Zerologger directly, and its output will be accumulated too:
@@ -491,8 +491,8 @@ func Test_e2_05(t *testing.T) {
 
 	Tracer = itracer
 
-	Tracer.InfoEvent("d3740cd9").Title("some title 1").Send()
-	Tracer.InfoEvent("05c1e865").Title("some title 1").Send()
+	Tracer.LogEvent("d3740cd9").Title("some title 1").Send()
+	Tracer.LogEvent("05c1e865").Title("some title 1").Send()
 	RootLogger := Tracer
 
 	Tracer = Tracer.NewSubTracerInitChain("_TLK").
@@ -507,46 +507,46 @@ func Test_e2_05(t *testing.T) {
 	var OfflineTracer accumapi.ILogsAccumulator = ol1.(*loggeterrzl.Tracer) // because of stupid cycle import ban in Go
 	OfflineTracer.SwitchOnTheOfflineAccumulation()
 
-	Tracer.InfoEvent("111b7de0").Title("some title 1").Send()
-	Tracer.InfoEvent("e3466c79").Title("some title 1").Send()
+	Tracer.LogEvent("111b7de0").Title("some title 1").Send()
+	Tracer.LogEvent("e3466c79").Title("some title 1").Send()
 
 	Tracer = Tracer.NewSubTracerInitChain("59fc7").ITracer() // just make a sublogger
 
-	Tracer.InfoEvent("b57e3641").Title("some title 1").Send()
+	Tracer.LogEvent("b57e3641").Title("some title 1").Send()
 
 	wg2 := sync.WaitGroup{}
 	wg2.Add(4)
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("73853896").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("290").Title("g1").Send()
+			Logger.LogEvent("290").Title("g1").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5687595c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("297").Title("g2").Send()
+			Logger.LogEvent("297").Title("g2").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("5141c5c5").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("304").Title("g3").Send()
+			Logger.LogEvent("304").Title("g3").Send()
 		}
 		wg2.Done()
 	}()
 	go func() {
 		Logger := OfflineTracer.NewSubTracerInitChain("a5042f9c").ITracer()
 		for i := 0; i < howManyIterations; i++ {
-			Logger.InfoEvent("311").Title("g4").Send()
+			Logger.LogEvent("311").Title("g4").Send()
 		}
 		wg2.Done()
 	}()
 	wg2.Wait()
-	OfflineTracer.InfoEvent("d0ed6944").Title("complete").Send()
-	Tracer.InfoEvent("e83ab525").Title("complete").SendMsg("complete")
+	OfflineTracer.LogEvent("d0ed6944").Title("complete").Send()
+	Tracer.LogEvent("e83ab525").Title("complete").SendMsg("complete")
 
 	LogsAccumulated := OfflineTracer.FinishAccumulationAndFetch()
 
@@ -603,7 +603,7 @@ func Test_e2_05(t *testing.T) {
 	require.Equal(t, howManyIterations, controlCriteria["[3 1 4]"])
 	require.Equal(t, 1, controlCriteria["d0ed6944"])
 
-	RootLogger.InfoEvent("cd9ef761").Title("complete").SendMsg("complete")
+	RootLogger.LogEvent("cd9ef761").Title("complete").SendMsg("complete")
 
 	fmt.Println("===========================================")
 
@@ -612,7 +612,7 @@ func Test_e2_05(t *testing.T) {
 	OfflineTracer.RestartTheAccumulation()
 
 	for i := 0; i < 5; i++ {
-		OfflineTracer.InfoEvent("c67f9c71").Send()
+		OfflineTracer.LogEvent("c67f9c71").Send()
 	}
 
 	// you can even use the Zerologger directly, and its output will be accumulated too:

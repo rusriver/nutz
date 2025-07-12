@@ -18,7 +18,7 @@ var _ upcommon.IRemovable = (*System01)(nil)
 
 func NewSystem01(name string, tracer loggeterrapi.ITracer, deps ...any) *System01 {
 	ControlRegistry.Components["System01"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &System01{
 		Name: name,
 	}
@@ -28,7 +28,7 @@ func (s *System01) GetName() string {
 }
 func (s *System01) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System01"]--
 }
 
@@ -43,7 +43,7 @@ var _ upcommon.IRemovable = (*System02)(nil)
 
 func NewSystem02(name string, tracer loggeterrapi.ITracer, deps ...any) *System02 {
 	ControlRegistry.Components["System02"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &System02{
 		Name: name,
 	}
@@ -53,7 +53,7 @@ func (s *System02) GetName() string {
 }
 func (s *System02) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System02"]--
 }
 
@@ -68,7 +68,7 @@ var _ upcommon.IRemovable = (*System03)(nil)
 
 func NewSystem03(name string, tracer loggeterrapi.ITracer, deps ...any) *System03 {
 	ControlRegistry.Components["System03"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &System03{
 		Name: name,
 	}
@@ -78,7 +78,7 @@ func (s *System03) GetName() string {
 }
 func (s *System03) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["System03"]--
 }
 
@@ -93,7 +93,7 @@ var _ upcommon.IRemovable = (*Aslast)(nil)
 
 func NewAslast(name string, tracer loggeterrapi.ITracer) *Aslast {
 	ControlRegistry.Components["aslast"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &Aslast{
 		Name: name,
 	}
@@ -103,7 +103,7 @@ func (s *Aslast) GetName() string {
 }
 func (s *Aslast) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["aslast"]--
 }
 
@@ -118,7 +118,7 @@ var _ upcommon.IRemovable = (*Uphili)(nil)
 
 func NewUphili(name string, tracer loggeterrapi.ITracer) *Uphili {
 	ControlRegistry.Components["uphili"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &Uphili{
 		Name: name,
 	}
@@ -128,7 +128,7 @@ func (s *Uphili) GetName() string {
 }
 func (s *Uphili) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["uphili"]--
 }
 
@@ -143,7 +143,7 @@ var _ upcommon.IRemovable = (*Itchot)(nil)
 
 func NewItchot(name string, tracer loggeterrapi.ITracer, s1 *System01, s2 *System02) *Itchot {
 	ControlRegistry.Components["itchot"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &Itchot{
 		Name: name,
 	}
@@ -153,7 +153,7 @@ func (s *Itchot) GetName() string {
 }
 func (s *Itchot) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["itchot"]--
 }
 
@@ -168,7 +168,7 @@ var _ upcommon.IRemovable = (*Ontras)(nil)
 
 func NewOntras(name string, tracer loggeterrapi.ITracer) *Ontras {
 	ControlRegistry.Components["ontras"]++
-	tracer.InfoEvent("START").Send()
+	tracer.LogEvent("START").Send()
 	return &Ontras{
 		Name: name,
 	}
@@ -178,7 +178,7 @@ func (s *Ontras) GetName() string {
 }
 func (s *Ontras) WindUp(tracer loggeterrapi.ITracer) {
 	SmallSleep()
-	tracer.InfoEvent("26").SendMsg("removed")
+	tracer.LogEvent("26").SendMsg("removed")
 	ControlRegistry.Components["ontras"]--
 }
 

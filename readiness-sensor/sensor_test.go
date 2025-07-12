@@ -19,13 +19,13 @@ func Test_Sensor_0111(t *testing.T) {
 		c.Tracer = loggeterrzl.New(nil)
 		c.F = func(s *readinesssensor.Sensor) {
 			status := s.StatusInternal()
-			s.Tracer.InfoEvent("23").
+			s.Tracer.LogEvent("23").
 				Strs("fresh", status.Fresh).
 				Strs("ready", status.Ready).
 				Strs("ceded", status.Ceded).
 				SendMsg("signalled")
 			if status.AllDone {
-				s.Tracer.InfoEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
+				s.Tracer.LogEvent("17").SendMsg("ALL SUBSYSTEMS ARE READY")
 				wg1.Done()
 			}
 		}

@@ -68,7 +68,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	// init the primary tracer
 	b.RootTracer = loggeterrzl.New(nil)
 
-	ev := b.RootTracer.InfoEvent("BOOT-STARTED")
+	ev := b.RootTracer.LogEvent("BOOT-STARTED")
 	if len(b.ProductName) > 0 {
 		ev = ev.Str("PRODUCT", b.ProductName)
 	}
@@ -93,7 +93,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			if b.L1ConfigFileRequired {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"aa9741598829", "L1 config file name is not specified"})
 			} else {
-				configdb_tracer.InfoEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
+				configdb_tracer.LogEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
 				ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
 				b.ConfDB = &configdb.Root{
 					InitContext: ic,
@@ -251,7 +251,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 }
 
 func (b *Boot) BlockAndWait() {
-	b.RootTracer.InfoEvent("BAW-227").SendMsg("block and wait")
+	b.RootTracer.LogEvent("BAW-227").SendMsg("block and wait")
 
 	chSignal := make(chan os.Signal, 1)
 	signal.Notify(chSignal, os.Interrupt)
@@ -259,8 +259,8 @@ func (b *Boot) BlockAndWait() {
 	// main blocking point
 	select {
 	case <-chSignal:
-		b.RootTracer.InfoEvent("BAW-235").SendMsg("got system interrupt signal")
+		b.RootTracer.LogEvent("BAW-235").SendMsg("got system interrupt signal")
 	case <-b.RootContext.Done():
-		b.RootTracer.InfoEvent("BAW-237").SendMsg("root context cancelled")
+		b.RootTracer.LogEvent("BAW-237").SendMsg("root context cancelled")
 	}
 }

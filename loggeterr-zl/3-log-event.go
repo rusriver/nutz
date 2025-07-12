@@ -13,7 +13,7 @@ import (
 
 type LogEvent struct {
 	ParentLogger      *Tracer
-	Tag               string
+	Tags              []string
 	IsInactive        bool
 	TheTitle          string
 	TheMessage        string
@@ -32,6 +32,14 @@ func (e *LogEvent) IfActive(f func(ev loggeterrapi.ILogEvent)) loggeterrapi.ILog
 	if !e.IsInactive {
 		f(e)
 	}
+	return e
+}
+
+func (e *LogEvent) Tag(msgtag string) loggeterrapi.ILogEvent {
+	if len(msgtag) > 21 {
+		msgtag = msgtag[:21] + "..."
+	}
+	e.Tags = append(e.Tags, msgtag)
 	return e
 }
 
@@ -191,7 +199,7 @@ func (e *LogEvent) Send() {
 		return // bypass
 	}
 
-	ft.Tags = append(ft.Tags, e.Tag)
+	ft.Tags = append(ft.Tags, e.Tags...)
 	defer func() {
 		ft.Tags = ft.Tags[:len(ft.Tags)-1]
 	}()

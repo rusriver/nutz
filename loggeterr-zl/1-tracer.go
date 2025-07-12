@@ -2,7 +2,6 @@ package loggeterrzl
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -76,13 +75,13 @@ func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)
 }
 
 func (t *Tracer) EventEvent(msgtag string, reported_e any) loggeterrapi.ILogEvent {
-	if reported_e == nil {
-		reported_e = errors.New("<nil>")
+	if len(msgtag) > 21 {
+		msgtag = msgtag[:21] + "..."
 	}
 	e := &LogEvent{
 		IsInactive:        t.IsInactive,
 		ParentLogger:      t,
-		Tag:               msgtag,
+		Tags:              []string{msgtag},
 		theTitleIsDefault: true,
 		ZerologEvent:      t.ZeroLoggerPtr.Info(),
 	}
@@ -107,10 +106,14 @@ func (t *Tracer) EventEvent(msgtag string, reported_e any) loggeterrapi.ILogEven
 }
 
 func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
+	if len(msgtag) > 21 {
+		msgtag = msgtag[:21] + "..."
+	}
+
 	e := &LogEvent{
 		IsInactive:   t.IsInactive,
 		ParentLogger: t,
-		Tag:          msgtag,
+		Tags:         []string{msgtag},
 		ZerologEvent: t.ZeroLoggerPtr.Info(),
 	}
 	activationHook(e)
@@ -131,6 +134,10 @@ func (t *Tracer) NewSubTracerInitChain(msgtag string) loggeterrapi.ISubTracerIni
 	defer t.mu.Unlock()
 
 	t.Forwardtrace.ETC.Inc()
+
+	if len(msgtag) > 32 {
+		msgtag = msgtag[:32] + "..."
+	}
 
 	zerologContext := t.ZeroLoggerPtr.With()
 	slich := &subTracerInitChain{
@@ -218,6 +225,10 @@ func (t *Tracer) GetForwardtrace() (tc *trace.Forwardtrace) {
 func (t *Tracer) SpanBegin(tag string) loggeterrapi.ITracer {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+
+	if len(tag) > 21 {
+		tag = tag[:21] + "..."
+	}
 
 	tc := t.Forwardtrace
 

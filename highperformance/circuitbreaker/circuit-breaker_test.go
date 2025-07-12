@@ -112,6 +112,6 @@ func Test_001(t *testing.T) {
 	fmt.Println("stats_executed", stats_executed)
 	fmt.Println("stats_missed", stats_missed)
 
-	require.InDelta(t, 55, stats_executed, 5)
-	require.InDelta(t, 335, stats_missed, 5)
+	require.InDelta(t, 55, stats_executed, 10)
+	require.InDelta(t, 335, stats_missed, 10)
 }

@@ -23,20 +23,22 @@ type ITracer interface {
 		Long story short, what if you really want semantic levels? JUST USE FORWARD TRACE TAGS.
 		Consider this point of view: what if these levels historically were just a forerunners
 		for forward traces.
+
+		See also the Tag() method, it can help a lot.
 	*/
 
-	EventEvent(msgtag string, e any) ILogEvent // can accept error, *controlflow.Event, *trace.BacktracePoint
-	LogEvent(msgtag string) ILogEvent          // pure log event, without legacy semantic level
+	EventEvent(msgtag string, e any) ILogEvent // can accept error, *controlflow.Event, *trace.BacktracePoint // max tag length is 21
+	LogEvent(msgtag string) ILogEvent          // pure log event, without legacy semantic level // max tag length is 21
 
 	// Creates new sub-logger, suitable for another thread.
 	// By default, all new sub-loggers are active, even if parent was inactivated.
-	NewSubTracerInitChain(msgtag string) ISubTracerInitChain
-	NSTIC(msgtag string) ISubTracerInitChain // synonym for NewSubLoggerInitChain()
+	NewSubTracerInitChain(msgtag string) ISubTracerInitChain // max tag length is 32
+	NSTIC(msgtag string) ISubTracerInitChain                 // synonym for NewSubLoggerInitChain()
 
 	// Faster single-thread-only alternative to creating a sub-logger; avoids unnecessary
 	// allocations, and calls hooks. Doesn't create another logger, modifies existing one.
-	SpanBegin(msgtag string) ITracer
-	SpanEnd() // counterpart for SpanBegin()
+	SpanBegin(msgtag string) ITracer // max tag length is 21
+	SpanEnd()                        // counterpart for SpanBegin()
 
 	// example use: tracer.RaiseCause(trace.BacktracePointf("123123", "the reason"))
 	RaiseCause(first_backtrace_point *trace.BacktracePoint)
@@ -98,6 +100,8 @@ type ILogEvent interface {
 	//				ev.RawJSON(b)
 	//			}).Title("my event").Send()
 	IfActive(func(ILogEvent)) ILogEvent
+
+	Tag(msgtag string) ILogEvent // adds extra tag to forward trace of event // max length is 21
 
 	Caller(skip ...int) ILogEvent
 	Str(string, string) ILogEvent

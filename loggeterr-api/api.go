@@ -77,8 +77,8 @@ type ISubTracerInitChain interface {
 	Floats64(string, []float64) ISubTracerInitChain
 	Array(k string, v *zerolog.Array) ISubTracerInitChain
 	Dict(k string, v *zerolog.Event) ISubTracerInitChain
-	RawJSON(string, []byte) ISubTracerInitChain
-	Bytes(string, []byte) ISubTracerInitChain
+	RawStruct(string, []byte) ISubTracerInitChain // sets data as is, the structural correctness is responsibility of user
+	Bytes(string, []byte) ISubTracerInitChain     // sets data as valid literal
 
 	WithClonedRootContext(optFuncs ...func(rctx *RootContext)) ISubTracerInitChain
 	ITracer() ITracer // (!) Each ILogger must be used in single thread, otherwise you'll get inconsistent tagging
@@ -114,8 +114,8 @@ type ILogEvent interface {
 	Floats64(string, []float64) ILogEvent
 	Array(k string, v *zerolog.Array) ILogEvent
 	Dict(k string, v *zerolog.Event) ILogEvent
-	RawJSON(string, []byte) ILogEvent
-	Bytes(string, []byte) ILogEvent
+	RawStruct(string, []byte) ILogEvent // sets data as is, the structural correctness is responsibility of user
+	Bytes(string, []byte) ILogEvent     // sets data as valid literal
 
 	// It's like Msg(), but sets the value to "title" field, and also
 	// can be used to report to metrics. Must be low-cardinality string.

@@ -171,7 +171,7 @@ func (e *LogEvent) AddControlflowEvent(key string, event *controlflow.Event) log
 	return e
 }
 
-func (e *LogEvent) RawJSON(k string, rj []byte) loggeterrapi.ILogEvent {
+func (e *LogEvent) RawStruct(k string, rj []byte) loggeterrapi.ILogEvent {
 	if e.IsInactive {
 		return e // bypass
 	}

@@ -97,7 +97,7 @@ func (stic *subTracerInitChain) Dict(k string, v *zerolog.Event) loggeterrapi.IS
 	return stic
 }
 
-func (stic *subTracerInitChain) RawJSON(k string, rj []byte) loggeterrapi.ISubTracerInitChain {
+func (stic *subTracerInitChain) RawStruct(k string, rj []byte) loggeterrapi.ISubTracerInitChain {
 	zc := stic.zerologContext.RawJSON(k, rj)
 	stic.zerologContext = &zc
 	return stic

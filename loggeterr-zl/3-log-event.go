@@ -201,7 +201,7 @@ func (e *LogEvent) Send() {
 
 	ft.Tags = append(ft.Tags, e.Tags...)
 	defer func() {
-		ft.Tags = ft.Tags[:len(ft.Tags)-1]
+		ft.Tags = ft.Tags[:len(ft.Tags)-len(e.Tags)]
 	}()
 
 	k := rc.ForwardtraceTagsKey

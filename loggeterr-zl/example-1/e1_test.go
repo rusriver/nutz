@@ -132,3 +132,15 @@ func Test_e1_03(t *testing.T) {
 
 	tracer.LogEvent("89").AddControlflowEvent("e1", e1).Send()
 }
+
+func Test_e1_04(t *testing.T) {
+
+	tracer := loggeterrzl.New(nil).NSTIC("XBegK8r2").ITracer()
+
+	zlTracer := tracer.(*loggeterrzl.Tracer)
+	zlTracer.RootContext.EventOnWireHook = func(e loggeterrapi.IEventInHook, p []byte) {
+		fmt.Println(e.GetForwardtrace())
+	}
+
+	tracer.LogEvent("111b7de0").Title("OK").SendMsg("no panic happened")
+}

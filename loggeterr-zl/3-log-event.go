@@ -12,7 +12,7 @@ import (
 )
 
 type LogEvent struct {
-	ParentLogger      *Tracer
+	ParentTracer      *Tracer
 	Tags              []string
 	IsInactive        bool
 	TheTitle          string
@@ -188,15 +188,34 @@ func (e *LogEvent) Bytes(k string, bb []byte) loggeterrapi.ILogEvent {
 }
 
 func (e *LogEvent) Send() {
-	ft := e.ParentLogger.Forwardtrace
-	rc := e.ParentLogger.RootContext
+	ft := e.ParentTracer.Forwardtrace
+	rc := e.ParentTracer.RootContext
 
-	e.ParentLogger.mu.Lock()
-	defer e.ParentLogger.mu.Unlock()
-	defer func() {
-		e.ParentLogger.anti_concurrency--
-	}()
+	e.ParentTracer.mu.Lock()
+	defer e.ParentTracer.mu.Unlock()
 	// this also synchronizes the access to the interceptor // (does it really, are you sure?)
+	/*
+		No, it does not, please see the cad65cef-a1ef-417e-b0f5-0b9e46d5e33a
+		The parent tracer can be different for different events - that's pretty common and normal.
+		And all of them use the same interceptor - and there's no way to avoid this, if you stick
+		with underlying zerolog library.
+		So what can we do?
+			1) We could vendor the zerolog locally here, and improve it. Why not? Because the very reason
+				we use the original zerolog here, is so that users can rely on the fact that actual original
+				zerologger is still there underneath.
+			2) We could lock the interceptor. This will solve the problem, but will make the whole thing
+				contentioous for a single mutex.
+		So, we will lock the interceptor, and it will solve the problem.
+		If you want better efficiency with this zerolog-based implementation, you can use several root
+		tracers, with separate interceptors, something like sharding.
+		Or you can choose different implementation, not zerolog-based.
+		Also, as an optimization, the lock will only be applied if the EventOnWireHook is set.
+	*/
+	if e.ParentTracer.RootContext.EventOnWireHook != nil {
+		interceptor := e.ParentTracer.interceptor
+		interceptor.mu.Lock()
+		defer interceptor.mu.Unlock()
+	}
 
 	if e.IsInactive {
 		return // bypass
@@ -223,13 +242,13 @@ func (e *LogEvent) Send() {
 	}
 
 	if len(e.TheMessage) > 0 {
-		e.ZerologEvent.Str(e.ParentLogger.RootContext.MessageKey, e.TheMessage)
+		e.ZerologEvent.Str(e.ParentTracer.RootContext.MessageKey, e.TheMessage)
 	}
 
-	e.ZerologEvent.Str("tsz", time.Since(e.ParentLogger.RootContext.ZeroTime).String())
+	e.ZerologEvent.Str("tsz", time.Since(e.ParentTracer.RootContext.ZeroTime).String())
 
-	e.ParentLogger.interceptor.e = e // this way we pass it to the EventOnWire() hook
-	defer func() { e.ParentLogger.interceptor.e = nil }()
+	e.ParentTracer.interceptor.e = e // this way we pass it to the EventOnWire() hook
+	defer func() { e.ParentTracer.interceptor.e = nil }()
 
 	hook := rc.IfSendHook
 	doSend := true
@@ -242,13 +261,13 @@ func (e *LogEvent) Send() {
 }
 
 func (e *LogEvent) GetUserObject() (uo any) {
-	e.ParentLogger.mu.Lock()
-	defer e.ParentLogger.mu.Unlock()
+	e.ParentTracer.mu.Lock()
+	defer e.ParentTracer.mu.Unlock()
 
-	return e.ParentLogger.UserObject
+	return e.ParentTracer.UserObject
 }
 
 // doesn't increment ETC (and shouldn't)
 func (e *LogEvent) GetForwardtrace() (tc *trace.Forwardtrace) {
-	return e.ParentLogger.Forwardtrace
+	return e.ParentTracer.Forwardtrace
 }

@@ -25,10 +25,9 @@ type Tracer struct {
 
 	ZeroLoggerPtr *zerolog.Logger
 
-	mu               sync.Mutex // only some functions use it
-	accumulator      *Accumulator
-	interceptor      *Interceptor
-	anti_concurrency int // one tracer must be used in one thread only
+	mu          sync.Mutex // only some functions use it
+	accumulator *Accumulator
+	interceptor *Interceptor
 }
 
 var _ loggeterrapi.ITracer = (*Tracer)(nil)
@@ -61,7 +60,7 @@ func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)
 	}
 	interceptor := &Interceptor{rctx: rctx}
 	if zlPtr == nil {
-		zlv := zerolog.New(interceptor).With().Timestamp().Logger()
+		zlv := zerolog.New(interceptor).With().Timestamp().Logger() // cad65cef-a1ef-417e-b0f5-0b9e46d5e33a
 		zlPtr = &zlv
 	}
 	tracer = &Tracer{
@@ -76,23 +75,15 @@ func New(zlPtr *zerolog.Logger, optFuncs ...func(rctx *loggeterrapi.RootContext)
 }
 
 func (t *Tracer) Reset() {
-	t.anti_concurrency = 0
 }
 
 func (t *Tracer) EventEvent(msgtag string, reported_e any) loggeterrapi.ILogEvent {
-	if t.anti_concurrency > 0 {
-		// This isn't exactly race-proof, but eases the debugging of incorrect tracer use,
-		// as sometimes emits useful tips of what's wrong exactly.
-		// TLDR: concurrent use isn't allowe, use NSTIC() if you need one.
-		controlflow.RaiseCause(t.Forwardtrace, &trace.BacktracePoint{"b046a027fd9d076a6efdEE", "concurrent use isn't allowed"})
-	}
-	t.anti_concurrency++
 	if len(msgtag) > 21 {
 		msgtag = msgtag[:21] + "..."
 	}
 	e := &LogEvent{
 		IsInactive:        t.IsInactive,
-		ParentLogger:      t,
+		ParentTracer:      t,
 		Tags:              []string{msgtag},
 		theTitleIsDefault: true,
 		ZerologEvent:      t.ZeroLoggerPtr.Info(),
@@ -118,20 +109,13 @@ func (t *Tracer) EventEvent(msgtag string, reported_e any) loggeterrapi.ILogEven
 }
 
 func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
-	if t.anti_concurrency > 0 {
-		// This isn't exactly race-proof, but eases the debugging of incorrect tracer use,
-		// as sometimes emits useful tips of what's wrong exactly.
-		// TLDR: concurrent use isn't allowe, use NSTIC() if you need one.
-		controlflow.RaiseCause(t.Forwardtrace, &trace.BacktracePoint{"b046a027fd9d076a6efdLE", "concurrent use isn't allowed"})
-	}
-	t.anti_concurrency++
 	if len(msgtag) > 21 {
 		msgtag = msgtag[:21] + "..."
 	}
 
 	e := &LogEvent{
 		IsInactive:   t.IsInactive,
-		ParentLogger: t,
+		ParentTracer: t,
 		Tags:         []string{msgtag},
 		ZerologEvent: t.ZeroLoggerPtr.Info(),
 	}
@@ -141,7 +125,7 @@ func (t *Tracer) LogEvent(msgtag string) loggeterrapi.ILogEvent {
 
 func activationHook(e *LogEvent) {
 	// call the (re-)activation hook, if any
-	rc := e.ParentLogger.RootContext
+	rc := e.ParentTracer.RootContext
 	hook := rc.ActivationHook
 	if hook != nil {
 		e.IsInactive = hook(e)
@@ -167,7 +151,7 @@ func (t *Tracer) NewSubTracerInitChain(msgtag string) loggeterrapi.ISubTracerIni
 		},
 		rctx:        t.RootContext,
 		uo:          t.UserObject,
-		interceptor: &Interceptor{rctx: t.interceptor.rctx},
+		interceptor: t.interceptor,
 	}
 
 	h := t.RootContext.NewSubLoggerHook

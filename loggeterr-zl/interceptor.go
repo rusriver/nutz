@@ -2,6 +2,7 @@ package loggeterrzl
 
 import (
 	"io"
+	"sync"
 
 	loggeterrapi "github.com/rusriver/nutz/loggeterr-api"
 )
@@ -9,6 +10,7 @@ import (
 type Interceptor struct {
 	rctx *loggeterrapi.RootContext
 	e    loggeterrapi.ILogEvent
+	mu   sync.Mutex
 }
 
 var _ io.Writer = (*Interceptor)(nil)

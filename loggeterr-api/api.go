@@ -40,6 +40,8 @@ type ITracer interface {
 	SpanBegin(msgtag string) ITracer // max tag length is 21
 	SpanEnd()                        // counterpart for SpanBegin()
 
+	Reset() // resets the tracer's anti-concurrency protection, if previous event wasn't sent
+
 	// example use: tracer.RaiseCause(trace.BacktracePointf("123123", "the reason"))
 	RaiseCause(first_backtrace_point *trace.BacktracePoint)
 	NewControlflowEvent(first_backtrace_point *trace.BacktracePoint) *controlflow.Event

@@ -218,14 +218,14 @@ func Test_e2_02(t *testing.T) {
 		// 	- match ETC prefix sequence
 		// 	- match msgtags prefix sequence
 		//  etc
-		if algoutils.HasSubSequence_Fibers(llinedb.P("tags").ListString(), []string{"d0ed6944"}) {
+		if algoutils.HasSubSequence_Fibers(llinedb.P("FORWARDTRACE-TAGS").ListString(), []string{"d0ed6944"}) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 3, 2}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 3, 2}) {
 			controlCriteria["1,3,3,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 3, 3}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 3, 3}) {
 			controlCriteria["1,3,3,3"]++
 		}
 	}
@@ -329,20 +329,20 @@ func Test_e2_03(t *testing.T) {
 		_ = i
 		// fmt.Println("LOGLINE", i, string(configdb.MustRenderJson(llinedb.Data, 0)))
 
-		if algoutils.HasSubSequence_Fibers(llinedb.P("tags").ListString(), []string{"d0ed6944"}) {
+		if algoutils.HasSubSequence_Fibers(llinedb.P("FORWARDTRACE-TAGS").ListString(), []string{"d0ed6944"}) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 1}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 1}) {
 			controlCriteria["1,3,1,1"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 2}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 2}) {
 			controlCriteria["1,3,1,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 3}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 3}) {
 			controlCriteria["1,3,1,3"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 4}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 4}) {
 			controlCriteria["1,3,1,4"]++
 		}
 	}
@@ -434,20 +434,20 @@ func Test_e2_04(t *testing.T) {
 		_ = i
 		// fmt.Println("LOGLINE", i, string(configdb.MustRenderJson(llinedb.Data, 0)))
 
-		if algoutils.HasSubSequence_Fibers(llinedb.P("tags").ListString(), []string{"d0ed6944"}) {
+		if algoutils.HasSubSequence_Fibers(llinedb.P("FORWARDTRACE-TAGS").ListString(), []string{"d0ed6944"}) {
 			fmt.Println("Gotcha!")
 			controlCriteria["d0ed6944"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 1}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 1}) {
 			controlCriteria["1,3,1,1"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 2}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 2}) {
 			controlCriteria["1,3,1,2"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 3}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 3}) {
 			controlCriteria["1,3,1,3"]++
 		}
-		if algoutils.HasPrefixSequence_Comparables(llinedb.P("etc").ListInt(), []int{1, 3, 1, 4}) {
+		if algoutils.HasPrefixSequence_Comparables(llinedb.P("ETC").ListInt(), []int{1, 3, 1, 4}) {
 			controlCriteria["1,3,1,4"]++
 		}
 	}
@@ -591,9 +591,9 @@ func Test_e2_05(t *testing.T) {
 			}},
 		}
 
-		fmtt_msgtags.FastMatch(llinedb.P("tags").ListString())
+		fmtt_msgtags.FastMatch(llinedb.P("FORWARDTRACE-TAGS").ListString())
 
-		fmtt_etc.FastMatch(llinedb.P("etc").ListInt())
+		fmtt_etc.FastMatch(llinedb.P("ETC").ListInt())
 	}
 
 	fmt.Printf("CONTROL CRITERIA: %+v\n", controlCriteria)

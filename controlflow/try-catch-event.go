@@ -228,8 +228,8 @@ func RaiseCause(forward_trace *trace.Forwardtrace, first_backtrace_point *trace.
 	panic(event)
 }
 
-// Example usage: controlflow.RaiseCause(tracer.GetForwardtrace(), trace.BacktracePointf("123123", "the cause"))
-// controlflow.RaiseCause(nil, trace.BacktracePointf("123123", "the cause"))
+// Example usage: controlflow.NewEvent(tracer.GetForwardtrace(), trace.BacktracePointf("123123", "the cause"))
+// controlflow.NewEvent(nil, trace.BacktracePointf("123123", "the cause"))
 func NewEvent(forward_trace *trace.Forwardtrace, first_backtrace_point *trace.BacktracePoint) *Event {
 	if forward_trace == nil {
 		forward_trace = &trace.Forwardtrace{}

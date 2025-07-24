@@ -193,7 +193,10 @@ func (e *LogEvent) Send() {
 
 	e.ParentLogger.mu.Lock()
 	defer e.ParentLogger.mu.Unlock()
-	// this also synchronizes the access to the interceptor
+	defer func() {
+		e.ParentLogger.anti_concurrency--
+	}()
+	// this also synchronizes the access to the interceptor // (does it really, are you sure?)
 
 	if e.IsInactive {
 		return // bypass

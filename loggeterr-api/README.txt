@@ -25,5 +25,10 @@ Some notes:
         The exception is constructors with explicitly specified object name - in that case it looks okay
         if it makes a sub tracer on its own.
 
+    JUST REMEMBER:
+
+        One tracer - one thread.
+
+        NSTIC() creates another tracer. SpanBegin() doesn not.
 
 ===

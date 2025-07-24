@@ -167,7 +167,7 @@ func (t *Tracer) NewSubTracerInitChain(msgtag string) loggeterrapi.ISubTracerIni
 		},
 		rctx:        t.RootContext,
 		uo:          t.UserObject,
-		interceptor: t.interceptor,
+		interceptor: &Interceptor{rctx: t.interceptor.rctx},
 	}
 
 	h := t.RootContext.NewSubLoggerHook

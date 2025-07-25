@@ -87,7 +87,7 @@ func main() {
 
 		return
 	}).Catch(func(e *controlflow.Event) {
-		otdg_main.Tracer.EventEvent("fbe3d1ca078", e).Tag("EXCEPTION").Send()
+		otdg_main.Tracer.EventEvent("EXCEPTION", e).Tag("fbe3d1ca078").Send()
 		boot.RootContextCancel()
 	})
 

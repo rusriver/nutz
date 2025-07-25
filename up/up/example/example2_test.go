@@ -696,7 +696,7 @@ func Make_S_rastan(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E320", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E320").Send()
 	})
 	return
 }
@@ -747,7 +747,7 @@ func Make_S_myinei(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E375", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E375").Send()
 	})
 	return
 }
@@ -787,7 +787,7 @@ func Make_S_armati(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E399", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E399").Send()
 	})
 }
 
@@ -821,7 +821,7 @@ func Make_S_xylane(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E422", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E422").Send()
 	})
 }
 
@@ -867,7 +867,7 @@ func Make_S_obdulu(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E447", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E447").Send()
 	})
 	return
 }
@@ -921,7 +921,7 @@ func Make_S_dodism(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E471", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E471").Send()
 	})
 	return
 }
@@ -950,7 +950,7 @@ func Make_S_nutari(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E495", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E495").Send()
 	})
 	return
 }
@@ -987,7 +987,7 @@ func Make_S_uromer(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E522", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E522").Send()
 	})
 	return
 }
@@ -1031,7 +1031,7 @@ func Make_A1(
 		}
 		return nil
 	}).Catch(func(e *controlflow.Event) {
-		otdg.Tracer.EventEvent("E566", e).Tag("EXCEPTION").Send()
+		otdg.Tracer.EventEvent("EXCEPTION", e).Tag("E566").Send()
 	})
 }
 

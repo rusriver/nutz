@@ -14,8 +14,8 @@ var (
 
 func main() {
 	local_start_values := map[string]any{
-		"tracer.executable-unit-version":     Version,
-		"tracer.executable-unit-fingerprint": GitHash,
+		"executable-unit.version":     Version,
+		"executable-unit.fingerprint": GitHash,
 	}
 	// this is special thing, never wound-up, so outside of otdg
 	boot := genericmsboot.NewBoot([]func(b *genericmsboot.Boot){

@@ -203,15 +203,15 @@ func NewBoot(of []func(b *Boot)) *Boot {
 			tracerConf := b.ConfDB.WithOk(&ok).P(b.PathToTheTracerConfigSection)
 			if ok && !(*b.DiagnosticFlags)["SHORT-192"] {
 
-				xu := tracerConf.P("executable-unit-name").String()
+				xu := tracerConf.PP("executable-unit.name").String()
 				if len(xu) > 0 && !b.TracerDisableOpt01_1 {
 					nstic = nstic.Str("xu", xu)
 				}
-				xu_ver := tracerConf.P("executable-unit-version").String()
+				xu_ver := tracerConf.PP("executable-unit.version").String()
 				if len(xu_ver) > 0 && !b.TracerDisableOpt02_1 {
 					nstic = nstic.Str("xu-ver", xu_ver)
 				}
-				xu_fp := tracerConf.P("executable-unit-fingerprint").String() // or git commit hash
+				xu_fp := tracerConf.PP("executable-unit.fingerprint").String() // or git commit hash
 				if len(xu_fp) > 0 && !b.TracerDisableOpt03_1 {
 					nstic = nstic.Str("xu-fingerprint", xu_fp)
 				}

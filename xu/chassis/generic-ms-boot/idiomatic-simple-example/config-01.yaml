@@ -1,5 +1,5 @@
-tracer:
-  executable-unit-name: idiomatic-simple-example
+executable-unit:
+  name: idiomatic-simple-example
 
 core:
   param-1: core--b154c4ee-9049-4ec7-aeb7-484ffaa4b7a4

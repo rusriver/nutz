@@ -23,19 +23,19 @@ type Boot struct {
 	RootContextCancel     context.CancelFunc
 	L1ConfigEffectiveName string
 	//
-	ProductName                  string
-	Copyright                    string
-	CallerSkipFrames             int            // used in FILE:LINE diagnostic mode
-	L1ConfigFileNameOverride     string         // overrides the arg-1 value
-	EnvsPrefix                   string         // can be used to distinguish envs specific to this service
-	PathToTheTracerConfigSection string         // in the config file
-	L1ConfigFileRequired         bool           //
-	LocalMapOverride             map[string]any //
-	L1ConfigTextLiteral          string         // can be used e.g. in tests
-	TracerDisableOpt01_1         bool           // disable logging of xu
-	TracerDisableOpt02_1         bool           // disable logging of xu-ver
-	TracerDisableOpt03_1         bool           // disable logging of xu-fingerprint
-	TracerDisableOpt04_1         bool           // disable logging of L1-conf-eff-name
+	ProductName                          string
+	Copyright                            string
+	CallerSkipFrames                     int            // used in FILE:LINE diagnostic mode
+	L1ConfigFileNameOverride             string         // overrides the arg-1 value
+	EnvsPrefix                           string         // can be used to distinguish envs specific to this service
+	PathToTheExecutableUnitConfigSection string         // in the config file
+	L1ConfigFileRequired                 bool           //
+	LocalMapOverride                     map[string]any //
+	L1ConfigTextLiteral                  string         // can be used e.g. in tests
+	TracerDisableOpt01_1                 bool           // disable logging of xu
+	TracerDisableOpt02_1                 bool           // disable logging of xu-ver
+	TracerDisableOpt03_1                 bool           // disable logging of xu-fingerprint
+	TracerDisableOpt04_1                 bool           // disable logging of L1-conf-eff-name
 }
 
 func NewBoot(of []func(b *Boot)) *Boot {
@@ -52,7 +52,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	b.CallerSkipFrames = -1
 	b.L1ConfigFileNameOverride = ""
 	b.EnvsPrefix = "71f2-0197e6694528dc94ddc5"
-	b.PathToTheTracerConfigSection = "tracer"
+	b.PathToTheExecutableUnitConfigSection = "executable-unit"
 	b.L1ConfigFileRequired = false
 	b.LocalMapOverride = nil
 	b.L1ConfigTextLiteral = ""
@@ -167,7 +167,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 	// init/fix the new main working tracer
 	{
 		// set the legacy log-level if any
-		legacy_log_level_str := b.ConfDB.PP(b.PathToTheTracerConfigSection + ".legacy-log-level").String()
+		legacy_log_level_str := b.ConfDB.P(b.PathToTheExecutableUnitConfigSection, "legacy-log-level").String()
 		if len(legacy_log_level_str) > 0 {
 			switch legacy_log_level_str {
 			case "trace", "debug", "info", "warn", "error", "fatal", "panic":
@@ -200,7 +200,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 			// set service attributes from the config
 			ok = true
-			tracerConf := b.ConfDB.WithOk(&ok).P(b.PathToTheTracerConfigSection)
+			tracerConf := b.ConfDB.WithOk(&ok).P(b.PathToTheExecutableUnitConfigSection)
 			if ok && !(*b.DiagnosticFlags)["SHORT-192"] {
 
 				xu := tracerConf.PP("executable-unit.name").String()

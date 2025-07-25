@@ -22,7 +22,6 @@ func main() {
 		func(b *genericmsboot.Boot) {
 			b.ProductName = "Idiomatic Simple Example by Someone"
 			b.Copyright = "(c) Someone, 2025"
-			b.PathToTheTracerConfigSection = "tracer"
 			b.L1ConfigFileRequired = true
 			b.LocalMapOverride = local_start_values
 		},

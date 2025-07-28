@@ -11,7 +11,7 @@ https://en.wikipedia.org/wiki/Assembly_line
 
 This is also close conceptually to the https://www.google.com/search?q=state+machine,
 the main difference is that here all states (stations) are grouped in lines. Or you
-can think of lines as states, and have more granularoty inside, and persistize the
+can think of lines as states, and have more granularity inside, and persistize the
 line names, as state IDs, i.e., the persistization granularity would be lines.
 
 Principle of operation:
@@ -28,7 +28,7 @@ Principle of operation:
 	Lines are like labels in a program, kind of, if all stations were one single list. This setup
 	simplifies management of it and is simpler conceptually.
 
-What can be used for:
+What this can be used for:
 
     - For pipelines/sequences of processing operations;
 

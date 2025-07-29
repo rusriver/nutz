@@ -1,8 +1,10 @@
-package railroad
+package railroad_test
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/rusriver/nutz/controlflow/railroad"
 )
 
 type StationObject struct {
@@ -10,30 +12,30 @@ type StationObject struct {
 	F  func(*StationObject)
 }
 
-func Test_Railroad_01(t *testing.T) {
+func Test_Railroad_1_01(t *testing.T) {
 
-	rr := &Raiload[*StationObject]{}
+	rr := &railroad.Raiload[*StationObject]{}
 
 	stFunc1 := func(so *StationObject) {
 		fmt.Println("station", so.Id, "type 1")
 	}
 	stFunc2 := func(so *StationObject) {
 		fmt.Println("station", so.Id, "type 2")
-		rr.AddStation(&Station[*StationObject]{
+		rr.AddStation(&railroad.Station[*StationObject]{
 			V: &StationObject{Id: "added-01", F: stFunc1},
 		})
-		rr.AddStation(&Station[*StationObject]{
+		rr.AddStation(&railroad.Station[*StationObject]{
 			V: &StationObject{Id: "added-02", F: stFunc1},
 		})
 	}
 
-	rr.AddStation(&Station[*StationObject]{
+	rr.AddStation(&railroad.Station[*StationObject]{
 		V: &StationObject{Id: "01", F: stFunc1},
 	})
-	rr.AddStation(&Station[*StationObject]{
+	rr.AddStation(&railroad.Station[*StationObject]{
 		V: &StationObject{Id: "02", F: stFunc2},
 	})
-	rr.AddStation(&Station[*StationObject]{
+	rr.AddStation(&railroad.Station[*StationObject]{
 		V: &StationObject{Id: "03", F: stFunc1},
 	})
 

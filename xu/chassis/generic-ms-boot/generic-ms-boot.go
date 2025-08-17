@@ -19,6 +19,7 @@ type Boot struct {
 	RootTracer            loggeterrapi.ITracer
 	DiagnosticFlags       *map[string]bool // to allow RCU/APR
 	ConfDB                *configdb.Root
+	ConfDB_Source         *configdb.Source
 	RootContext           context.Context
 	RootContextCancel     context.CancelFunc
 	L1ConfigEffectiveName string
@@ -94,7 +95,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 				controlflow.RaiseCause(nil, &trace.BacktracePoint{"aa9741598829", "L1 config file name is not specified"})
 			} else {
 				configdb_tracer.LogEvent("ae6a84057237").SendMsg("missing L1 config, going with empty ConfDB")
-				ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
+				ic := (&configdb.InitContext{MMode: configdb.SingleThread}).WithTracer(configdb_tracer)
 				b.ConfDB = &configdb.Root{
 					InitContext: ic,
 				}
@@ -103,13 +104,13 @@ func NewBoot(of []func(b *Boot)) *Boot {
 
 		case len(b.L1ConfigTextLiteral) > 0:
 			// this takes priority over the CLI args
-			ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
+			ic := (&configdb.InitContext{MMode: configdb.SingleThread}).WithTracer(configdb_tracer)
 			b.ConfDB = ic.FromBytes([]byte(
 				strings.ReplaceAll(b.L1ConfigTextLiteral, "\t", "    "),
 			)).Load().DontPanic()
 
 		default:
-			ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
+			ic := (&configdb.InitContext{MMode: configdb.SingleThread}).WithTracer(configdb_tracer)
 			b.ConfDB = ic.FromFile(b.L1ConfigEffectiveName).LoadWithParenting().DontPanic()
 
 		}
@@ -130,7 +131,7 @@ func NewBoot(of []func(b *Boot)) *Boot {
 		if len(L2_name) == 0 || L2_name == "." {
 			return nil
 		}
-		ic := (&configdb.InitContext{}).WithTracer(configdb_tracer)
+		ic := (&configdb.InitContext{MMode: configdb.SingleThread}).WithTracer(configdb_tracer)
 		L2_conf := ic.FromFile(L2_name).LoadWithParenting().DontPanic()
 		b.ConfDB.ExtendBy_v2(L2_conf)
 		return nil

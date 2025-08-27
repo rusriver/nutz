@@ -2,6 +2,7 @@ package datavm
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 )
 
@@ -10,56 +11,44 @@ func TypeToUint64(v1 any) (v2 uint64) {
 		v2 = 0
 		return
 	}
-	switch v := v1.(type) {
-	case int:
-		v2 = uint64(v)
-	case int8:
-		v2 = uint64(v)
-	case int16:
-		v2 = uint64(v)
-	case int32:
-		v2 = uint64(v)
-	case int64:
-		v2 = uint64(v)
-	case uint:
-		v2 = uint64(v)
-	case uint8:
-		v2 = uint64(v)
-	case uint16:
-		v2 = uint64(v)
-	case uint32:
-		v2 = uint64(v)
-	case uint64:
-		v2 = uint64(v)
-	case float32:
-		v2 = uint64(v)
-	case float64:
-		v2 = uint64(v)
-	case bool:
-		if v {
+	v1rv := reflect.ValueOf(v1)
+	switch v1rv.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v2 = uint64(v1rv.Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v2 = v1rv.Uint()
+	case reflect.Float32, reflect.Float64:
+		v2 = uint64(v1rv.Float())
+	case reflect.Bool:
+		if v1rv.Bool() {
 			v2 = 1
 		} else {
 			v2 = 0
 		}
-	case string:
-		v3, err := strconv.ParseFloat(v, 64)
+	case reflect.String:
+		v3, err := strconv.ParseFloat(v1rv.String(), 64)
 		if err == nil {
 			v2 = uint64(v3)
 		} else {
 			v2 = 0
 		}
-	case []byte:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = uint64(v3)
-		} else {
-			v2 = 0
-		}
-	case []rune:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = uint64(v3)
-		} else {
+	case reflect.Slice:
+		switch v := v1.(type) {
+		case []byte:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = uint64(v3)
+			} else {
+				v2 = 0
+			}
+		case []rune:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = uint64(v3)
+			} else {
+				v2 = 0
+			}
+		default:
 			v2 = 0
 		}
 	default:
@@ -73,56 +62,44 @@ func TypeToInt64(v1 any) (v2 int64) {
 		v2 = 0
 		return
 	}
-	switch v := v1.(type) {
-	case int:
-		v2 = int64(v)
-	case int8:
-		v2 = int64(v)
-	case int16:
-		v2 = int64(v)
-	case int32:
-		v2 = int64(v)
-	case int64:
-		v2 = int64(v)
-	case uint:
-		v2 = int64(v)
-	case uint8:
-		v2 = int64(v)
-	case uint16:
-		v2 = int64(v)
-	case uint32:
-		v2 = int64(v)
-	case uint64:
-		v2 = int64(v)
-	case float32:
-		v2 = int64(v)
-	case float64:
-		v2 = int64(v)
-	case bool:
-		if v {
+	v1rv := reflect.ValueOf(v1)
+	switch v1rv.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v2 = v1rv.Int()
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v2 = int64(v1rv.Uint())
+	case reflect.Float32, reflect.Float64:
+		v2 = int64(v1rv.Float())
+	case reflect.Bool:
+		if v1rv.Bool() {
 			v2 = 1
 		} else {
 			v2 = 0
 		}
-	case string:
-		v3, err := strconv.ParseFloat(v, 64)
+	case reflect.String:
+		v3, err := strconv.ParseFloat(v1rv.String(), 64)
 		if err == nil {
 			v2 = int64(v3)
 		} else {
 			v2 = 0
 		}
-	case []byte:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = int64(v3)
-		} else {
-			v2 = 0
-		}
-	case []rune:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = int64(v3)
-		} else {
+	case reflect.Slice:
+		switch v := v1.(type) {
+		case []byte:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = int64(v3)
+			} else {
+				v2 = 0
+			}
+		case []rune:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = int64(v3)
+			} else {
+				v2 = 0
+			}
+		default:
 			v2 = 0
 		}
 	default:
@@ -136,56 +113,44 @@ func TypeToFloat64(v1 any) (v2 float64) {
 		v2 = 0
 		return
 	}
-	switch v := v1.(type) {
-	case int:
-		v2 = float64(v)
-	case int8:
-		v2 = float64(v)
-	case int16:
-		v2 = float64(v)
-	case int32:
-		v2 = float64(v)
-	case int64:
-		v2 = float64(v)
-	case uint:
-		v2 = float64(v)
-	case uint8:
-		v2 = float64(v)
-	case uint16:
-		v2 = float64(v)
-	case uint32:
-		v2 = float64(v)
-	case uint64:
-		v2 = float64(v)
-	case float32:
-		v2 = float64(v)
-	case float64:
-		v2 = float64(v)
-	case bool:
-		if v {
+	v1rv := reflect.ValueOf(v1)
+	switch v1rv.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v2 = float64(v1rv.Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v2 = float64(v1rv.Uint())
+	case reflect.Float32, reflect.Float64:
+		v2 = v1rv.Float()
+	case reflect.Bool:
+		if v1rv.Bool() {
 			v2 = 1
 		} else {
 			v2 = 0
 		}
-	case string:
-		v3, err := strconv.ParseFloat(v, 64)
+	case reflect.String:
+		v3, err := strconv.ParseFloat(v1rv.String(), 64)
 		if err == nil {
 			v2 = v3
 		} else {
 			v2 = 0
 		}
-	case []byte:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = v3
-		} else {
-			v2 = 0
-		}
-	case []rune:
-		v3, err := strconv.ParseFloat(string(v), 64)
-		if err == nil {
-			v2 = v3
-		} else {
+	case reflect.Slice:
+		switch v := v1.(type) {
+		case []byte:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = v3
+			} else {
+				v2 = 0
+			}
+		case []rune:
+			v3, err := strconv.ParseFloat(string(v), 64)
+			if err == nil {
+				v2 = v3
+			} else {
+				v2 = 0
+			}
+		default:
 			v2 = 0
 		}
 	default:
@@ -199,16 +164,19 @@ func TypeToString(v1 any) (v2 string) {
 		v2 = ""
 		return
 	}
-	switch v := v1.(type) {
-	case string:
-		v2 = v
-		return
-	case []byte:
-		v2 = string(v)
-		return
-	case []rune:
-		v2 = string(v)
-		return
+	v1rv := reflect.ValueOf(v1)
+	switch v1rv.Kind() {
+	case reflect.String:
+		v2 = v1rv.String()
+	case reflect.Slice:
+		switch v := v1.(type) {
+		case []byte:
+			v2 = string(v)
+		case []rune:
+			v2 = string(v)
+		default:
+			v2 = fmt.Sprint(v1)
+		}
 	default:
 		v2 = fmt.Sprint(v1)
 	}
@@ -221,39 +189,30 @@ func TypeToBool(v1 any) (v2, undef bool) {
 		return
 	}
 	var err error
-	switch v := v1.(type) {
-	case int:
+	v1rv := reflect.ValueOf(v1)
+	switch v1rv.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v := v1rv.Int()
 		v2 = v >= 1
-	case int8:
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v := v1rv.Uint()
 		v2 = v >= 1
-	case int16:
+	case reflect.Float32, reflect.Float64:
+		v := v1rv.Float()
 		v2 = v >= 1
-	case int32:
-		v2 = v >= 1
-	case int64:
-		v2 = v >= 1
-	case uint:
-		v2 = v >= 1
-	case uint8:
-		v2 = v >= 1
-	case uint16:
-		v2 = v >= 1
-	case uint32:
-		v2 = v >= 1
-	case uint64:
-		v2 = v >= 1
-	case float32:
-		v2 = v >= 1
-	case float64:
-		v2 = v >= 1
-	case bool:
-		v2 = v
-	case string:
-		v2, err = strconv.ParseBool(v)
-	case []byte:
-		v2, err = strconv.ParseBool(string(v))
-	case []rune:
-		v2, err = strconv.ParseBool(string(v))
+	case reflect.Bool:
+		v2 = v1rv.Bool()
+	case reflect.String:
+		v2, err = strconv.ParseBool(v1rv.String())
+	case reflect.Slice:
+		switch v := v1.(type) {
+		case []byte:
+			v2, err = strconv.ParseBool(string(v))
+		case []rune:
+			v2, err = strconv.ParseBool(string(v))
+		default:
+			v2 = false
+		}
 	default:
 		v2 = false
 	}

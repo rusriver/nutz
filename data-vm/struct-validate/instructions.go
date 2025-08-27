@@ -118,7 +118,7 @@ func (instr *Instruction) Execute(s any) (err error) {
 			return
 		}
 		for _, vE := range instr.Values {
-			if instr.areEqual_typeAgnostic(v1, vE) {
+			if instr.AreEqual_typeAgnostic(v1, vE) {
 				return
 			}
 		}
@@ -136,7 +136,7 @@ func (instr *Instruction) Execute(s any) (err error) {
 			for j := 0; j < v1.Len(); j++ {
 				v1 := v1.Index(j)
 				for _, vE := range instr.Values {
-					if instr.areEqual_typeAgnostic(v1, vE) {
+					if instr.AreEqual_typeAgnostic(v1, vE) {
 						return
 					}
 				}
@@ -160,7 +160,7 @@ func (instr *Instruction) Execute(s any) (err error) {
 			for j := 0; j < v1.Len(); j++ {
 				v1 := v1.Index(j)
 				for vi, vE := range instr.Values {
-					if instr.areEqual_typeAgnostic(v1, vE) {
+					if instr.AreEqual_typeAgnostic(v1, vE) {
 						found[vi] = true
 					}
 				}
@@ -182,7 +182,7 @@ func (instr *Instruction) Execute(s any) (err error) {
 	return
 }
 
-func (i *Instruction) areEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
+func (i *Instruction) AreEqual_typeAgnostic(v1 reflect.Value, vE any) bool {
 	if v1.Interface() == nil {
 		vE_val := reflect.ValueOf(vE)
 		switch {

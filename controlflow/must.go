@@ -60,7 +60,7 @@ This actually works:
 
 	var ft *trace.Forwardtrace
 
-	values := controlflow.Must(controlflow.Mustp(
+	values := controlflow.Must(controlflow.Mustvep(
 		url.ParseQuery("a=1&s=2;"),
 	), ft, "b17b648bbee12b797619")
 

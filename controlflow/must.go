@@ -1,17 +1,60 @@
 package controlflow
 
-import "github.com/rusriver/nutz/loggeterr-api/trace"
+import (
+	"runtime"
+	"strconv"
 
-/*
-This works, but lacks the ID information passed.
+	"github.com/rusriver/nutz/loggeterr-api/trace"
+)
 
+// This works, but lacks FT and ID, instead uses source code file and LN
+// to tag error. Good for simple and local things, for serious production
+// use see VEP tools.
 func Must[T any](result T, err error) T {
 	if err != nil {
-		RaiseCause(nil, &trace.BacktracePoint{"123", err.Error()})
+		var id string
+
+		{
+			maxLen := 12
+			_, file, line, ok := runtime.Caller(3)
+			if ok {
+				if len(file) >= maxLen {
+					file = "..." + file[len(file)-maxLen:]
+				}
+				id += file + ":" + strconv.Itoa(line)
+			}
+		}
+		if len(id) > 0 {
+			id += ".."
+		}
+		{
+			maxLen := 22
+			_, file, line, ok := runtime.Caller(2)
+			if ok {
+				if len(file) >= maxLen {
+					file = "..." + file[len(file)-maxLen:]
+				}
+				id += file + ":" + strconv.Itoa(line)
+			}
+		}
+		if len(id) > 0 {
+			id += ".."
+		}
+		{
+			maxLen := 33
+			_, file, line, ok := runtime.Caller(1)
+			if ok {
+				if len(file) >= maxLen {
+					file = "..." + file[len(file)-maxLen:]
+				}
+				id += file + ":" + strconv.Itoa(line)
+			}
+		}
+
+		RaiseCause(nil, &trace.BacktracePoint{id, err.Error()})
 	}
 	return result
 }
-*/
 
 /*
 type MustObject struct {
@@ -45,14 +88,15 @@ func Must[T any](result T, err error, ft *trace.Forwardtrace, id string) T {
 }
 */
 
-type MustPair[T any] struct {
+// Value-Error pair
+type VEP_Type[T any] struct {
 	result T
 	err    error
 }
 
-// must-value-error-pair
-func Mustvep[T any](result T, err error) MustPair[T] {
-	return MustPair[T]{result, err}
+// Execute the subject function, and make a value-error pair object
+func VEP[T any](result T, err error) VEP_Type[T] {
+	return VEP_Type[T]{result, err}
 }
 
 /*
@@ -60,7 +104,7 @@ This actually works:
 
 	var ft *trace.Forwardtrace
 
-	values := controlflow.Must(controlflow.Mustvep(
+	values := controlflow.MustVep(controlflow.VEP(
 		url.ParseQuery("a=1&s=2;"),
 	), ft, "b17b648bbee12b797619")
 
@@ -73,11 +117,20 @@ This is the alternative to do the same explicitly:
 
 Good thing about first variant, is that it quite easily can be wrapped into a syntax sugar:
 
-	values := Must(url.ParseQuery("a=1&s=2;"), ft, "b17b648bbee12b797619")
+	values := MustVep(url.ParseQuery("a=1&s=2;"), ft, "b17b648bbee12b797619")
 */
-func Must[T any](mp MustPair[T], ft *trace.Forwardtrace, id string) T {
-	if mp.err != nil {
-		RaiseCause(ft, &trace.BacktracePoint{id, mp.err.Error()})
+func MustVep[T any](vep VEP_Type[T], ft *trace.Forwardtrace, id string) T {
+	if vep.err != nil {
+		RaiseCause(ft, &trace.BacktracePoint{id, vep.err.Error()})
 	}
-	return mp.result
+	return vep.result
+}
+
+// -----------
+
+func (vep VEP_Type[T]) MustWith(ft *trace.Forwardtrace, id string) T {
+	if vep.err != nil {
+		RaiseCause(ft, &trace.BacktracePoint{id, vep.err.Error()})
+	}
+	return vep.result
 }

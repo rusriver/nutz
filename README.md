@@ -13,3 +13,4 @@ But, there's more than meets the eye.
 | Logger | Logger API implementation, zerolog-based | [LINK](logger/README.txt)
 | keycontainer8 | A replacement for PEM block, used to pass all necessary metainfo as a single yaml-friendly string | [LINK](keycontainer8/)
 | up | Like systemd, for DI-containers | [LINK](up/README.txt)
+| dslre | Support of DSL for the Go ecosystem | [LINK](dslre/examples/)

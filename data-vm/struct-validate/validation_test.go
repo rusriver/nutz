@@ -278,7 +278,7 @@ func Test_01(t *testing.T) {
 	}
 	for _, cas := range cases {
 		fmt.Println(cas.N)
-		err := datavm.ExecuteUntilFirstError(cas.Data, cas.Program)
+		err := datavm.ExecuteUntilFirstError(cas.Data, cas.Program, nil)
 		errMsg := ""
 		if err != nil {
 			errMsg = err.Error()

@@ -40,6 +40,7 @@ require (
 
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.37.1
+	github.com/Ramshackle-Jamathon/go-quickPerm v0.0.0-20160815023856-9eeaa3c24064
 	github.com/alicebob/miniredis/v2 v2.35.0
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/lithammer/shortuuid/v4 v4.0.0

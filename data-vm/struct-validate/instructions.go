@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	datavm "github.com/rusriver/nutz/data-vm"
+	executionlog "github.com/rusriver/nutz/data-vm/execution-log"
 	"github.com/rusriver/nutz/lookup"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,6 +20,7 @@ var (
 	Command_EqualsEitherValue    = Command{4, 0}
 	Command_ArrayContainsEither  = Command{5, 0}
 	Command_ArrayContainsAll     = Command{6, 0}
+	Command_OR                   = Command{7, 0}
 )
 
 const (
@@ -37,7 +39,21 @@ type Instruction struct {
 	FloatPrecision float64
 }
 
-func (instr *Instruction) Execute(s any) (err error) {
+func (instr *Instruction) Execute(s any, xlog *executionlog.ExecutionLog) (err error) {
+
+	if xlog != nil {
+		rec := &executionlog.Record{
+			InstructionId: instr.Id,
+		}
+		xlog.Records = append(xlog.Records, rec)
+		defer func() {
+			if err != nil {
+				rec.ResultString = "FAIL: " + err.Error()
+			} else {
+				rec.ResultString = "OK"
+			}
+		}()
+	}
 
 	switch instr.Command {
 
@@ -174,6 +190,30 @@ func (instr *Instruction) Execute(s any) (err error) {
 		}
 		err = datavm.StdErr(instr.Id, instr.Path, "doesn't contain all")
 		return
+
+	case Command_OR:
+		/*
+			In this instruction, branches are values, which contain []IInstruction each,
+			and we use the datavm.ExecuteUntilFirstError() for each branch, until some
+			succeed. If neither does we fail, returning the error "neither of OR branches
+			were successful".
+		*/
+		branches := make([][]datavm.IInstruction, 0, len(instr.Values))
+		for _, b := range instr.Values {
+			switch branch := b.(type) {
+			case []datavm.IInstruction:
+				branches = append(branches, branch)
+			default:
+				err = datavm.StdErr(instr.Id, nil, "OR has incorrect type of branch")
+				return
+			}
+		}
+		for _, bList := range branches {
+			err = datavm.ExecuteUntilFirstError(s, bList, xlog)
+			if err == nil {
+				return // successful
+			}
+		}
 
 	default:
 		err = datavm.StdErr(instr.Id, instr.Path, "wrong command")
